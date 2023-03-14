@@ -1,5 +1,6 @@
 import type { Board } from './board';
 import { nextTurn, type Game } from './game';
+import { getDefaultPiece } from './pieceData';
 
 export type Piece = {
     name: string;
@@ -20,6 +21,7 @@ enum Direction {
  * This function spawns a piece on the game board and returns if the spawn succeeded.
  */
 export const spawnPiece = (board: Board, piece: Piece): boolean => {
+    // First we reset the position of the piece.
     resetPiece(piece);
 
     const gb: number[][] = board.GameBoard;
@@ -320,290 +322,19 @@ export const getCollisionBlocks = (
     });
 };
 
+/**
+ * Resets a piece back to its original position and rotation.
+ */
 export const resetPiece = (piece: Piece): void => {
     piece.offset = [0, 3];
     piece.currentRotation = 0;
 };
 
-// These rotations are from the "Super Rotation System (SRS)"
-// https://strategywiki.org/wiki/Tetris/Rotation_systems
-export const allPieces: Piece[] = [
-    {
-        name: 'I',
-        color: 1,
-        currentRotation: 0,
-        rotations: [
-            [
-                [0, 0, 0, 0],
-                [1, 1, 1, 1],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 0, 1, 0],
-                [0, 0, 1, 0],
-                [0, 0, 1, 0],
-                [0, 0, 1, 0]
-            ],
-            [
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
-                [1, 1, 1, 1],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 1, 0, 0],
-                [0, 1, 0, 0],
-                [0, 1, 0, 0],
-                [0, 1, 0, 0]
-            ]
-        ],
-        // The initial offset of the piece.
-        offset: [0, 3]
-    },
-    {
-        name: 'J',
-        color: 2,
-        currentRotation: 0,
-        rotations: [
-            [
-                [1, 0, 0, 0],
-                [1, 1, 1, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 1, 1, 0],
-                [0, 1, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 0, 0, 0],
-                [1, 1, 1, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 1, 0, 0],
-                [0, 1, 0, 0],
-                [1, 1, 0, 0],
-                [0, 0, 0, 0]
-            ]
-        ],
-        offset: [0, 3]
-    },
-    {
-        name: 'L',
-        color: 3,
-        currentRotation: 0,
-        rotations: [
-            [
-                [0, 0, 1, 0],
-                [1, 1, 1, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 1, 0, 0],
-                [0, 1, 0, 0],
-                [0, 1, 1, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 0, 0, 0],
-                [1, 1, 1, 0],
-                [1, 0, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [1, 1, 0, 0],
-                [0, 1, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 0]
-            ]
-        ],
-        offset: [0, 3]
-    },
-    {
-        name: 'O',
-        color: 4,
-        currentRotation: 0,
-        rotations: [
-            [
-                [0, 0, 0, 0],
-                [0, 1, 1, 0],
-                [0, 1, 1, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 0, 0, 0],
-                [0, 1, 1, 0],
-                [0, 1, 1, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 0, 0, 0],
-                [0, 1, 1, 0],
-                [0, 1, 1, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 0, 0, 0],
-                [0, 1, 1, 0],
-                [0, 1, 1, 0],
-                [0, 0, 0, 0]
-            ]
-        ],
-        offset: [0, 3]
-    },
-    {
-        name: 'S',
-        color: 5,
-        currentRotation: 0,
-        rotations: [
-            [
-                [0, 1, 1, 0],
-                [1, 1, 0, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 1, 0, 0],
-                [0, 1, 1, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 0, 0, 0],
-                [0, 1, 1, 0],
-                [1, 1, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [1, 0, 0, 0],
-                [1, 1, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 0]
-            ]
-        ],
-        offset: [0, 3]
-    },
-    {
-        name: 'Z',
-        color: 6,
-        currentRotation: 0,
-        rotations: [
-            [
-                [1, 1, 0, 0],
-                [0, 1, 1, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 0, 1, 0],
-                [0, 1, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 0, 0, 0],
-                [1, 1, 0, 0],
-                [0, 1, 1, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 1, 0, 0],
-                [1, 1, 0, 0],
-                [1, 0, 0, 0],
-                [0, 0, 0, 0]
-            ]
-        ],
-        offset: [0, 3]
-    },
-    {
-        name: 'T',
-        color: 7,
-        currentRotation: 0,
-        rotations: [
-            [
-                [0, 1, 0, 0],
-                [1, 1, 1, 0],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 1, 0, 0],
-                [0, 1, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 0, 0, 0],
-                [1, 1, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 0]
-            ],
-            [
-                [0, 1, 0, 0],
-                [1, 1, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 0]
-            ]
-        ],
-        offset: [0, 3]
-    }
-];
-
 /**
- * This is for rendering the preview of upcoming/held pieces.
+ * Gets a neatly formatted 4x4 table with a single piece.
+ * Used in the preview for upcoming pieces, held pieces and piece counts.
  */
-export const getDefaultPiece = (pieceType: string | null): number[][] => {
-    switch (pieceType) {
-        case 'I':
-            return [
-                [0, 0, 0, 0],
-                [1, 1, 1, 1]
-            ];
-        case 'J':
-            return [
-                [2, 0, 0, 0],
-                [2, 2, 2, 0]
-            ];
-        case 'L':
-            return [
-                [0, 0, 3, 0],
-                [3, 3, 3, 0]
-            ];
-        case 'O':
-            return [
-                [0, 4, 4, 0],
-                [0, 4, 4, 0]
-            ];
-        case 'S':
-            return [
-                [0, 5, 5, 0],
-                [5, 5, 0, 0]
-            ];
-        case 'Z':
-            return [
-                [6, 6, 0, 0],
-                [0, 6, 6, 0]
-            ];
-        case 'T':
-            return [
-                [0, 7, 0, 0],
-                [7, 7, 7, 0]
-            ];
-        default:
-            return [
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
-            ];
-    }
-};
-
-export const getNextPieceTable = (nextPieces: Piece[]): number[][] => {
+export const getPreviewPieceTable = (nextPieces: Piece[]): number[][] => {
     const table: number[][] = [];
 
     for (let i = 0; i < nextPieces.length; i++) {

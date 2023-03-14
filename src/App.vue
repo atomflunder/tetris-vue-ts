@@ -9,9 +9,10 @@ import {
     movePieceRight,
     rotatePiece,
     holdPiece,
-    getNextPieceTable,
-    allPieces
+    getPreviewPieceTable
 } from './helpers/pieces';
+import { allPieces } from './helpers/pieceData';
+import { inDanger } from './helpers/board';
 
 const game = reactive(newGame());
 
@@ -77,6 +78,14 @@ function getHeldPieceColor(block: number): string {
         } else {
             return 'empty small-block';
         }
+    }
+}
+
+function isInDanger(): string {
+    if (inDanger(game.board, game.currentPiece)) {
+        return 'red-glow ';
+    } else {
+        return '';
     }
 }
 
@@ -149,75 +158,41 @@ onMounted(() => {
         <div class="game-info left-column">
             <table>
                 <tr>
-                    Score:
-                    {{
-                        game.score
-                    }}
+                    <td>Score: {{ game.score }}</td>
+                    <td>Level: {{ game.level }}</td>
+                    <td colspan="2">Total Lines: {{ game.totalLines }}</td>
                 </tr>
                 <tr>
-                    Level:
-                    {{
-                        game.level
-                    }}
+                    <td>Singles: {{ game.lineCounter[0] }}</td>
+                    <td>Doubles: {{ game.lineCounter[1] }}</td>
+                    <td>Triples: {{ game.lineCounter[2] }}</td>
+                    <td>Tetris: {{ game.lineCounter[3] }}</td>
                 </tr>
                 <tr>
-                    Total Lines:
-                    {{
-                        game.totalLines
-                    }}
-                </tr>
-                <tr>
-                    Singles:
-                    {{
-                        game.lineCounter[0]
-                    }}
-                </tr>
-                <tr>
-                    Doubles:
-                    {{
-                        game.lineCounter[1]
-                    }}
-                </tr>
-                <tr>
-                    Triples:
-                    {{
-                        game.lineCounter[2]
-                    }}
-                </tr>
-                <tr>
-                    Tetris:
-                    {{
-                        game.lineCounter[3]
-                    }}
-                </tr>
-                <tr>
-                    Tick (Debug):
-                    {{
-                        // @ts-ignore
-                        game.ticks.toString().padStart(3, '0')
-                    }}
-                </tr>
-                <tr>
-                    Pieces:
-                    <td v-for="(count, i) in game.pieceCounter" :key="i">
-                        <tr
-                            v-for="(row, j) in getNextPieceTable([
-                                JSON.parse(JSON.stringify(allPieces[i]))
-                            ])"
-                            :key="j"
-                        >
-                            <td
-                                v-for="(block, j) in row"
-                                :key="j"
-                                :class="getColorClass(block, -1, -1) + ' small-block'"
-                            ></td>
-                        </tr>
-                        {{ game.pieceCounter[i] }}
+                    <td colspan="4">
+                        Pieces:
+                        <table>
+                            <td v-for="(count, i) in game.pieceCounter" :key="i">
+                                <tr
+                                    v-for="(row, j) in getPreviewPieceTable([
+                                        JSON.parse(JSON.stringify(allPieces[i]))
+                                    ])"
+                                    :key="j"
+                                >
+                                    <td
+                                        v-for="(block, j) in row"
+                                        :key="j"
+                                        :class="getColorClass(block, -1, -1) + ' small-block'"
+                                    ></td>
+                                </tr>
+                                {{ count }}
+                            </td>
+                        </table>
                     </td>
                 </tr>
             </table>
         </div>
-        <table class="main-table center-column">
+        <table :class="isInDanger() + 'main-table center-column'">
             <tr v-for="(row, i) in game.board.GameBoard" :key="i">
                 <td v-for="(block, j) in row" :key="j" :class="getColorClass(block, i, j)"></td>
             </tr>
@@ -228,7 +203,7 @@ onMounted(() => {
         <div class="next-column piece-info">
             Next Pieces:
             <table>
-                <tr v-for="(row, i) in getNextPieceTable(game.nextPieces)" :key="i">
+                <tr v-for="(row, i) in getPreviewPieceTable(game.nextPieces.slice(0, 14))" :key="i">
                     <td
                         v-for="(block, j) in row"
                         :key="j"
@@ -240,7 +215,7 @@ onMounted(() => {
         <div class="held-column piece-info">
             Held Piece:
             <table v-if="game.holdPiece">
-                <tr v-for="(row, i) in getNextPieceTable([game.holdPiece])" :key="i">
+                <tr v-for="(row, i) in getPreviewPieceTable([game.holdPiece])" :key="i">
                     <td v-for="(block, j) in row" :key="j" :class="getHeldPieceColor(block)"></td>
                 </tr>
             </table>
@@ -319,6 +294,10 @@ onMounted(() => {
 .small-block {
     width: 15px;
     height: 15px;
+}
+
+.red-glow {
+    box-shadow: 1px 1px 1px #ff0000;
 }
 
 .empty {

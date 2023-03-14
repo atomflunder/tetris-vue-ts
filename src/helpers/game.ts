@@ -1,6 +1,8 @@
 import { deleteLine, getFullLines, newBoard, type Board } from './board';
 import { spawnPiece, type Piece } from './pieces';
-import { getRandomPiece } from './rng';
+import { getRandomPieceModern } from './rng';
+
+const PIECE_BAG_SIZE = 3;
 
 export type Game = {
     board: Board;
@@ -22,12 +24,14 @@ export type Game = {
  * Returns a new game.
  */
 export const newGame = (): Game => {
-    const nextPieces = [];
-    for (let i = 0; i < 14; i++) {
-        nextPieces.push(getRandomPiece());
-    }
+    // First we have to populate the piece queue.
+    const nextPieces = getRandomPieceModern([], PIECE_BAG_SIZE);
 
-    const currentPiece = getRandomPiece();
+    // Taking the first piece of the queue.
+    const currentPiece = nextPieces[0];
+    nextPieces.shift();
+
+    getRandomPieceModern(nextPieces, PIECE_BAG_SIZE);
 
     const game = {
         board: newBoard(),
@@ -136,10 +140,9 @@ export const nextTurn = (game: Game): void => {
         game.gameOver = true;
     }
 
-    // Then we append a new random piece to the next piece bag.
-    const newPiece = getRandomPiece();
-
-    game.nextPieces.push(newPiece);
+    // Then we populate the queue some more if it needs it.
+    game.nextPieces = getRandomPieceModern(game.nextPieces, PIECE_BAG_SIZE);
+    // Then we remove the first piece from the piece queue.
     game.nextPieces.shift();
 
     // After all of that we reset the ticks and the ability to hold a new piece.
