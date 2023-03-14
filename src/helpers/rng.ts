@@ -21,7 +21,11 @@ export const getRandomPieceClassic = (nextPieces: Piece[]): Piece[] => {
 /**
  * Gets you a pseudo-random shuffled piece bag, like in modern Tetris versions.
  */
-export const getRandomPieceModern = (nextPieces: Piece[], pieceBagSize: number): Piece[] => {
+export const getRandomPieceModern = (
+    nextPieces: Piece[],
+    pieceBagSize: number,
+    firstPiece: boolean = false
+): Piece[] => {
     // We have to have at least 14 pieces in the next piece queue, for displaying them all.
     // If we do already have those we just return.
     if (nextPieces.length > 14) {
@@ -45,6 +49,18 @@ export const getRandomPieceModern = (nextPieces: Piece[], pieceBagSize: number):
     }
 
     pieceBag = shuffle(pieceBag);
+
+    // If this is the first piece being generated, we do not want a piece that can generate an "overhang".
+    // These being the S and Z pieces, but an O piece can generate an overhang too if you draw a S/Z after.
+    // This is a feature in the Tetris Grand Master games.
+    if (firstPiece) {
+        // We just shuffle the bag until the first piece is not S, Z or O.
+        let piece = pieceBag[0];
+        while (piece.name === 'Z' || piece.name === 'S' || piece.name === 'O') {
+            pieceBag = shuffle(pieceBag);
+            piece = pieceBag[0];
+        }
+    }
 
     nextPieces.push(...pieceBag);
 

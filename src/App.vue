@@ -160,14 +160,46 @@ onMounted(() => {
                 <tr>
                     <td>Score: {{ game.score }}</td>
                     <td>Level: {{ game.level }}</td>
-                    <td colspan="2">Total Lines: {{ game.totalLines }}</td>
                 </tr>
+
                 <tr>
-                    <td>Singles: {{ game.lineCounter[0] }}</td>
-                    <td>Doubles: {{ game.lineCounter[1] }}</td>
-                    <td>Triples: {{ game.lineCounter[2] }}</td>
-                    <td>Tetris: {{ game.lineCounter[3] }}</td>
+                    <td colspan="2">
+                        Total Lines:
+                        {{ game.totalLines }}
+                        <table class="line-table">
+                            <tr>
+                                <td class="small-block greyed-out"></td>
+                                <td class="small-block empty"></td>
+                                <td class="small-block empty"></td>
+                                <td class="small-block empty"></td>
+                                <td>Single: {{ game.lineCounter[0] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="small-block greyed-out"></td>
+                                <td class="small-block greyed-out"></td>
+                                <td class="small-block empty"></td>
+                                <td class="small-block empty"></td>
+                                <td>Double: {{ game.lineCounter[1] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="small-block greyed-out"></td>
+                                <td class="small-block greyed-out"></td>
+                                <td class="small-block greyed-out"></td>
+                                <td class="small-block empty"></td>
+                                <td>Triple: {{ game.lineCounter[2] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="small-block greyed-out"></td>
+                                <td class="small-block greyed-out"></td>
+                                <td class="small-block greyed-out"></td>
+                                <td class="small-block greyed-out"></td>
+                                <td>Tetris: {{ game.lineCounter[3] }}</td>
+                            </tr>
+                            <tr></tr>
+                        </table>
+                    </td>
                 </tr>
+
                 <tr>
                     <td colspan="4">
                         Pieces:
@@ -279,6 +311,11 @@ onMounted(() => {
 .piece-info {
     color: #ddd;
     font-size: 1.2rem;
+}
+
+.line-table {
+    border-collapse: separate;
+    border-spacing: 15px 2px;
 }
 
 .single-piece {

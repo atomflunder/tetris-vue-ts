@@ -25,7 +25,7 @@ export type Game = {
  */
 export const newGame = (): Game => {
     // First we have to populate the piece queue.
-    const nextPieces = getRandomPieceModern([], PIECE_BAG_SIZE);
+    const nextPieces = getRandomPieceModern([], PIECE_BAG_SIZE, true);
 
     // Taking the first piece of the queue.
     const currentPiece = nextPieces[0];
