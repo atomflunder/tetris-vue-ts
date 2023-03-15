@@ -15,6 +15,8 @@ export type Game = {
     nextPieces: Piece[];
     currentDrop: number; // We need to keep track of how long the player is holding down in a row.
     ticks: number;
+    lockTick: number; // The amount of ticks after a piece gets locked without input.
+    waitForLock: boolean;
     holdPiece: Piece | null;
     holdThisTurn: boolean; // You can only toggle held pieces once per turn.
     pieceCounter: number[];
@@ -43,6 +45,8 @@ export const newGame = (): Game => {
         nextPieces: nextPieces,
         currentDrop: 0,
         ticks: 0,
+        lockTick: 30,
+        waitForLock: false,
         holdPiece: null,
         holdThisTurn: true,
         pieceCounter: [0, 0, 0, 0, 0, 0, 0],
@@ -148,6 +152,7 @@ export const nextTurn = (game: Game): void => {
     // After all of that we reset the ticks and the ability to hold a new piece.
     game.ticks = 0;
     game.holdThisTurn = true;
+    game.waitForLock = false;
 };
 
 /**

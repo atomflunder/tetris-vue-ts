@@ -27,8 +27,14 @@ function moveDown(drop: boolean): void {
     } else {
         let b = movePieceDown(game.board, game.currentPiece);
         if (!b) {
-            game.score += game.currentDrop;
-            nextTurn(game);
+            // When we cannot move a piece down, it enters the "pre-locked" stage
+            // where you have 30 ticks (0.5s) to move it again, or it becomes locked.
+            game.waitForLock = true;
+            // If the 30 ticks are up, we lock the piece for real.
+            if (game.lockTick <= 0) {
+                game.score += game.currentDrop;
+                nextTurn(game);
+            }
         }
     }
 
@@ -53,6 +59,9 @@ function getColorClass(block: number, i: number, j: number): string {
             return 'z block';
         case 7:
             return 't block';
+        case 8:
+            // Maybe used for garbage blocks in the future.
+            return 'greyed-out block';
         default:
             // If the piece is not filled in, we check if it is occupied by a "shadow" piece.
             // If that is the case, we render a slightly transparent color of the current piece.
@@ -94,34 +103,50 @@ onkeydown = (e: KeyboardEvent) => {
         return;
     }
 
+    // When an action successfully completes, we update the lock ticks and the shadow piece coordinates.
+    function update(): void {
+        game.lockTick = 30;
+        shadowPieceCoordinates = getShadowPieceCoordinates(game.board, game.currentPiece);
+    }
+
     switch (e.key) {
         case 'ArrowLeft':
-            movePieceLeft(game.board, game.currentPiece);
-            shadowPieceCoordinates = getShadowPieceCoordinates(game.board, game.currentPiece);
+            if (movePieceLeft(game.board, game.currentPiece)) {
+                update();
+            }
+
             break;
         case 'ArrowRight':
-            movePieceRight(game.board, game.currentPiece);
-            shadowPieceCoordinates = getShadowPieceCoordinates(game.board, game.currentPiece);
+            if (movePieceRight(game.board, game.currentPiece)) {
+                update();
+            }
+
             break;
         case 'ArrowDown':
             moveDown(false);
             // Incrementing the drop counter for every time the game registers a consecutive down press.
             game.currentDrop += 1;
+            // When you hold down you probably do want the piece to lock instantly.
+            game.lockTick = 0;
             break;
         case 'ArrowUp':
             moveDown(true);
             break;
         case ' ':
-            rotatePiece(game.board, game.currentPiece, true);
-            shadowPieceCoordinates = getShadowPieceCoordinates(game.board, game.currentPiece);
+            if (rotatePiece(game.board, game.currentPiece, true)) {
+                update();
+            }
             break;
         case 'Enter':
-            rotatePiece(game.board, game.currentPiece, false);
-            shadowPieceCoordinates = getShadowPieceCoordinates(game.board, game.currentPiece);
+            if (rotatePiece(game.board, game.currentPiece, false)) {
+                update();
+            }
             break;
         case '0':
-            holdPiece(game);
-            shadowPieceCoordinates = getShadowPieceCoordinates(game.board, game.currentPiece);
+            if (holdPiece(game)) {
+                update();
+            }
+
             break;
     }
 };
@@ -137,6 +162,14 @@ onkeyup = (e: KeyboardEvent) => {
 const frame = (): void => {
     setTimeout(() => {
         game.ticks++;
+
+        // When the game is waiting for a locked piece to "finish",
+        // we decrement the timer
+        if (game.waitForLock) {
+            game.lockTick--;
+            moveDown(false);
+        }
+
         const threshold = getFallSpeed(game.level);
         if (game.ticks % threshold === 0) {
             moveDown(false);

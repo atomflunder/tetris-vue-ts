@@ -47,11 +47,12 @@ export const spawnPiece = (board: Board, piece: Piece): boolean => {
 
 /**
  * Holds a piece and spawns either the currently held piece, or the next one from the stack if you are not holding one.
+ * Returns if the operation succeeded.
  */
-export const holdPiece = (game: Game): void => {
+export const holdPiece = (game: Game): boolean => {
     // You can only hold a piece one time per turn, otherwise you could just stall forever.
     if (!game.holdThisTurn) {
-        return;
+        return false;
     }
 
     // Despawning the current piece.
@@ -67,7 +68,7 @@ export const holdPiece = (game: Game): void => {
         nextTurn(game);
         // But we have to make sure to set this to false.
         game.holdThisTurn = false;
-        return;
+        return true;
     }
 
     // If you are holding a piece, we swap the current piece and the hold piece.
@@ -83,6 +84,8 @@ export const holdPiece = (game: Game): void => {
     game.ticks = 0;
     // And of course turn off the ability to swap again.
     game.holdThisTurn = false;
+
+    return true;
 };
 
 export const rotatePiece = (board: Board, piece: Piece, clockwise: boolean): boolean => {
