@@ -85,46 +85,18 @@ export const holdPiece = (game: Game): void => {
     game.holdThisTurn = false;
 };
 
-/**
- * This function rotates a piece clockwise or counter-clockwise and returns if the move succeeded.
- */
 export const rotatePiece = (board: Board, piece: Piece, clockwise: boolean): boolean => {
-    // Getting the next rotation in the list (0-3). If it rolls over we need to account for that.
     let nextRotation = (piece.currentRotation + (clockwise ? 1 : -1)) % 4;
     if (nextRotation === -1) {
         nextRotation += 4;
     }
 
     const pieceCoordinates = getPieceCoordinates(piece);
-    const rotatedPiece: Piece = {
-        ...piece,
-        currentRotation: nextRotation
-    };
 
-    let collisionBlocks = getPieceCoordinates(rotatedPiece);
+    const wallKick = getCorrectWallKick(piece, board, nextRotation, clockwise);
 
-    // Filtering out all of the pieces that the current piece occupies.
-    collisionBlocks = collisionBlocks.filter((b) => {
-        for (let i = 0; i < pieceCoordinates.length; i++) {
-            if (b[0] === pieceCoordinates[i][0] && b[1] === pieceCoordinates[i][1]) {
-                return false;
-            }
-        }
-        return true;
-    });
-
-    // We need to check if the blocks that the rotated piece will be in are empty and on the board.
-    for (let i = 0; i < collisionBlocks.length; i++) {
-        const coords = collisionBlocks[i];
-        if (
-            coords[0] < 0 ||
-            coords[0] >= board.GameBoard.length ||
-            coords[1] < 0 ||
-            coords[1] >= board.GameBoard[i].length ||
-            board.GameBoard[coords[0]][coords[1]] !== 0
-        ) {
-            return false;
-        }
+    if (wallKick === null) {
+        return false;
     }
 
     // We first set all "old" blocks to zero, before setting the new blocks to 1.
@@ -134,6 +106,10 @@ export const rotatePiece = (board: Board, piece: Piece, clockwise: boolean): boo
     }
 
     piece.currentRotation = nextRotation;
+
+    // These are intentionally swapped due to the wall kick coordinates being X/Y and the offset being Y/X.
+    piece.offset[0] += wallKick[1];
+    piece.offset[1] += wallKick[0];
 
     const newPieceBlocks = getPieceCoordinates(piece);
 
@@ -345,4 +321,136 @@ export const getPreviewPieceTable = (nextPieces: Piece[]): number[][] => {
     table.push([0, 0, 0, 0]);
 
     return table;
+};
+
+/**
+ * Gets you the wall kick offsets for each piece.
+ * The first one is always [0, 0].
+ * This is taken from: https://tetris.fandom.com/wiki/SRS#Wall_Kicks
+ */
+export const getWallKicks = (piece: Piece, clockwise: boolean): number[][] => {
+    const currentRotation = piece.currentRotation;
+
+    const wallKicks: number[][] = [];
+
+    wallKicks.push([0, 0]);
+
+    // The O piece does not kick.
+    if (piece.name === 'O') {
+        return wallKicks;
+    }
+
+    // The I piece has special kick values due to its shape.
+    if (piece.name === 'I') {
+        if (currentRotation === 0) {
+            clockwise
+                ? wallKicks.push([-2, 0], [1, 0], [-2, -1], [1, 2]) // 0 >> 1
+                : wallKicks.push([-1, 0], [2, 0], [-1, 2], [2, -1]); // 0 >> 3
+        } else if (currentRotation === 1) {
+            clockwise
+                ? wallKicks.push([-1, 0], [2, 0], [-1, 2], [2, -1]) // 1 >> 2
+                : wallKicks.push([2, 0], [-1, 0], [2, 1], [-1, 2]); // 1 >> 0
+        } else if (currentRotation === 2) {
+            clockwise
+                ? wallKicks.push([2, 0], [-1, 0], [2, 1], [-1, -2]) // 2 >> 3
+                : wallKicks.push([1, 0], [-2, 0], [1, -2], [-2, 1]); // 2 >> 1
+        } else if (currentRotation == 3) {
+            clockwise
+                ? wallKicks.push([1, 0], [-2, 0], [1, -2], [-2, 1]) // 3 >> 0
+                : wallKicks.push([-2, 0], [1, 0], [-2, -1], [1, 2]); // 3 >> 2
+        }
+
+        return wallKicks;
+    }
+
+    // And the J, L, T, S, and Z pieces all share kick values.
+    if (currentRotation === 0) {
+        clockwise
+            ? wallKicks.push([-1, 0], [-1, 1], [0, -2], [-1, -2]) // 0 >> 1
+            : wallKicks.push([1, 0], [1, 1], [0, -2], [1, -2]); // 0 >> 3
+    } else if (currentRotation === 1) {
+        clockwise
+            ? wallKicks.push([1, 0], [1, -1], [0, 2], [1, 2]) // 1 >> 2
+            : wallKicks.push([1, 0], [1, -1], [0, 2], [1, 2]); // 1 >> 0
+    } else if (currentRotation === 2) {
+        clockwise
+            ? wallKicks.push([1, 0], [1, 1], [0, -2], [1, -2]) // 2 >> 3
+            : wallKicks.push([-1, 0], [-1, 1], [0, -2], [-1, -2]); // 2 >> 1
+    } else if (currentRotation == 3) {
+        clockwise
+            ? wallKicks.push([-1, 0], [-1, -1], [0, 2], [-1, 2]) // 3 >> 0
+            : wallKicks.push([-1, 0], [-1, -1], [0, 2], [-1, 2]); // 3 >> 2
+    }
+
+    return wallKicks;
+};
+
+/**
+ * This function gets the correct wall kick.
+ * Loops through every possible one and chooses the first valid one.
+ * If no wall kicks are valid this will return null.
+ */
+const getCorrectWallKick = (
+    piece: Piece,
+    board: Board,
+    nextRotation: number,
+    clockwise: boolean
+): number[] | null => {
+    const wallKicks = getWallKicks(piece, clockwise);
+
+    const pieceCoordinates = getPieceCoordinates(piece);
+
+    // We are looping through the possible wall kicks.
+    wallKickLoop: for (let i = 0; i < wallKicks.length; i++) {
+        const pieceOffset = wallKicks[i];
+
+        const rotatedPiece: Piece = {
+            ...piece,
+            currentRotation: nextRotation
+        };
+
+        console.log(rotatedPiece.offset);
+
+        // We apply the wallkick to the piece offsets.
+        // These are intentionally swapped due to the wall kick coordinates being X/Y and the offset being Y/X.
+        rotatedPiece.offset = [
+            rotatedPiece.offset[0] + pieceOffset[1],
+            rotatedPiece.offset[1] + pieceOffset[0]
+        ];
+
+        console.log(rotatedPiece.offset);
+
+        // Calculating the collision blocks with the initial piece in mind.
+        let collisionBlocks = getPieceCoordinates(rotatedPiece);
+
+        collisionBlocks = collisionBlocks.filter((b) => {
+            for (let j = 0; j < pieceCoordinates.length; j++) {
+                if (b[0] === pieceCoordinates[j][0] && b[1] === pieceCoordinates[j][1]) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        // And then if the piece does not fit we continue the loop.
+        for (let j = 0; j < collisionBlocks.length; j++) {
+            const coords = collisionBlocks[j];
+            if (
+                coords[0] < 0 ||
+                coords[0] >= board.GameBoard.length ||
+                coords[1] < 0 ||
+                coords[1] >= board.GameBoard[0].length ||
+                board.GameBoard[coords[0]][coords[1]] !== 0
+            ) {
+                continue wallKickLoop;
+            }
+        }
+
+        // If the piece fits we return the wall kick position.
+        console.log(`Rotating piece with ${i} wall kicks.`);
+        return wallKicks[i];
+    }
+
+    // And if none fit, we return null.
+    return null;
 };

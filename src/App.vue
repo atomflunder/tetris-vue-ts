@@ -7,9 +7,9 @@ import {
     movePieceDown,
     movePieceLeft,
     movePieceRight,
-    rotatePiece,
     holdPiece,
-    getPreviewPieceTable
+    getPreviewPieceTable,
+    rotatePiece
 } from './helpers/pieces';
 import { allPieces } from './helpers/pieceData';
 import { inDanger } from './helpers/board';
