@@ -1,75 +1,18 @@
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue';
 import { Game } from './helpers/game';
+import { getColorClass, getHeldPieceColor, isInDanger } from './helpers/style';
 import { getPreviewPieceTable } from './helpers/pieces';
 import { allPieces } from './helpers/pieceData';
 
 const game = reactive(new Game());
-
-function getColorClass(block: number, i: number, j: number): string {
-    switch (block) {
-        case 1:
-            return 'i block';
-        case 2:
-            return 'j block';
-        case 3:
-            return 'l block';
-        case 4:
-            return 'o block';
-        case 5:
-            return 's block';
-        case 6:
-            return 'z block';
-        case 7:
-            return 't block';
-        case 8:
-            // Maybe used for garbage blocks in the future.
-            return 'greyed-out block';
-        default:
-            // If the piece is not filled in, we check if it is occupied by a "shadow" piece.
-            // If that is the case, we render a slightly transparent color of the current piece.
-            for (let k = 0; k < game.shadowPiece.length; k++) {
-                if (game.shadowPiece[k][0] === i && game.shadowPiece[k][1] === j) {
-                    return `${game.currentPiece.name.toLowerCase()} block transparent`;
-                }
-            }
-            // And if not, just an empty block.
-            return 'empty block';
-    }
-}
-
-function getHeldPieceColor(block: number): string {
-    // If you can toggle the hold this "turn" we return the standard colors.
-    if (game.holdThisTurn) {
-        return getColorClass(block, -1, -1) + ' small-block';
-    } else {
-        // If you cannot toggle, we want the piece blocks to be greyed out.
-        let color = getColorClass(block, -1, -1);
-        if (color !== 'empty block') {
-            return 'greyed-out empty small-block';
-        } else {
-            return 'empty small-block';
-        }
-    }
-}
-
-function isInDanger(): string {
-    if (game.board.inDanger(game.currentPiece)) {
-        return 'red-glow ';
-    } else {
-        return '';
-    }
-}
 
 onkeydown = (e: KeyboardEvent) => {
     game.handleInput(e);
 };
 
 onkeyup = (e: KeyboardEvent) => {
-    // Resetting the down counter when the player releases the down key.
-    if (e.key === 'ArrowDown') {
-        game.currentDrop = 0;
-    }
+    game.handleKeyup(e);
 };
 
 onMounted(() => {
@@ -138,7 +81,7 @@ onMounted(() => {
                                     <td
                                         v-for="(block, j) in row"
                                         :key="j"
-                                        :class="getColorClass(block, -1, -1) + ' small-block'"
+                                        :class="getColorClass(game, block, -1, -1) + ' small-block'"
                                     ></td>
                                 </tr>
                                 {{ count }}
@@ -148,9 +91,13 @@ onMounted(() => {
                 </tr>
             </table>
         </div>
-        <table :class="isInDanger() + 'main-table center-column'">
+        <table :class="isInDanger(game) + 'main-table center-column'">
             <tr v-for="(row, i) in game.board.GameBoard" :key="i">
-                <td v-for="(block, j) in row" :key="j" :class="getColorClass(block, i, j)"></td>
+                <td
+                    v-for="(block, j) in row"
+                    :key="j"
+                    :class="getColorClass(game, block, i, j)"
+                ></td>
             </tr>
         </table>
 
@@ -163,7 +110,7 @@ onMounted(() => {
                     <td
                         v-for="(block, j) in row"
                         :key="j"
-                        :class="getColorClass(block, -1, -1) + ' small-block'"
+                        :class="getColorClass(game, block, -1, -1) + ' small-block'"
                     ></td>
                 </tr>
             </table>
@@ -172,7 +119,11 @@ onMounted(() => {
             Held Piece:
             <table v-if="game.holdPiece">
                 <tr v-for="(row, i) in getPreviewPieceTable([game.holdPiece])" :key="i">
-                    <td v-for="(block, j) in row" :key="j" :class="getHeldPieceColor(block)"></td>
+                    <td
+                        v-for="(block, j) in row"
+                        :key="j"
+                        :class="getHeldPieceColor(game, block)"
+                    ></td>
                 </tr>
             </table>
             <table v-else>
@@ -188,7 +139,7 @@ onMounted(() => {
                     <td
                         v-for="(block, j) in row"
                         :key="j"
-                        :class="getColorClass(block, -1, -1) + ' small-block'"
+                        :class="getColorClass(game, block, -1, -1) + ' small-block'"
                     ></td>
                 </tr>
             </table>

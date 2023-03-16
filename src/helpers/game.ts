@@ -157,6 +157,14 @@ export class Game {
         }
     }
 
+    handleKeyup(e: KeyboardEvent): void {
+        // Resetting the down counter when the player releases the down key.
+        if (e.key === 'ArrowDown') {
+            this.currentDrop = 0;
+            this.lockTick = PIECE_LOCK_TICKS;
+        }
+    }
+
     moveDown(drop: boolean): void {
         if (drop) {
             // In the original NES Version of Tetris you get 1 point for every cell you drop a piece down manually.
