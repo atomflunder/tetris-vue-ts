@@ -1,16 +1,6 @@
 import { Board } from './board';
 import { PIECE_BAG_AMOUNT, PIECE_LOCK_TICKS } from './consts';
-import {
-    getPieceCoordinates,
-    getShadowPieceCoordinates,
-    spawnPiece,
-    rotatePiece,
-    movePieceLeft,
-    movePieceRight,
-    type Piece,
-    dropPieceDown,
-    movePieceDown
-} from './pieces';
+import type { Piece } from './pieces';
 import { getRandomPieceModern } from './rng';
 
 export class Game {
@@ -60,7 +50,7 @@ export class Game {
         this.nextPieces = nextPieces;
         this.pieceCounter = [0, 0, 0, 0, 0, 0, 0];
 
-        this.shadowPiece = getShadowPieceCoordinates(this.board, this.currentPiece);
+        this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
         this.holdPiece = null;
         this.holdThisTurn = true;
 
@@ -76,7 +66,7 @@ export class Game {
         this.waitForLock = false;
 
         // Spawning the first piece.
-        spawnPiece(this.board, currentPiece);
+        this.currentPiece.spawnPiece(this.board);
 
         this.incrementPieceCount();
     }
@@ -112,18 +102,18 @@ export class Game {
         // When an action successfully completes, we update the lock ticks and the shadow piece coordinates.
         const update = (): void => {
             this.lockTick = PIECE_LOCK_TICKS;
-            this.shadowPiece = getShadowPieceCoordinates(this.board, this.currentPiece);
+            this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
         };
 
         switch (e.key) {
             case 'ArrowLeft':
-                if (movePieceLeft(this.board, this.currentPiece)) {
+                if (this.currentPiece.movePieceLeft(this.board)) {
                     update();
                 }
 
                 break;
             case 'ArrowRight':
-                if (movePieceRight(this.board, this.currentPiece)) {
+                if (this.currentPiece.movePieceRight(this.board)) {
                     update();
                 }
 
@@ -139,12 +129,12 @@ export class Game {
                 this.moveDown(true);
                 break;
             case ' ':
-                if (rotatePiece(this.board, this.currentPiece, true)) {
+                if (this.currentPiece.rotatePiece(this.board, true)) {
                     update();
                 }
                 break;
             case 'Enter':
-                if (rotatePiece(this.board, this.currentPiece, false)) {
+                if (this.currentPiece.rotatePiece(this.board, false)) {
                     update();
                 }
                 break;
@@ -169,10 +159,10 @@ export class Game {
         if (drop) {
             // In the original NES Version of Tetris you get 1 point for every cell you drop a piece down manually.
             // I like the idea so we are copying it for both hard and soft drops to reward fast play.
-            this.score += dropPieceDown(this.board, this.currentPiece);
+            this.score += this.currentPiece.dropPieceDown(this.board);
             this.nextTurn();
         } else {
-            const b = movePieceDown(this.board, this.currentPiece);
+            const b = this.currentPiece.movePieceDown(this.board);
             if (!b) {
                 // When we cannot move a piece down, it enters the "pre-locked" stage
                 // where you have 30 ticks (0.5s) to move it again, or it becomes locked.
@@ -187,7 +177,7 @@ export class Game {
 
         // This will update the shadow coordinates when a new piece spawns.
         // Otherwise this is fairly useless.
-        this.shadowPiece = getShadowPieceCoordinates(this.board, this.currentPiece);
+        this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
     }
 
     nextTurn(): void {
@@ -216,7 +206,7 @@ export class Game {
         this.incrementPieceCount();
 
         // Checking if the piece can spawn, if not this is an automatic game over.
-        const b = spawnPiece(this.board, this.currentPiece);
+        const b = this.currentPiece.spawnPiece(this.board);
         if (!b) {
             this.gameOver = true;
         }
@@ -243,7 +233,7 @@ export class Game {
         }
 
         // Despawning the current piece.
-        const pieceCoordinates = getPieceCoordinates(this.currentPiece);
+        const pieceCoordinates = this.currentPiece.getPieceCoordinates();
         for (let i = 0; i < pieceCoordinates.length; i++) {
             const coords = pieceCoordinates[i];
             this.board.GameBoard[coords[0]][coords[1]] = 0;
@@ -265,7 +255,7 @@ export class Game {
 
         // Then spawning the previously held piece.
 
-        spawnPiece(this.board, this.currentPiece);
+        this.currentPiece.spawnPiece(this.board);
 
         // Also need to set the ticks to 0 manually.
         this.ticks = 0;

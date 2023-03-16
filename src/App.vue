@@ -2,8 +2,7 @@
 import { onMounted, reactive } from 'vue';
 import { Game } from './helpers/game';
 import { getColorClass, getHeldPieceColor, isInDanger } from './helpers/style';
-import { getPreviewPieceTable } from './helpers/pieces';
-import { allPieces } from './helpers/pieceData';
+import { allPieces, getPreviewPieceTable } from './helpers/pieceData';
 
 const game = reactive(new Game());
 

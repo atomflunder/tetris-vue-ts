@@ -1,4 +1,4 @@
-import { getPieceCoordinates, type Piece } from './pieces';
+import type { Piece } from './pieces';
 
 export class Board {
     GameBoard: number[][];
@@ -78,7 +78,7 @@ export class Board {
             for (let j = 0; j < this.GameBoard[i].length; j++) {
                 if (
                     this.GameBoard[i][j] !== 0 &&
-                    !isItemInArray(getPieceCoordinates(currentPiece), [i, j])
+                    !isItemInArray(currentPiece.getPieceCoordinates(), [i, j])
                 ) {
                     // If so, the player is "in danger" and we return true.
                     return true;
