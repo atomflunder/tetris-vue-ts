@@ -112,6 +112,9 @@ export class Piece {
         });
     };
 
+    /**
+     * Rotates a piece either clockwise or counter-clockwise, with wall kicks.
+     */
     rotatePiece = (board: Board, clockwise: boolean): boolean => {
         // Can't rotate an O.
         if (this.name === 'O') {

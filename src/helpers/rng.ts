@@ -1,11 +1,26 @@
-import { FIRST_PIECE_NO_OVERHANG } from './consts';
+import { FIRST_PIECE_NO_OVERHANG, MODERN_PIECE_RNG } from './consts';
 import { allPieces } from './pieceData';
 import type { Piece } from './pieces';
 
 /**
+ * Gets you a random piece, depending on whether or not modern rng is enabled.
+ */
+export const getRandomPiece = (
+    nextPieces: Piece[],
+    pieceBagSize: number,
+    firstPiece: boolean = false
+): Piece[] => {
+    if (MODERN_PIECE_RNG) {
+        return getRandomPieceModern(nextPieces, pieceBagSize, firstPiece);
+    } else {
+        return getRandomPieceClassic(nextPieces);
+    }
+};
+
+/**
  * Gets a truly random piece, like in classic versions of Tetris.
  */
-export const getRandomPieceClassic = (nextPieces: Piece[]): Piece[] => {
+const getRandomPieceClassic = (nextPieces: Piece[]): Piece[] => {
     // We have to have at least 14 pieces in the next piece queue, for displaying them all.
     // So we fill it up to this point.
     while (nextPieces.length <= 14) {
@@ -22,7 +37,7 @@ export const getRandomPieceClassic = (nextPieces: Piece[]): Piece[] => {
 /**
  * Gets you a pseudo-random shuffled piece bag, like in modern Tetris versions.
  */
-export const getRandomPieceModern = (
+const getRandomPieceModern = (
     nextPieces: Piece[],
     pieceBagSize: number,
     firstPiece: boolean = false

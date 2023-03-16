@@ -1,7 +1,7 @@
 import { Board } from './board';
 import { PIECE_BAG_AMOUNT, PIECE_LOCK_TICKS } from './consts';
 import type { Piece } from './pieces';
-import { getRandomPieceModern } from './rng';
+import { getRandomPiece } from './rng';
 
 export class Game {
     gameOver: boolean;
@@ -34,13 +34,13 @@ export class Game {
     waitForLock: boolean;
 
     constructor() {
-        const nextPieces = getRandomPieceModern([], PIECE_BAG_AMOUNT, true);
+        const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
 
         // Taking the first piece of the queue.
         const currentPiece = nextPieces[0];
         nextPieces.shift();
 
-        getRandomPieceModern(nextPieces, PIECE_BAG_AMOUNT);
+        getRandomPiece(nextPieces, PIECE_BAG_AMOUNT);
 
         // Assigning the values.
         this.gameOver = false;
@@ -71,7 +71,9 @@ export class Game {
         this.incrementPieceCount();
     }
 
-    // This is the main game loop that drops pieces automatically.
+    /**
+     * Advances the game loop by one tick every 1/60th of a second.
+     */
     advanceTick(): void {
         setTimeout(() => {
             this.ticks++;
@@ -94,6 +96,9 @@ export class Game {
         }, 1000 / 60);
     }
 
+    /**
+     * Handles the keyboard inputs.
+     */
     handleInput(e: KeyboardEvent): void {
         if (this.gameOver) {
             return;
@@ -147,6 +152,9 @@ export class Game {
         }
     }
 
+    /**
+     * Handles the event when the user releases a key.
+     */
     handleKeyup(e: KeyboardEvent): void {
         // Resetting the down counter when the player releases the down key.
         if (e.key === 'ArrowDown') {
@@ -155,6 +163,9 @@ export class Game {
         }
     }
 
+    /**
+     * Handles the automatic and manual down-movement of pieces.
+     */
     moveDown(drop: boolean): void {
         if (drop) {
             // In the original NES Version of Tetris you get 1 point for every cell you drop a piece down manually.
@@ -180,6 +191,10 @@ export class Game {
         this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
     }
 
+    /**
+     * Handles the ending of a "turn" meaning the spawning of a new piece,
+     * deleting of any full lines, incrementing the score etc.
+     */
     nextTurn(): void {
         if (this.gameOver) {
             return;
@@ -212,7 +227,7 @@ export class Game {
         }
 
         // Then we populate the queue some more if it needs it.
-        this.nextPieces = getRandomPieceModern(this.nextPieces, PIECE_BAG_AMOUNT);
+        this.nextPieces = getRandomPiece(this.nextPieces, PIECE_BAG_AMOUNT);
         // Then we remove the first piece from the piece queue.
         this.nextPieces.shift();
 
@@ -308,6 +323,9 @@ export class Game {
         }
     }
 
+    /**
+     * Increments the piece counter for each individual piece.
+     */
     incrementPieceCount(): void {
         // Incrementing the individual piece counts.
         switch (this.currentPiece.name) {

@@ -1,5 +1,8 @@
 import type { Game } from './game';
 
+/**
+ * Gets you the CSS style class of a block on the playing field.
+ */
 export const getColorClass = (game: Game, block: number, i: number, j: number): string => {
     switch (block) {
         case 1:
@@ -32,6 +35,10 @@ export const getColorClass = (game: Game, block: number, i: number, j: number): 
     }
 };
 
+/**
+ * Gets you the CSS style class of the held piece preview,
+ * which is greyed out if you cannot swap the held piece.
+ */
 export const getHeldPieceColor = (game: Game, block: number): string => {
     // If you can toggle the hold this "turn" we return the standard colors.
     if (game.holdThisTurn) {
@@ -47,6 +54,10 @@ export const getHeldPieceColor = (game: Game, block: number): string => {
     }
 };
 
+/**
+ * Gets you the CSS style class of the main table, if you are in danger or not.
+ * "Danger" meaning if a dropped piece is X rows high.
+ */
 export const isInDanger = (game: Game): string => {
     if (game.board.inDanger(game.currentPiece)) {
         return 'red-glow ';
