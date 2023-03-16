@@ -1,3 +1,4 @@
+import { FIRST_PIECE_NO_OVERHANG } from './consts';
 import { allPieces } from './pieceData';
 import type { Piece } from './pieces';
 
@@ -51,9 +52,7 @@ export const getRandomPieceModern = (
     pieceBag = shuffle(pieceBag);
 
     // If this is the first piece being generated, we do not want a piece that can generate an "overhang".
-    // These being the S and Z pieces, but an O piece can generate an overhang too if you draw a S/Z after.
-    // This is a feature in the Tetris Grand Master games.
-    if (firstPiece) {
+    if (firstPiece && FIRST_PIECE_NO_OVERHANG) {
         // We just shuffle the bag until the first piece is not S, Z or O.
         let piece = pieceBag[0];
         while (piece.name === 'Z' || piece.name === 'S' || piece.name === 'O') {

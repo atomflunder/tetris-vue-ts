@@ -1,47 +1,10 @@
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue';
-import { getFallSpeed, newGame, nextTurn } from './helpers/game';
-import {
-    dropPieceDown,
-    getShadowPieceCoordinates,
-    movePieceDown,
-    movePieceLeft,
-    movePieceRight,
-    holdPiece,
-    getPreviewPieceTable,
-    rotatePiece
-} from './helpers/pieces';
+import { Game } from './helpers/game';
+import { getPreviewPieceTable } from './helpers/pieces';
 import { allPieces } from './helpers/pieceData';
-import { inDanger } from './helpers/board';
 
-const game = reactive(newGame());
-
-let shadowPieceCoordinates: number[][] = getShadowPieceCoordinates(game.board, game.currentPiece);
-
-function moveDown(drop: boolean): void {
-    if (drop) {
-        // In the original NES Version of Tetris you get 1 point for every cell you drop a piece down manually.
-        // I like the idea so we are copying it for both hard and soft drops to reward fast play.
-        game.score += dropPieceDown(game.board, game.currentPiece);
-        nextTurn(game);
-    } else {
-        let b = movePieceDown(game.board, game.currentPiece);
-        if (!b) {
-            // When we cannot move a piece down, it enters the "pre-locked" stage
-            // where you have 30 ticks (0.5s) to move it again, or it becomes locked.
-            game.waitForLock = true;
-            // If the 30 ticks are up, we lock the piece for real.
-            if (game.lockTick <= 0) {
-                game.score += game.currentDrop;
-                nextTurn(game);
-            }
-        }
-    }
-
-    // This will update the shadow coordinates when a new piece spawns.
-    // Otherwise this is fairly useless.
-    shadowPieceCoordinates = getShadowPieceCoordinates(game.board, game.currentPiece);
-}
+const game = reactive(new Game());
 
 function getColorClass(block: number, i: number, j: number): string {
     switch (block) {
@@ -65,8 +28,8 @@ function getColorClass(block: number, i: number, j: number): string {
         default:
             // If the piece is not filled in, we check if it is occupied by a "shadow" piece.
             // If that is the case, we render a slightly transparent color of the current piece.
-            for (let k = 0; k < shadowPieceCoordinates.length; k++) {
-                if (shadowPieceCoordinates[k][0] === i && shadowPieceCoordinates[k][1] === j) {
+            for (let k = 0; k < game.shadowPiece.length; k++) {
+                if (game.shadowPiece[k][0] === i && game.shadowPiece[k][1] === j) {
                     return `${game.currentPiece.name.toLowerCase()} block transparent`;
                 }
             }
@@ -91,7 +54,7 @@ function getHeldPieceColor(block: number): string {
 }
 
 function isInDanger(): string {
-    if (inDanger(game.board, game.currentPiece)) {
+    if (game.board.inDanger(game.currentPiece)) {
         return 'red-glow ';
     } else {
         return '';
@@ -99,56 +62,7 @@ function isInDanger(): string {
 }
 
 onkeydown = (e: KeyboardEvent) => {
-    if (game.gameOver) {
-        return;
-    }
-
-    // When an action successfully completes, we update the lock ticks and the shadow piece coordinates.
-    function update(): void {
-        game.lockTick = 30;
-        shadowPieceCoordinates = getShadowPieceCoordinates(game.board, game.currentPiece);
-    }
-
-    switch (e.key) {
-        case 'ArrowLeft':
-            if (movePieceLeft(game.board, game.currentPiece)) {
-                update();
-            }
-
-            break;
-        case 'ArrowRight':
-            if (movePieceRight(game.board, game.currentPiece)) {
-                update();
-            }
-
-            break;
-        case 'ArrowDown':
-            moveDown(false);
-            // Incrementing the drop counter for every time the game registers a consecutive down press.
-            game.currentDrop += 1;
-            // When you hold down you probably do want the piece to lock instantly.
-            game.lockTick = 0;
-            break;
-        case 'ArrowUp':
-            moveDown(true);
-            break;
-        case ' ':
-            if (rotatePiece(game.board, game.currentPiece, true)) {
-                update();
-            }
-            break;
-        case 'Enter':
-            if (rotatePiece(game.board, game.currentPiece, false)) {
-                update();
-            }
-            break;
-        case '0':
-            if (holdPiece(game)) {
-                update();
-            }
-
-            break;
-    }
+    game.handleInput(e);
 };
 
 onkeyup = (e: KeyboardEvent) => {
@@ -158,31 +72,8 @@ onkeyup = (e: KeyboardEvent) => {
     }
 };
 
-// This is the main game loop that drops pieces automatically.
-const frame = (): void => {
-    setTimeout(() => {
-        game.ticks++;
-
-        // When the game is waiting for a locked piece to "finish",
-        // we decrement the timer
-        if (game.waitForLock) {
-            game.lockTick--;
-            moveDown(false);
-        }
-
-        const threshold = getFallSpeed(game.level);
-        if (game.ticks % threshold === 0) {
-            moveDown(false);
-            game.ticks = 0;
-        }
-        if (!game.gameOver) {
-            frame();
-        }
-    }, 1000 / 60);
-};
-
 onMounted(() => {
-    frame();
+    game.advanceTick();
 });
 </script>
 

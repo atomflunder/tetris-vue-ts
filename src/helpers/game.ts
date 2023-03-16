@@ -1,199 +1,341 @@
-import { deleteLine, getFullLines, newBoard, type Board } from './board';
-import { spawnPiece, type Piece } from './pieces';
+import { Board } from './board';
+import { PIECE_BAG_AMOUNT, PIECE_LOCK_TICKS } from './consts';
+import {
+    getPieceCoordinates,
+    getShadowPieceCoordinates,
+    spawnPiece,
+    rotatePiece,
+    movePieceLeft,
+    movePieceRight,
+    type Piece,
+    dropPieceDown,
+    movePieceDown
+} from './pieces';
 import { getRandomPieceModern } from './rng';
 
-const PIECE_BAG_SIZE = 3;
+export class Game {
+    gameOver: boolean;
 
-export type Game = {
     board: Board;
     currentPiece: Piece;
-    gameOver: boolean;
+    nextPieces: Piece[];
+    // The individual count of each piece.
+    pieceCounter: number[];
+
+    // The coordinates of the "shadow" piece.
+    shadowPiece: number[][];
+    holdPiece: Piece | null;
+    // You can only toggle held pieces once per turn.
+    holdThisTurn: boolean;
+
+    // We need to keep track of how long the player is holding down in a row.
+    currentDrop: number;
+
     score: number;
     totalLines: number;
-    lineCounter: number[]; // The specific line clears (Single, Double, Triple, Tetris)
+    // The specific line clears (Single, Double, Triple, Tetris)
+    lineCounter: number[];
     level: number;
-    nextPieces: Piece[];
-    currentDrop: number; // We need to keep track of how long the player is holding down in a row.
+
+    // A tick is 1/60th of a second.
     ticks: number;
-    lockTick: number; // The amount of ticks after a piece gets locked without input.
+    // The amount of ticks after a piece gets locked without input.
+    lockTick: number;
     waitForLock: boolean;
-    holdPiece: Piece | null;
-    holdThisTurn: boolean; // You can only toggle held pieces once per turn.
-    pieceCounter: number[];
-};
 
-/**
- * Returns a new game.
- */
-export const newGame = (): Game => {
-    // First we have to populate the piece queue.
-    const nextPieces = getRandomPieceModern([], PIECE_BAG_SIZE, true);
+    constructor() {
+        const nextPieces = getRandomPieceModern([], PIECE_BAG_AMOUNT, true);
 
-    // Taking the first piece of the queue.
-    const currentPiece = nextPieces[0];
-    nextPieces.shift();
+        // Taking the first piece of the queue.
+        const currentPiece = nextPieces[0];
+        nextPieces.shift();
 
-    getRandomPieceModern(nextPieces, PIECE_BAG_SIZE);
+        getRandomPieceModern(nextPieces, PIECE_BAG_AMOUNT);
 
-    const game = {
-        board: newBoard(),
-        currentPiece: currentPiece,
-        gameOver: false,
-        score: 0,
-        totalLines: 0,
-        level: 1,
-        nextPieces: nextPieces,
-        currentDrop: 0,
-        ticks: 0,
-        lockTick: 30,
-        waitForLock: false,
-        holdPiece: null,
-        holdThisTurn: true,
-        pieceCounter: [0, 0, 0, 0, 0, 0, 0],
-        lineCounter: [0, 0, 0, 0]
-    };
+        // Assigning the values.
+        this.gameOver = false;
 
-    spawnPiece(game.board, currentPiece);
+        this.board = new Board();
+        this.currentPiece = currentPiece;
+        this.nextPieces = nextPieces;
+        this.pieceCounter = [0, 0, 0, 0, 0, 0, 0];
 
-    // Incrementing the individual piece counts.
-    switch (currentPiece.name) {
-        case 'I':
-            game.pieceCounter[0] += 1;
-            break;
-        case 'J':
-            game.pieceCounter[1] += 1;
-            break;
-        case 'L':
-            game.pieceCounter[2] += 1;
-            break;
-        case 'O':
-            game.pieceCounter[3] += 1;
-            break;
-        case 'S':
-            game.pieceCounter[4] += 1;
-            break;
-        case 'Z':
-            game.pieceCounter[5] += 1;
-            break;
-        case 'T':
-            game.pieceCounter[6] += 1;
-            break;
-        default:
-            break;
+        this.shadowPiece = getShadowPieceCoordinates(this.board, this.currentPiece);
+        this.holdPiece = null;
+        this.holdThisTurn = true;
+
+        this.currentDrop = 0;
+
+        this.score = 0;
+        this.totalLines = 0;
+        this.lineCounter = [0, 0, 0, 0];
+        this.level = 1;
+
+        this.ticks = 0;
+        this.lockTick = PIECE_LOCK_TICKS;
+        this.waitForLock = false;
+
+        // Spawning the first piece.
+        spawnPiece(this.board, currentPiece);
+
+        this.incrementPieceCount();
     }
 
-    return game;
-};
+    // This is the main game loop that drops pieces automatically.
+    advanceTick(): void {
+        setTimeout(() => {
+            this.ticks++;
 
-/**
- * Handles a "turn" in the game, meaning spawning a new piece, checking for full lines, etc.
- */
-export const nextTurn = (game: Game): void => {
-    if (game.gameOver) {
-        return;
+            // When the game is waiting for a locked piece to "finish",
+            // we decrement the timer
+            if (this.waitForLock) {
+                this.lockTick--;
+                this.moveDown(false);
+            }
+
+            const threshold = this.getFallSpeed();
+            if (this.ticks % threshold === 0) {
+                this.moveDown(false);
+                this.ticks = 0;
+            }
+            if (!this.gameOver) {
+                this.advanceTick();
+            }
+        }, 1000 / 60);
     }
 
-    // First we check for the lines that need to be deleted.
-    const fullLines = getFullLines(game.board);
+    handleInput(e: KeyboardEvent): void {
+        if (this.gameOver) {
+            return;
+        }
 
-    for (let i = 0; i < fullLines.length; i++) {
-        deleteLine(game.board, fullLines[i]);
+        // When an action successfully completes, we update the lock ticks and the shadow piece coordinates.
+        const update = (): void => {
+            this.lockTick = PIECE_LOCK_TICKS;
+            this.shadowPiece = getShadowPieceCoordinates(this.board, this.currentPiece);
+        };
+
+        switch (e.key) {
+            case 'ArrowLeft':
+                if (movePieceLeft(this.board, this.currentPiece)) {
+                    update();
+                }
+
+                break;
+            case 'ArrowRight':
+                if (movePieceRight(this.board, this.currentPiece)) {
+                    update();
+                }
+
+                break;
+            case 'ArrowDown':
+                this.moveDown(false);
+                // Incrementing the drop counter for every time the game registers a consecutive down press.
+                this.currentDrop += 1;
+                // When you hold down you probably do want the piece to lock instantly.
+                this.lockTick = 0;
+                break;
+            case 'ArrowUp':
+                this.moveDown(true);
+                break;
+            case ' ':
+                if (rotatePiece(this.board, this.currentPiece, true)) {
+                    update();
+                }
+                break;
+            case 'Enter':
+                if (rotatePiece(this.board, this.currentPiece, false)) {
+                    update();
+                }
+                break;
+            case '0':
+                if (this.toggleHoldPiece()) {
+                    update();
+                }
+
+                break;
+        }
     }
 
-    game.totalLines += fullLines.length;
-    game.lineCounter[fullLines.length - 1] += 1;
+    moveDown(drop: boolean): void {
+        if (drop) {
+            // In the original NES Version of Tetris you get 1 point for every cell you drop a piece down manually.
+            // I like the idea so we are copying it for both hard and soft drops to reward fast play.
+            this.score += dropPieceDown(this.board, this.currentPiece);
+            this.nextTurn();
+        } else {
+            const b = movePieceDown(this.board, this.currentPiece);
+            if (!b) {
+                // When we cannot move a piece down, it enters the "pre-locked" stage
+                // where you have 30 ticks (0.5s) to move it again, or it becomes locked.
+                this.waitForLock = true;
+                // If the 30 ticks are up, we lock the piece for real.
+                if (this.lockTick <= 0) {
+                    this.score += this.currentDrop;
+                    this.nextTurn();
+                }
+            }
+        }
 
-    game.score += getScore(fullLines.length, game.level);
-
-    game.level = Math.floor(game.totalLines / 10) + 1;
-
-    // We get the new piece from the stack of next pieces.
-    const nextPiece = game.nextPieces[0];
-    game.currentPiece = nextPiece;
-
-    // Incrementing the individual piece counts.
-    switch (game.currentPiece.name) {
-        case 'I':
-            game.pieceCounter[0] += 1;
-            break;
-        case 'J':
-            game.pieceCounter[1] += 1;
-            break;
-        case 'L':
-            game.pieceCounter[2] += 1;
-            break;
-        case 'O':
-            game.pieceCounter[3] += 1;
-            break;
-        case 'S':
-            game.pieceCounter[4] += 1;
-            break;
-        case 'Z':
-            game.pieceCounter[5] += 1;
-            break;
-        case 'T':
-            game.pieceCounter[6] += 1;
-            break;
-        default:
-            break;
+        // This will update the shadow coordinates when a new piece spawns.
+        // Otherwise this is fairly useless.
+        this.shadowPiece = getShadowPieceCoordinates(this.board, this.currentPiece);
     }
 
-    // Checking if the piece can spawn, if not this is an automatic game over.
-    const b = spawnPiece(game.board, game.currentPiece);
-    if (!b) {
-        game.gameOver = true;
+    nextTurn(): void {
+        if (this.gameOver) {
+            return;
+        }
+
+        // First we check for the lines that need to be deleted.
+        const fullLines = this.board.getFullLines();
+
+        for (let i = 0; i < fullLines.length; i++) {
+            this.board.deleteLine(fullLines[i]);
+        }
+
+        this.totalLines += fullLines.length;
+        this.lineCounter[fullLines.length - 1] += 1;
+
+        this.score += this.getScore(fullLines.length);
+
+        this.level = Math.floor(this.totalLines / 10) + 1;
+
+        // We get the new piece from the stack of next pieces.
+        const nextPiece = this.nextPieces[0];
+        this.currentPiece = nextPiece;
+
+        this.incrementPieceCount();
+
+        // Checking if the piece can spawn, if not this is an automatic game over.
+        const b = spawnPiece(this.board, this.currentPiece);
+        if (!b) {
+            this.gameOver = true;
+        }
+
+        // Then we populate the queue some more if it needs it.
+        this.nextPieces = getRandomPieceModern(this.nextPieces, PIECE_BAG_AMOUNT);
+        // Then we remove the first piece from the piece queue.
+        this.nextPieces.shift();
+
+        // After all of that we reset the ticks and the ability to hold a new piece.
+        this.ticks = 0;
+        this.holdThisTurn = true;
+        this.waitForLock = false;
     }
 
-    // Then we populate the queue some more if it needs it.
-    game.nextPieces = getRandomPieceModern(game.nextPieces, PIECE_BAG_SIZE);
-    // Then we remove the first piece from the piece queue.
-    game.nextPieces.shift();
+    /**
+     * Holds a piece and spawns either the currently held piece, or the next one from the stack if you are not holding one.
+     * Returns if the operation succeeded.
+     */
+    toggleHoldPiece(): boolean {
+        // You can only hold a piece one time per turn, otherwise you could just stall forever.
+        if (!this.holdThisTurn) {
+            return false;
+        }
 
-    // After all of that we reset the ticks and the ability to hold a new piece.
-    game.ticks = 0;
-    game.holdThisTurn = true;
-    game.waitForLock = false;
-};
+        // Despawning the current piece.
+        const pieceCoordinates = getPieceCoordinates(this.currentPiece);
+        for (let i = 0; i < pieceCoordinates.length; i++) {
+            const coords = pieceCoordinates[i];
+            this.board.GameBoard[coords[0]][coords[1]] = 0;
+        }
 
-/**
- * Gets the score based on the amount of lines cleared at onces and the current level.
- */
-export const getScore = (linesCleared: number, level: number): number => {
-    // This is from the NES Tetris scoring algorithm.
-    switch (linesCleared) {
-        case 1:
-            return 40 * level;
-        case 2:
-            return 100 * level;
-        case 3:
-            return 300 * level;
-        case 4:
-            return 1200 * level;
-        default:
-            return 0;
+        // If you are not currently holding a piece, it is like ending your turn, kind of.
+        if (!this.holdPiece) {
+            this.holdPiece = this.currentPiece;
+            this.nextTurn();
+            // But we have to make sure to set this to false.
+            this.holdThisTurn = false;
+            return true;
+        }
+
+        // If you are holding a piece, we swap the current piece and the hold piece.
+        const bufferPiece = this.currentPiece;
+        this.currentPiece = this.holdPiece;
+        this.holdPiece = bufferPiece;
+
+        // Then spawning the previously held piece.
+
+        spawnPiece(this.board, this.currentPiece);
+
+        // Also need to set the ticks to 0 manually.
+        this.ticks = 0;
+        // And of course turn off the ability to swap again.
+        this.holdThisTurn = false;
+
+        return true;
     }
-};
 
-/**
- * Gets the amount of seconds before a piece falls down by one grid.
- * These are from the original NES Version of Tetris (But we start at level 1 instead of 0).
- * The original game runs at 60(~ish) frames per second.
- */
-export const getFallSpeed = (level: number): number => {
-    if (level < 10) {
-        // It scales linearly up until NES Level 8 (Our Level 9).
-        return 53 - 5 * level;
-    } else if (level < 11) {
-        return 6;
-    } else if (level < 14) {
-        return 5;
-    } else if (level < 17) {
-        return 4;
-    } else if (level < 20) {
-        return 3;
-    } else if (level < 30) {
-        return 2;
-    } else {
-        return 1;
+    /**
+     * Gets the score depending on the amount of lines cleared and the current level.
+     */
+    getScore(linesCleared: number): number {
+        // This is from the NES Tetris scoring algorithm.
+        switch (linesCleared) {
+            case 1:
+                return 40 * this.level;
+            case 2:
+                return 100 * this.level;
+            case 3:
+                return 300 * this.level;
+            case 4:
+                return 1200 * this.level;
+            default:
+                return 0;
+        }
     }
-};
+
+    /**
+     * Gets the amount of seconds before a piece falls down by one grid.
+     * These are from the original NES Version of Tetris (But we start at level 1 instead of 0).
+     * The original game runs at 60(~ish) frames per second.
+     */
+    getFallSpeed(): number {
+        if (this.level < 10) {
+            // It scales linearly up until NES Level 8 (Our Level 9).
+            return 53 - 5 * this.level;
+        } else if (this.level < 11) {
+            return 6;
+        } else if (this.level < 14) {
+            return 5;
+        } else if (this.level < 17) {
+            return 4;
+        } else if (this.level < 20) {
+            return 3;
+        } else if (this.level < 30) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
+
+    incrementPieceCount(): void {
+        // Incrementing the individual piece counts.
+        switch (this.currentPiece.name) {
+            case 'I':
+                this.pieceCounter[0] += 1;
+                break;
+            case 'J':
+                this.pieceCounter[1] += 1;
+                break;
+            case 'L':
+                this.pieceCounter[2] += 1;
+                break;
+            case 'O':
+                this.pieceCounter[3] += 1;
+                break;
+            case 'S':
+                this.pieceCounter[4] += 1;
+                break;
+            case 'Z':
+                this.pieceCounter[5] += 1;
+                break;
+            case 'T':
+                this.pieceCounter[6] += 1;
+                break;
+            default:
+                break;
+        }
+    }
+}

@@ -1,5 +1,5 @@
 import type { Board } from './board';
-import { nextTurn, type Game } from './game';
+import type { Game } from './game';
 import { getDefaultPiece } from './pieceData';
 
 export type Piece = {
@@ -65,7 +65,7 @@ export const holdPiece = (game: Game): boolean => {
     // If you are not currently holding a piece, it is like ending your turn, kind of.
     if (!game.holdPiece) {
         game.holdPiece = game.currentPiece;
-        nextTurn(game);
+        game.nextTurn();
         // But we have to make sure to set this to false.
         game.holdThisTurn = false;
         return true;
