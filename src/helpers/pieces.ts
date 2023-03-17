@@ -39,13 +39,13 @@ export class Piece {
     /**
      * This function spawns a piece on the game board and returns if the spawn succeeded.
      */
-    spawnPiece = (board: Board): boolean => {
+    spawn = (board: Board): boolean => {
         // First we reset the position of the piece.
         this.resetPiece();
 
         const gb: number[][] = board.GameBoard;
 
-        const pieceBlocks = this.getPieceCoordinates();
+        const pieceBlocks = this.getCoordinates();
 
         // First we check if the board is already full at the coordinates that we want the piece to spawn in.
         // This is an automatic game over.
@@ -67,7 +67,7 @@ export class Piece {
     /**
      * This function gets the current coordinates of a piece.
      */
-    getPieceCoordinates = (): number[][] => {
+    getCoordinates = (): number[][] => {
         const pieceBlocks: number[][] = [];
 
         for (let i = 0; i < this.rotations[this.currentRotation].length; i++) {
@@ -86,7 +86,7 @@ export class Piece {
      * Excludes blocks of the same piece.
      */
     getCollisionBlocks = (direction: Direction): number[][] => {
-        const pieceCoordinates = this.getPieceCoordinates();
+        const pieceCoordinates = this.getCoordinates();
 
         const collisionBlocks: number[][] = [];
 
@@ -115,7 +115,7 @@ export class Piece {
     /**
      * Rotates a piece either clockwise or counter-clockwise, with wall kicks.
      */
-    rotatePiece = (board: Board, clockwise: boolean): boolean => {
+    rotate = (board: Board, clockwise: boolean): boolean => {
         // Can't rotate an O.
         if (this.name === 'O') {
             return false;
@@ -126,7 +126,7 @@ export class Piece {
             nextRotation += 4;
         }
 
-        const pieceCoordinates = this.getPieceCoordinates();
+        const pieceCoordinates = this.getCoordinates();
 
         const wallKick = this.getCorrectWallKick(board, nextRotation, clockwise);
 
@@ -146,7 +146,7 @@ export class Piece {
         this.offset[0] += wallKick[1];
         this.offset[1] += wallKick[0];
 
-        const newPieceBlocks = this.getPieceCoordinates();
+        const newPieceBlocks = this.getCoordinates();
 
         for (let i = 0; i < newPieceBlocks.length; i++) {
             const coords = newPieceBlocks[i];
@@ -159,8 +159,8 @@ export class Piece {
     /**
      * This function moves a piece down by 1 and returns if the move succeeded.
      */
-    movePieceDown = (board: Board): boolean => {
-        const pieceBlocks = this.getPieceCoordinates();
+    moveDown = (board: Board): boolean => {
+        const pieceBlocks = this.getCoordinates();
         // These are the blocks that face down from the given piece, we check for collision on those.
         const blocksToBeCollidedWith = this.getCollisionBlocks(Direction.Down);
 
@@ -182,7 +182,7 @@ export class Piece {
 
         this.offset[0] += 1;
 
-        const newPieceBlocks = this.getPieceCoordinates();
+        const newPieceBlocks = this.getCoordinates();
 
         for (let i = 0; i < pieceBlocks.length; i++) {
             const coords = newPieceBlocks[i];
@@ -196,12 +196,12 @@ export class Piece {
      * This function drops a piece down as far as it will go.
      * Returns how many spaces the piece has fallen.
      */
-    dropPieceDown = (board: Board): number => {
+    dropDown = (board: Board): number => {
         let fallen = 0;
         let result = true;
 
         while (result) {
-            result = this.movePieceDown(board);
+            result = this.moveDown(board);
             fallen++;
         }
 
@@ -211,8 +211,8 @@ export class Piece {
     /**
      * This function moves a piece left by 1 and returns if the move succeeded.
      */
-    movePieceLeft = (board: Board): boolean => {
-        const pieceBlocks = this.getPieceCoordinates();
+    moveLeft = (board: Board): boolean => {
+        const pieceBlocks = this.getCoordinates();
         // These are the blocks that face left from the given piece, we check for collision on those.
         const blocksToBeCollidedWith = this.getCollisionBlocks(Direction.Left);
 
@@ -231,7 +231,7 @@ export class Piece {
 
         this.offset[1] -= 1;
 
-        const newPieceBlocks = this.getPieceCoordinates();
+        const newPieceBlocks = this.getCoordinates();
 
         for (let i = 0; i < pieceBlocks.length; i++) {
             const coords = newPieceBlocks[i];
@@ -244,8 +244,8 @@ export class Piece {
     /**
      * This function moves a piece right by 1 and returns if the move succeeded.
      */
-    movePieceRight = (board: Board): boolean => {
-        const pieceBlocks = this.getPieceCoordinates();
+    moveRight = (board: Board): boolean => {
+        const pieceBlocks = this.getCoordinates();
         // These are the blocks that face right from the given piece, we check for collision on those.
         const blocksToBeCollidedWith = this.getCollisionBlocks(Direction.Right);
 
@@ -267,7 +267,7 @@ export class Piece {
 
         this.offset[1] += 1;
 
-        const newPieceBlocks = this.getPieceCoordinates();
+        const newPieceBlocks = this.getCoordinates();
 
         for (let i = 0; i < pieceBlocks.length; i++) {
             const coords = newPieceBlocks[i];
@@ -350,7 +350,7 @@ export class Piece {
     ): number[] | null => {
         const wallKicks = this.getWallKicks(clockwise);
 
-        const pieceCoordinates = this.getPieceCoordinates();
+        const pieceCoordinates = this.getCoordinates();
 
         // We are looping through the possible wall kicks.
         wallKickLoop: for (let i = 0; i < wallKicks.length; i++) {
@@ -372,7 +372,7 @@ export class Piece {
             ];
 
             // Calculating the collision blocks with the initial piece in mind.
-            let collisionBlocks = rotatedPiece.getPieceCoordinates();
+            let collisionBlocks = rotatedPiece.getCoordinates();
 
             collisionBlocks = collisionBlocks.filter((b) => {
                 for (let j = 0; j < pieceCoordinates.length; j++) {
@@ -423,8 +423,8 @@ export class Piece {
         );
         const shadowBoard: Board = JSON.parse(JSON.stringify(board));
 
-        shadowPiece.dropPieceDown(shadowBoard);
+        shadowPiece.dropDown(shadowBoard);
 
-        return shadowPiece.getPieceCoordinates();
+        return shadowPiece.getCoordinates();
     };
 }

@@ -59,7 +59,7 @@ export const getHeldPieceColor = (game: Game, block: number): string => {
  * "Danger" meaning if a dropped piece is X rows high.
  */
 export const isInDanger = (game: Game): string => {
-    if (game.board.inDanger(game.currentPiece)) {
+    if (game.board.firstRowsEmpty(game.currentPiece, 6)) {
         return 'red-glow ';
     } else {
         return '';

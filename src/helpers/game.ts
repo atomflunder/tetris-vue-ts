@@ -66,7 +66,7 @@ export class Game {
         this.waitForLock = false;
 
         // Spawning the first piece.
-        this.currentPiece.spawnPiece(this.board);
+        this.currentPiece.spawn(this.board);
 
         this.incrementPieceCount();
     }
@@ -112,13 +112,13 @@ export class Game {
 
         switch (e.key) {
             case 'ArrowLeft':
-                if (this.currentPiece.movePieceLeft(this.board)) {
+                if (this.currentPiece.moveLeft(this.board)) {
                     update();
                 }
 
                 break;
             case 'ArrowRight':
-                if (this.currentPiece.movePieceRight(this.board)) {
+                if (this.currentPiece.moveRight(this.board)) {
                     update();
                 }
 
@@ -134,12 +134,12 @@ export class Game {
                 this.moveDown(true);
                 break;
             case ' ':
-                if (this.currentPiece.rotatePiece(this.board, true)) {
+                if (this.currentPiece.rotate(this.board, true)) {
                     update();
                 }
                 break;
             case 'Enter':
-                if (this.currentPiece.rotatePiece(this.board, false)) {
+                if (this.currentPiece.rotate(this.board, false)) {
                     update();
                 }
                 break;
@@ -147,7 +147,10 @@ export class Game {
                 if (this.toggleHoldPiece()) {
                     update();
                 }
-
+                break;
+            case 'F1':
+                this.board.insertGarbageLines(2, this.currentPiece);
+                update();
                 break;
         }
     }
@@ -170,10 +173,10 @@ export class Game {
         if (drop) {
             // In the original NES Version of Tetris you get 1 point for every cell you drop a piece down manually.
             // I like the idea so we are copying it for both hard and soft drops to reward fast play.
-            this.score += this.currentPiece.dropPieceDown(this.board);
+            this.score += this.currentPiece.dropDown(this.board);
             this.nextTurn();
         } else {
-            const b = this.currentPiece.movePieceDown(this.board);
+            const b = this.currentPiece.moveDown(this.board);
             if (!b) {
                 // When we cannot move a piece down, it enters the "pre-locked" stage
                 // where you have 30 ticks (0.5s) to move it again, or it becomes locked.
@@ -221,7 +224,7 @@ export class Game {
         this.incrementPieceCount();
 
         // Checking if the piece can spawn, if not this is an automatic game over.
-        const b = this.currentPiece.spawnPiece(this.board);
+        const b = this.currentPiece.spawn(this.board);
         if (!b) {
             this.gameOver = true;
         }
@@ -248,7 +251,7 @@ export class Game {
         }
 
         // Despawning the current piece.
-        const pieceCoordinates = this.currentPiece.getPieceCoordinates();
+        const pieceCoordinates = this.currentPiece.getCoordinates();
         for (let i = 0; i < pieceCoordinates.length; i++) {
             const coords = pieceCoordinates[i];
             this.board.GameBoard[coords[0]][coords[1]] = 0;
@@ -270,7 +273,7 @@ export class Game {
 
         // Then spawning the previously held piece.
 
-        this.currentPiece.spawnPiece(this.board);
+        this.currentPiece.spawn(this.board);
 
         // Also need to set the ticks to 0 manually.
         this.ticks = 0;
