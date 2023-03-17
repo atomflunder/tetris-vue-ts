@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
     <td colspan="4">
-        Pieces:
+        TOTAL PIECES: {{ game.pieceCounter.reduce((a, b) => a + b) }}
         <table>
             <td v-for="(count, i) in game.pieceCounter" :key="i">
                 <tr
