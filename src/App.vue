@@ -10,6 +10,7 @@ import TetrisBoard from './components/TetrisBoard.vue';
 import GameStats from './components/GameStats.vue';
 import GameOver from './components/GameOver.vue';
 import KeyboardControls from './components/KeyboardControls.vue';
+import PauseOverlay from './components/PauseOverlay.vue';
 
 const game = reactive(new Game());
 
@@ -49,6 +50,7 @@ onMounted(() => {
         </div>
 
         <TetrisBoard :game="game" />
+        <PauseOverlay v-if="game.isPaused" />
         <GameOver v-if="game.gameOver" />
 
         <div class="next-column piece-info">
