@@ -2,3 +2,59 @@ html,
 body {
     background-color: #313;
 }
+
+.empty {
+    background-color: #464646;
+}
+
+.i {
+    background-color: #00ffff;
+}
+
+.j {
+    background-color: #0000ff;
+}
+
+.l {
+    background-color: #ff7f00;
+}
+
+.o {
+    background-color: #ffff00;
+}
+
+.z {
+    background-color: #ff0000;
+}
+
+.s {
+    background-color: #00ff00;
+}
+
+.t {
+    background-color: #bb00bb;
+}
+
+.greyed-out {
+    background-color: #aaaaaa;
+}
+
+.transparent {
+    opacity: 50%;
+    background-color: #999999;
+}
+
+.block {
+    width: 30px;
+    height: 30px;
+}
+
+.small-block {
+    width: 15px;
+    height: 15px;
+}
+
+.game-info {
+    color: #ddd;
+    font-size: 1.2rem;
+}
