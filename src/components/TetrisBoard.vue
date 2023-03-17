@@ -15,6 +15,7 @@ defineProps<{
     </table>
 
     <div v-if="game.gameOver" class="game-info">Game Over!</div>
+    <div v-if="game.isPaused" class="game-info">Paused</div>
 </template>
 
 <style scoped>
