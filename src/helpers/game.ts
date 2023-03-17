@@ -5,6 +5,7 @@ import { getRandomPiece } from './rng';
 
 export class Game {
     gameOver: boolean;
+    isPaused: boolean;
 
     board: Board;
     currentPiece: Piece;
@@ -44,6 +45,7 @@ export class Game {
 
         // Assigning the values.
         this.gameOver = false;
+        this.isPaused = false;
 
         this.board = new Board();
         this.currentPiece = currentPiece;
@@ -76,20 +78,24 @@ export class Game {
      */
     advanceTick(): void {
         setTimeout(() => {
-            this.ticks++;
+            // If the game is paused we pretty much do nothing.
+            if (!this.isPaused) {
+                this.ticks++;
 
-            // When the game is waiting for a locked piece to "finish",
-            // we decrement the timer
-            if (this.waitForLock) {
-                this.lockTick--;
-                this.moveDown(false);
+                // When the game is waiting for a locked piece to "finish",
+                // we decrement the timer
+                if (this.waitForLock) {
+                    this.lockTick--;
+                    this.moveDown(false);
+                }
+
+                const threshold = this.getFallSpeed();
+                if (this.ticks % threshold === 0) {
+                    this.moveDown(false);
+                    this.ticks = 0;
+                }
             }
 
-            const threshold = this.getFallSpeed();
-            if (this.ticks % threshold === 0) {
-                this.moveDown(false);
-                this.ticks = 0;
-            }
             if (!this.gameOver) {
                 this.advanceTick();
             }
@@ -101,6 +107,16 @@ export class Game {
      */
     handleInput(e: KeyboardEvent): void {
         if (this.gameOver) {
+            return;
+        }
+
+        // We need a special case for Esc
+        // Because we don't want to listen to any other events while the game is paused.
+        if (e.key === 'Escape') {
+            this.isPaused = !this.isPaused;
+        }
+
+        if (this.isPaused) {
             return;
         }
 
