@@ -8,6 +8,8 @@ import HoldPiece from './components/HoldPiece.vue';
 import NextPieces from './components/NextPieces.vue';
 import TetrisBoard from './components/TetrisBoard.vue';
 import GameStats from './components/GameStats.vue';
+import GameOver from './components/GameOver.vue';
+import KeyboardControls from './components/KeyboardControls.vue';
 
 const game = reactive(new Game());
 
@@ -33,6 +35,10 @@ onMounted(() => {
                 </tr>
 
                 <tr>
+                    <KeyboardControls />
+                </tr>
+
+                <tr>
                     <LineCount :game="game" />
                 </tr>
 
@@ -43,6 +49,7 @@ onMounted(() => {
         </div>
 
         <TetrisBoard :game="game" />
+        <GameOver v-if="game.gameOver" />
 
         <div class="next-column piece-info">
             <NextPieces :game="game" />

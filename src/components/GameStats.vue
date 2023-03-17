@@ -7,8 +7,20 @@ defineProps<{
 </script>
 
 <template>
-    <td>SCORE: {{ game.score }}</td>
-    <td>LEVEL: {{ game.level }}</td>
+    <td colspan="4">
+        <tr>
+            SCORE:
+            {{
+                game.score
+            }}
+        </tr>
+        <tr>
+            LEVEL:
+            {{
+                game.level
+            }}
+        </tr>
+    </td>
 </template>
 
 <style scoped></style>
