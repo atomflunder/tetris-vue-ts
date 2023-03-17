@@ -36,7 +36,6 @@ export class Board {
     getFullLines = (): number[] => {
         const fullLines = [];
 
-        // A line is full if the sum of the line is equal to 10.
         for (let i = 0; i < this.GameBoard.length; i++) {
             const sum = this.GameBoard[i].filter((n) => n !== 0);
             if (sum.length === this.GameBoard[i].length) {

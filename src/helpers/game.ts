@@ -276,6 +276,7 @@ export class Game {
         this.ticks = 0;
         // And of course turn off the ability to swap again.
         this.holdThisTurn = false;
+        this.waitForLock = false;
 
         return true;
     }
