@@ -1,4 +1,4 @@
-import { MODERN_PIECE_RNG, PIECE_BAG_AMOUNT, PIECE_LOCK_TICKS } from '@/helpers/consts';
+import { MODERN_PIECE_RNG, PIECE_LOCK_TICKS } from '@/helpers/consts';
 import { Game } from '@/helpers/game';
 import { expect, test } from 'vitest';
 
@@ -12,7 +12,7 @@ test('New Game', () => {
     // so no need to repeat that here.
 
     if (MODERN_PIECE_RNG) {
-        expect(game.nextPieces.length).toBe(PIECE_BAG_AMOUNT * 7 - 1);
+        expect(game.nextPieces.length).toBe(13);
     } else {
         expect(game.nextPieces.length).toBe(15);
     }
