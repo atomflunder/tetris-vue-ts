@@ -6,7 +6,7 @@ import { getRandomPiece } from './rng';
 /**
  * The possible T-Spin outcomes.
  */
-enum TSpin {
+export enum TSpin {
     None,
     Mini,
     Full

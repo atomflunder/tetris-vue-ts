@@ -1,5 +1,5 @@
 import { MODERN_PIECE_RNG, PIECE_LOCK_TICKS } from '@/helpers/consts';
-import { Game } from '@/helpers/game';
+import { Game, TSpin } from '@/helpers/game';
 import { expect, test } from 'vitest';
 
 test('New Game', () => {
@@ -57,11 +57,11 @@ test('Move Down', () => {
 
     expect(game.currentPiece.offset).toEqual([0, 3]);
 
-    game.moveDown(false);
+    game.moveDown(false, true);
 
     expect(game.currentPiece.offset).toEqual([1, 3]);
 
-    game.moveDown(true);
+    game.moveDown(true, true);
 
     // The game will roll over into the next turn if you hard drop.
     expect(game.currentPiece.offset).toEqual([0, 3]);
@@ -131,13 +131,13 @@ test('Get Score', () => {
     expect(game.getScore(3)).toBe(10000);
     expect(game.getScore(4)).toBe(16000);
 
-    expect(game.getScore(1, false, true)).toBe(16000);
-    expect(game.getScore(2, true)).toBe(8000);
-    expect(game.getScore(3, false, true)).toBe(32000);
+    expect(game.getScore(1, TSpin.Full, true)).toBe(16000);
+    expect(game.getScore(2, TSpin.Mini)).toBe(8000);
+    expect(game.getScore(3, TSpin.None, true)).toBe(36000);
 
     game.lastDifficult = true;
 
-    expect(game.getScore(4, false, false, true)).toBe(60000);
+    expect(game.getScore(4, TSpin.None, false)).toBe(24000);
 });
 
 test('Get Fall Speed', () => {
