@@ -93,4 +93,9 @@ onMounted(() => {
     color: #ddd;
     font-size: 1.2rem;
 }
+
+.game-info {
+    color: #ddd;
+    font-size: 1.2rem;
+}
 </style>

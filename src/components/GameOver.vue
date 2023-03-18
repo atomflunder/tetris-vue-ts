@@ -2,7 +2,21 @@
 // TODO: Make this a modal, with the option to reset the game.
 </script>
 <template>
-    <div class="game-info">GAME OVER!</div>
+    <div class="game-over">GAME OVER!</div>
+    <div class="game-over info">ENTER TO RESET</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.game-over {
+    color: #ffffff;
+    position: absolute;
+    top: 20%;
+    left: 41%;
+    font-size: 1.8rem;
+}
+
+.info {
+    top: 25%;
+    font-size: 1.25rem;
+}
+</style>
