@@ -3,7 +3,7 @@
     <tr>
         &nbsp;
     </tr>
-    <table>
+    <table class="keyboard-controls">
         <tr>
             <td>MOVE LEFT / RIGHT:</td>
             <td>◀ / ▶</td>
@@ -26,3 +26,9 @@
         </tr>
     </table>
 </template>
+
+<style scoped>
+.keyboard-controls {
+    border-spacing: 10px 30px;
+}
+</style>

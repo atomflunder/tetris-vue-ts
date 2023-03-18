@@ -36,10 +36,6 @@ onMounted(() => {
                 </tr>
 
                 <tr>
-                    <KeyboardControls />
-                </tr>
-
-                <tr>
                     <LineCount :game="game" />
                 </tr>
 
@@ -58,6 +54,10 @@ onMounted(() => {
         </div>
         <div class="held-column piece-info">
             <HoldPiece :game="game" />
+            <br />
+            <br />
+            <br />
+            <KeyboardControls />
         </div>
     </div>
 </template>
@@ -70,21 +70,21 @@ onMounted(() => {
 }
 
 .left-column {
-    width: 41%;
+    width: 30%;
     float: left;
     justify-content: center;
     display: flex;
 }
 
 .next-column {
-    width: 20.5%;
+    width: 8%;
     float: right;
     justify-content: center;
     margin-left: 20px;
 }
 
 .held-column {
-    width: 20.5%;
+    width: 22%;
     float: right;
     justify-content: center;
 }
