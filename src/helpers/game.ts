@@ -272,6 +272,7 @@ export class Game {
         this.totalLines += fullLines.length;
         this.lineCounter[fullLines.length - 1] += 1;
 
+        // This detects the
         if (fullLines.length !== 0) {
             this.currentCombo++;
             this.score += 50 * this.level * this.currentCombo;
@@ -279,9 +280,19 @@ export class Game {
             this.currentCombo = -1;
         }
 
-        // TODO: Detect T-Spins Difficult Back-to-Backs and full clears
+        // This will detect a full-clear.
+        const boardSum = this.board.GameBoard.reduce(function (a, b) {
+            return a.concat(b);
+        }).reduce(function (a, b) {
+            return a + b;
+        });
+        const fullClear = boardSum === 0 && fullLines.length > 0 ? true : false;
 
-        this.score += this.getScore(fullLines.length);
+        console.log(fullClear, boardSum);
+
+        // TODO: Detect T-Spins Difficult Back-to-Backs
+
+        this.score += this.getScore(fullLines.length, false, false, fullClear);
 
         this.level = Math.floor(this.totalLines / 10) + 1;
 
@@ -327,10 +338,15 @@ export class Game {
 
         // If you are not currently holding a piece, it is like ending your turn, kind of.
         if (!this.holdPiece) {
+            // We have to save the current combo before it gets overwritten.
+            const combo = this.currentCombo;
+
             this.holdPiece = this.currentPiece;
             this.nextTurn();
             // But we have to make sure to set this to false.
             this.holdThisTurn = false;
+            // And set the combo back to its original value.
+            this.currentCombo = combo;
             return true;
         }
 
