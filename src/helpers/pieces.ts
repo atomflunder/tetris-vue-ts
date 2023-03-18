@@ -1,6 +1,6 @@
 import type { Board } from './board';
 
-enum Direction {
+export enum Direction {
     // You cannot really ever move a piece up in tetris.
     Down,
     Left,
@@ -31,7 +31,7 @@ export class Piece {
     /**
      * Resets a piece back to its original position and rotation.
      */
-    resetPiece = (): void => {
+    reset = (): void => {
         this.offset = [0, 3];
         this.currentRotation = 0;
     };
@@ -41,7 +41,7 @@ export class Piece {
      */
     spawn = (board: Board): boolean => {
         // First we reset the position of the piece.
-        this.resetPiece();
+        this.reset();
 
         const gb: number[][] = board.GameBoard;
 
