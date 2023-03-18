@@ -87,7 +87,7 @@ test('Next Turn', () => {
 
     game.nextTurn();
 
-    expect(game.score).toBe(1200);
+    expect(game.score).toBe(800);
     expect(game.board.GameBoard[10]).toEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     expect(game.totalLines).toBe(4);
     expect(game.lineCounter).toEqual([0, 0, 0, 1]);
@@ -119,17 +119,25 @@ test('Toggle Hold Piece', () => {
 test('Get Score', () => {
     const game = new Game();
 
-    expect(game.getScore(1)).toBe(40);
-    expect(game.getScore(2)).toBe(100);
-    expect(game.getScore(3)).toBe(300);
-    expect(game.getScore(4)).toBe(1200);
+    expect(game.getScore(1)).toBe(100);
+    expect(game.getScore(2)).toBe(300);
+    expect(game.getScore(3)).toBe(500);
+    expect(game.getScore(4)).toBe(800);
 
     game.level = 20;
 
-    expect(game.getScore(1)).toBe(800);
-    expect(game.getScore(2)).toBe(2000);
-    expect(game.getScore(3)).toBe(6000);
-    expect(game.getScore(4)).toBe(24000);
+    expect(game.getScore(1)).toBe(2000);
+    expect(game.getScore(2)).toBe(6000);
+    expect(game.getScore(3)).toBe(10000);
+    expect(game.getScore(4)).toBe(16000);
+
+    expect(game.getScore(1, false, true)).toBe(16000);
+    expect(game.getScore(2, true)).toBe(8000);
+    expect(game.getScore(3, false, true)).toBe(32000);
+
+    game.lastDifficult = true;
+
+    expect(game.getScore(4, false, false, true)).toBe(60000);
 });
 
 test('Get Fall Speed', () => {

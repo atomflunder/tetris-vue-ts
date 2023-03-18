@@ -20,6 +20,15 @@ defineProps<{
                 game.level
             }}
         </tr>
+        <tr>
+            &nbsp;
+        </tr>
+        <tr>
+            COMBO:
+            {{
+                game.currentCombo + 1
+            }}
+        </tr>
     </td>
 </template>
 

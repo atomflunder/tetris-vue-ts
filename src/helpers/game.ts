@@ -19,6 +19,9 @@ export class Game {
     // You can only toggle held pieces once per turn.
     holdThisTurn: boolean;
 
+    lastDifficult: boolean;
+    currentCombo: number;
+
     // We need to keep track of how long the player is holding down in a row.
     currentDrop: number;
 
@@ -55,6 +58,9 @@ export class Game {
         this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
         this.holdPiece = null;
         this.holdThisTurn = true;
+
+        this.lastDifficult = false;
+        this.currentCombo = -1;
 
         this.currentDrop = 0;
 
@@ -266,6 +272,15 @@ export class Game {
         this.totalLines += fullLines.length;
         this.lineCounter[fullLines.length - 1] += 1;
 
+        if (fullLines.length !== 0) {
+            this.currentCombo++;
+            this.score += 50 * this.level * this.currentCombo;
+        } else {
+            this.currentCombo = -1;
+        }
+
+        // TODO: Detect T-Spins Difficult Back-to-Backs and full clears
+
         this.score += this.getScore(fullLines.length);
 
         this.level = Math.floor(this.totalLines / 10) + 1;
@@ -339,18 +354,69 @@ export class Game {
 
     /**
      * Gets the score depending on the amount of lines cleared and the current level.
+     * Taken from: https://tetris.wiki/Scoring#Recent_guideline_compatible_games
      */
-    getScore(linesCleared: number): number {
-        // This is from the NES Tetris scoring algorithm.
+    getScore(
+        linesCleared: number,
+        tSpinMini: boolean = false,
+        tSpin: boolean = false,
+        fullClear: boolean = false
+    ): number {
+        const multiplier = this.level * (this.lastDifficult ? 1.5 : 1);
+
+        if (tSpinMini) {
+            switch (linesCleared) {
+                case 0:
+                    return 100 * multiplier;
+                case 1:
+                    return 200 * multiplier;
+                case 2:
+                    return 400 * multiplier;
+                // A Mini-T-Spin triple is not possible.
+                default:
+                    return 0;
+            }
+        }
+
+        if (tSpin) {
+            switch (linesCleared) {
+                case 0:
+                    return 400 * multiplier;
+                case 1:
+                    return 800 * multiplier;
+                case 2:
+                    return 1200 * multiplier;
+                case 3:
+                    return 1600 * multiplier;
+                default:
+                    return 0;
+            }
+        }
+
+        if (fullClear) {
+            switch (linesCleared) {
+                case 1:
+                    return 800 * multiplier;
+                case 2:
+                    return 1200 * multiplier;
+                case 3:
+                    return 1800 * multiplier;
+                case 4:
+                    return 2000 * multiplier;
+                default:
+                    return 0;
+            }
+        }
+
         switch (linesCleared) {
             case 1:
-                return 40 * this.level;
+                return 100 * multiplier;
             case 2:
-                return 100 * this.level;
+                return 300 * multiplier;
             case 3:
-                return 300 * this.level;
+                return 500 * multiplier;
             case 4:
-                return 1200 * this.level;
+                return 800 * multiplier;
             default:
                 return 0;
         }
