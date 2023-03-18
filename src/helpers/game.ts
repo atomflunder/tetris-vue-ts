@@ -107,6 +107,45 @@ export class Game {
      */
     handleInput(e: KeyboardEvent): void {
         if (this.gameOver) {
+            // Resets the game.
+            if (e.key === 'Enter') {
+                const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
+
+                const currentPiece = nextPieces[0];
+                nextPieces.shift();
+
+                getRandomPiece(nextPieces, PIECE_BAG_AMOUNT);
+
+                this.gameOver = false;
+                this.isPaused = false;
+
+                this.board = new Board();
+                this.currentPiece = currentPiece;
+                this.nextPieces = nextPieces;
+                this.pieceCounter = [0, 0, 0, 0, 0, 0, 0];
+
+                this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
+                this.holdPiece = null;
+                this.holdThisTurn = true;
+
+                this.currentDrop = 0;
+
+                this.score = 0;
+                this.totalLines = 0;
+                this.lineCounter = [0, 0, 0, 0];
+                this.level = 1;
+
+                this.ticks = 0;
+                this.lockTick = PIECE_LOCK_TICKS;
+                this.waitForLock = false;
+
+                this.currentPiece.spawn(this.board);
+
+                this.incrementPieceCount();
+
+                this.advanceTick();
+            }
+
             return;
         }
 

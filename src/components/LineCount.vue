@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
     <td colspan="2">
-        Total Lines:
+        TOTAL LINES:
         {{ game.totalLines }}
         <table class="line-table">
             <tr>
@@ -16,28 +16,28 @@ defineProps<{
                 <td class="small-block empty"></td>
                 <td class="small-block empty"></td>
                 <td class="small-block empty"></td>
-                <td>Single: {{ game.lineCounter[0] }}</td>
+                <td>SINGLE: {{ game.lineCounter[0] }}</td>
             </tr>
             <tr>
                 <td class="small-block greyed-out"></td>
                 <td class="small-block greyed-out"></td>
                 <td class="small-block empty"></td>
                 <td class="small-block empty"></td>
-                <td>Double: {{ game.lineCounter[1] }}</td>
+                <td>DOUBLE: {{ game.lineCounter[1] }}</td>
             </tr>
             <tr>
                 <td class="small-block greyed-out"></td>
                 <td class="small-block greyed-out"></td>
                 <td class="small-block greyed-out"></td>
                 <td class="small-block empty"></td>
-                <td>Triple: {{ game.lineCounter[2] }}</td>
+                <td>TRIPLE: {{ game.lineCounter[2] }}</td>
             </tr>
             <tr>
                 <td class="small-block greyed-out"></td>
                 <td class="small-block greyed-out"></td>
                 <td class="small-block greyed-out"></td>
                 <td class="small-block greyed-out"></td>
-                <td>Tetris: {{ game.lineCounter[3] }}</td>
+                <td>TETRIS: {{ game.lineCounter[3] }}</td>
             </tr>
             <tr></tr>
         </table>

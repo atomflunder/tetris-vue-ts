@@ -9,7 +9,7 @@ defineProps<{
 </script>
 
 <template>
-    Next Pieces:
+    NEXT:
     <table>
         <tr v-for="(row, i) in getPreviewPieceTable(game.nextPieces.slice(0, 14))" :key="i">
             <td

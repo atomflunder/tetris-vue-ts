@@ -9,7 +9,7 @@ defineProps<{
 </script>
 
 <template>
-    Held Piece:
+    HOLD:
     <table v-if="game.holdPiece">
         <tr v-for="(row, i) in getPreviewPieceTable([game.holdPiece])" :key="i">
             <td v-for="(block, j) in row" :key="j" :class="getHeldPieceColor(game, block)"></td>

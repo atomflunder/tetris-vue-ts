@@ -8,6 +8,9 @@ import HoldPiece from './components/HoldPiece.vue';
 import NextPieces from './components/NextPieces.vue';
 import TetrisBoard from './components/TetrisBoard.vue';
 import GameStats from './components/GameStats.vue';
+import GameOver from './components/GameOver.vue';
+import KeyboardControls from './components/KeyboardControls.vue';
+import PauseOverlay from './components/PauseOverlay.vue';
 
 const game = reactive(new Game());
 
@@ -43,12 +46,18 @@ onMounted(() => {
         </div>
 
         <TetrisBoard :game="game" />
+        <PauseOverlay v-if="game.isPaused" />
+        <GameOver v-if="game.gameOver" />
 
         <div class="next-column piece-info">
             <NextPieces :game="game" />
         </div>
         <div class="held-column piece-info">
             <HoldPiece :game="game" />
+            <br />
+            <br />
+            <br />
+            <KeyboardControls />
         </div>
     </div>
 </template>
@@ -61,26 +70,31 @@ onMounted(() => {
 }
 
 .left-column {
-    width: 41%;
+    width: 30%;
     float: left;
     justify-content: center;
     display: flex;
 }
 
 .next-column {
-    width: 20.5%;
+    width: 8%;
     float: right;
     justify-content: center;
     margin-left: 20px;
 }
 
 .held-column {
-    width: 20.5%;
+    width: 22%;
     float: right;
     justify-content: center;
 }
 
 .piece-info {
+    color: #ddd;
+    font-size: 1.2rem;
+}
+
+.game-info {
     color: #ddd;
     font-size: 1.2rem;
 }

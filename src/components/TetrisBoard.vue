@@ -13,9 +13,6 @@ defineProps<{
             <td v-for="(block, j) in row" :key="j" :class="getColorClass(game, block, i, j)"></td>
         </tr>
     </table>
-
-    <div v-if="game.gameOver" class="game-info">Game Over!</div>
-    <div v-if="game.isPaused" class="game-info">Paused</div>
 </template>
 
 <style scoped>

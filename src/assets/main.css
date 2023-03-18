@@ -1,6 +1,13 @@
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('./PressStart2P-Regular.ttf');
+}
+
 html,
 body {
-    background-color: #313;
+    background-color: #222;
+    font-family: 'Press Start 2P';
+    font-size: large;
 }
 
 .empty {
@@ -52,9 +59,4 @@ body {
 .small-block {
     width: 15px;
     height: 15px;
-}
-
-.game-info {
-    color: #ddd;
-    font-size: 1.2rem;
 }
