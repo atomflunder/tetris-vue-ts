@@ -4,6 +4,8 @@ export class Board {
     GameBoard: number[][];
 
     constructor() {
+        // The board is usually 10 blocks wide,
+        // and 16-24 blocks high. Our board is 22 blocks high.
         this.GameBoard = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -102,7 +104,7 @@ export class Board {
     /**
      * Returns if the first X rows are empty, except for the current piece.
      */
-    firstRowsEmpty = (currentPiece: Piece, rowsChecked: number): boolean => {
+    firstRowsNotEmpty = (currentPiece: Piece, rowsChecked: number): boolean => {
         // From: https://stackoverflow.com/questions/24943200/javascript-2d-array-indexof
         function isItemInArray(array: Array<Array<number>>, item: Array<number>) {
             for (let i = 0; i < array.length; i++) {

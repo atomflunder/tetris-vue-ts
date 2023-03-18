@@ -187,9 +187,7 @@ export class Game {
      */
     moveDown(drop: boolean): void {
         if (drop) {
-            // In the original NES Version of Tetris you get 1 point for every cell you drop a piece down manually.
-            // I like the idea so we are copying it for both hard and soft drops to reward fast play.
-            this.score += this.currentPiece.dropDown(this.board);
+            this.score += 2 * this.currentPiece.dropDown(this.board);
             this.nextTurn();
         } else {
             const b = this.currentPiece.moveDown(this.board);
