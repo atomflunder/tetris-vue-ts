@@ -1,5 +1,5 @@
 import { MODERN_PIECE_RNG, PIECE_LOCK_TICKS } from '@/helpers/consts';
-import { Game } from '@/helpers/game';
+import { Game, TSpin } from '@/helpers/game';
 import { expect, test } from 'vitest';
 
 test('New Game', () => {
@@ -57,11 +57,11 @@ test('Move Down', () => {
 
     expect(game.currentPiece.offset).toEqual([0, 3]);
 
-    game.moveDown(false);
+    game.moveDown(false, true);
 
     expect(game.currentPiece.offset).toEqual([1, 3]);
 
-    game.moveDown(true);
+    game.moveDown(true, true);
 
     // The game will roll over into the next turn if you hard drop.
     expect(game.currentPiece.offset).toEqual([0, 3]);
@@ -87,7 +87,7 @@ test('Next Turn', () => {
 
     game.nextTurn();
 
-    expect(game.score).toBe(1200);
+    expect(game.score).toBe(800);
     expect(game.board.GameBoard[10]).toEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     expect(game.totalLines).toBe(4);
     expect(game.lineCounter).toEqual([0, 0, 0, 1]);
@@ -119,17 +119,25 @@ test('Toggle Hold Piece', () => {
 test('Get Score', () => {
     const game = new Game();
 
-    expect(game.getScore(1)).toBe(40);
-    expect(game.getScore(2)).toBe(100);
-    expect(game.getScore(3)).toBe(300);
-    expect(game.getScore(4)).toBe(1200);
+    expect(game.getScore(1)).toBe(100);
+    expect(game.getScore(2)).toBe(300);
+    expect(game.getScore(3)).toBe(500);
+    expect(game.getScore(4)).toBe(800);
 
     game.level = 20;
 
-    expect(game.getScore(1)).toBe(800);
-    expect(game.getScore(2)).toBe(2000);
-    expect(game.getScore(3)).toBe(6000);
-    expect(game.getScore(4)).toBe(24000);
+    expect(game.getScore(1)).toBe(2000);
+    expect(game.getScore(2)).toBe(6000);
+    expect(game.getScore(3)).toBe(10000);
+    expect(game.getScore(4)).toBe(16000);
+
+    expect(game.getScore(1, TSpin.Full, true)).toBe(16000);
+    expect(game.getScore(2, TSpin.Mini)).toBe(8000);
+    expect(game.getScore(3, TSpin.None, true)).toBe(36000);
+
+    game.lastDifficult = true;
+
+    expect(game.getScore(4, TSpin.None, false)).toBe(24000);
 });
 
 test('Get Fall Speed', () => {
