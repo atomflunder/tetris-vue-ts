@@ -3,6 +3,26 @@ import { PIECE_BAG_AMOUNT, PIECE_LOCK_TICKS } from './consts';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
 
+/**
+ * The possible T-Spin outcomes.
+ */
+enum TSpin {
+    None,
+    Mini,
+    Full
+}
+
+/**
+ * The last successful move a player makes.
+ */
+enum Move {
+    None,
+    Drop,
+    Rotation,
+    Left,
+    Right
+}
+
 export class Game {
     gameOver: boolean;
     isPaused: boolean;
@@ -19,6 +39,8 @@ export class Game {
     // You can only toggle held pieces once per turn.
     holdThisTurn: boolean;
 
+    lastMove: Move;
+
     lastDifficult: boolean;
     currentCombo: number;
 
@@ -30,6 +52,8 @@ export class Game {
     // The specific line clears (Single, Double, Triple, Tetris)
     lineCounter: number[];
     level: number;
+    // The number of Mini and Full T-Spins
+    tSpinCounter: number[];
 
     // A tick is 1/60th of a second.
     ticks: number;
@@ -59,6 +83,8 @@ export class Game {
         this.holdPiece = null;
         this.holdThisTurn = true;
 
+        this.lastMove = Move.None;
+
         this.lastDifficult = false;
         this.currentCombo = -1;
 
@@ -68,6 +94,7 @@ export class Game {
         this.totalLines = 0;
         this.lineCounter = [0, 0, 0, 0];
         this.level = 1;
+        this.tSpinCounter = [0, 0];
 
         this.ticks = 0;
         this.lockTick = PIECE_LOCK_TICKS;
@@ -92,12 +119,12 @@ export class Game {
                 // we decrement the timer
                 if (this.waitForLock) {
                     this.lockTick--;
-                    this.moveDown(false);
+                    this.moveDown(false, false);
                 }
 
                 const threshold = this.getFallSpeed();
                 if (this.ticks % threshold === 0) {
-                    this.moveDown(false);
+                    this.moveDown(false, false);
                     this.ticks = 0;
                 }
             }
@@ -175,33 +202,37 @@ export class Game {
             case 'ArrowLeft':
                 if (this.currentPiece.moveLeft(this.board)) {
                     update();
+                    this.lastMove = Move.Left;
                 }
 
                 break;
             case 'ArrowRight':
                 if (this.currentPiece.moveRight(this.board)) {
                     update();
+                    this.lastMove = Move.Right;
                 }
 
                 break;
             case 'ArrowDown':
-                this.moveDown(false);
+                this.moveDown(false, true);
                 // Incrementing the drop counter for every time the game registers a consecutive down press.
                 this.currentDrop += 1;
                 // When you hold down you probably do want the piece to lock instantly.
                 this.lockTick = 0;
                 break;
             case 'ArrowUp':
-                this.moveDown(true);
+                this.moveDown(true, true);
                 break;
             case ' ':
                 if (this.currentPiece.rotate(this.board, true)) {
                     update();
+                    this.lastMove = Move.Rotation;
                 }
                 break;
             case 'Enter':
                 if (this.currentPiece.rotate(this.board, false)) {
                     update();
+                    this.lastMove = Move.Rotation;
                 }
                 break;
             case '0':
@@ -230,9 +261,15 @@ export class Game {
     /**
      * Handles the automatic and manual down-movement of pieces.
      */
-    moveDown(drop: boolean): void {
+    moveDown(drop: boolean, manual: boolean): void {
         if (drop) {
-            this.score += 2 * this.currentPiece.dropDown(this.board);
+            const scoreGain = 2 * this.currentPiece.dropDown(this.board);
+            this.score += scoreGain;
+
+            if (scoreGain > 2 && manual) {
+                this.lastMove = Move.Drop;
+            }
+
             this.nextTurn();
         } else {
             const b = this.currentPiece.moveDown(this.board);
@@ -244,6 +281,10 @@ export class Game {
                 if (this.lockTick <= 0) {
                     this.score += this.currentDrop;
                     this.nextTurn();
+                }
+            } else {
+                if (manual) {
+                    this.lastMove = Move.Drop;
                 }
             }
         }
@@ -265,14 +306,10 @@ export class Game {
         // First we check for the lines that need to be deleted.
         const fullLines = this.board.getFullLines();
 
-        for (let i = 0; i < fullLines.length; i++) {
-            this.board.deleteLine(fullLines[i]);
-        }
-
         this.totalLines += fullLines.length;
         this.lineCounter[fullLines.length - 1] += 1;
 
-        // This detects the
+        // This detects the ongoing combo.
         if (fullLines.length !== 0) {
             this.currentCombo++;
             this.score += 50 * this.level * this.currentCombo;
@@ -288,19 +325,44 @@ export class Game {
         });
         const fullClear = boardSum === 0 && fullLines.length > 0 ? true : false;
 
-        console.log(fullClear, boardSum);
+        // This detects a T-Spin
+        const tSpin = this.detectTSpin();
 
-        // TODO: Detect T-Spins Difficult Back-to-Backs
+        if (tSpin === TSpin.Mini) {
+            this.tSpinCounter[0]++;
+        } else if (tSpin === TSpin.Full) {
+            this.tSpinCounter[1]++;
+        }
 
-        this.score += this.getScore(fullLines.length, false, false, fullClear);
+        // This detects back-to-back "difficult moves"
+        // Reference: https://tetris.wiki/Scoring#Recent_guideline_compatible_games
+        let thisDifficult = this.lastDifficult;
+
+        if (fullLines.length > 0) {
+            thisDifficult = false;
+            if (fullLines.length === 4 || (fullLines.length > 0 && tSpin !== TSpin.None)) {
+                thisDifficult = true;
+            }
+        }
+
+        const difficultMultiplier = this.lastDifficult && thisDifficult ? 1.5 : 1;
+
+        this.score += this.getScore(fullLines.length, tSpin, fullClear) * difficultMultiplier;
 
         this.level = Math.floor(this.totalLines / 10) + 1;
+
+        this.lastDifficult = thisDifficult;
 
         // We get the new piece from the stack of next pieces.
         const nextPiece = this.nextPieces[0];
         this.currentPiece = nextPiece;
 
         this.incrementPieceCount();
+
+        // Then we actually delete the lines.
+        for (let i = 0; i < fullLines.length; i++) {
+            this.board.deleteLine(fullLines[i]);
+        }
 
         // Checking if the piece can spawn, if not this is an automatic game over.
         const b = this.currentPiece.spawn(this.board);
@@ -368,19 +430,78 @@ export class Game {
         return true;
     }
 
+    detectTSpin(): TSpin {
+        let tSpin = TSpin.None;
+
+        if (this.currentPiece.name !== 'T') {
+            return tSpin;
+        }
+
+        if (this.lastMove !== Move.Rotation) {
+            return tSpin;
+        }
+
+        let frontLeft = [0, 0];
+        let frontRight = [0, 0];
+        let backLeft = [0, 0];
+        let backRight = [0, 0];
+
+        switch (this.currentPiece.currentRotation) {
+            case 0:
+                frontLeft = [this.currentPiece.offset[0], this.currentPiece.offset[1]];
+                frontRight = [this.currentPiece.offset[0], this.currentPiece.offset[1] + 2];
+                backLeft = [this.currentPiece.offset[0] + 2, this.currentPiece.offset[1]];
+                backRight = [this.currentPiece.offset[0] + 2, this.currentPiece.offset[1] + 2];
+                break;
+            case 1:
+                frontLeft = [this.currentPiece.offset[0], this.currentPiece.offset[1] + 2];
+                frontRight = [this.currentPiece.offset[0] + 2, this.currentPiece.offset[1] + 2];
+                backLeft = [this.currentPiece.offset[0], this.currentPiece.offset[1]];
+                backRight = [this.currentPiece.offset[0] + 2, this.currentPiece.offset[1]];
+                break;
+            case 2:
+                frontLeft = [this.currentPiece.offset[0] + 2, this.currentPiece.offset[1]];
+                frontRight = [this.currentPiece.offset[0] + 2, this.currentPiece.offset[1] + 2];
+                backLeft = [this.currentPiece.offset[0], this.currentPiece.offset[1]];
+                backRight = [this.currentPiece.offset[0], this.currentPiece.offset[1] + 2];
+                break;
+            case 3:
+                frontLeft = [this.currentPiece.offset[0] + 2, this.currentPiece.offset[1]];
+                frontRight = [this.currentPiece.offset[0], this.currentPiece.offset[1]];
+                backLeft = [this.currentPiece.offset[0], this.currentPiece.offset[1] + 2];
+                backRight = [this.currentPiece.offset[0] + 2, this.currentPiece.offset[1] + 2];
+                break;
+            default:
+                break;
+        }
+
+        if (
+            this.board.GameBoard[frontLeft[0]][frontLeft[1]] !== 0 &&
+            this.board.GameBoard[frontRight[0]][frontRight[1]] &&
+            (this.board.GameBoard[backLeft[0]][backLeft[1]] !== 0 ||
+                this.board.GameBoard[backRight[0]][backRight[1]] !== 0)
+        ) {
+            tSpin = TSpin.Full;
+        } else if (
+            this.board.GameBoard[backLeft[0]][backLeft[1]] !== 0 &&
+            this.board.GameBoard[backRight[0]][backRight[1]] &&
+            (this.board.GameBoard[frontLeft[0]][frontLeft[1]] !== 0 ||
+                this.board.GameBoard[frontRight[0]][frontRight[1]] !== 0)
+        ) {
+            tSpin = TSpin.Mini;
+        }
+
+        return tSpin;
+    }
+
     /**
      * Gets the score depending on the amount of lines cleared and the current level.
      * Taken from: https://tetris.wiki/Scoring#Recent_guideline_compatible_games
      */
-    getScore(
-        linesCleared: number,
-        tSpinMini: boolean = false,
-        tSpin: boolean = false,
-        fullClear: boolean = false
-    ): number {
+    getScore(linesCleared: number, tSpin: TSpin = TSpin.None, fullClear: boolean = false): number {
         const multiplier = this.level * (this.lastDifficult ? 1.5 : 1);
 
-        if (tSpinMini) {
+        if (tSpin === TSpin.Mini) {
             switch (linesCleared) {
                 case 0:
                     return 100 * multiplier;
@@ -394,7 +515,7 @@ export class Game {
             }
         }
 
-        if (tSpin) {
+        if (tSpin === TSpin.Full) {
             switch (linesCleared) {
                 case 0:
                     return 400 * multiplier;

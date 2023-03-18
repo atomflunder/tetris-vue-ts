@@ -29,6 +29,22 @@ defineProps<{
                 game.currentCombo + 1
             }}
         </tr>
+        <tr>
+            T-SPINS:
+            {{
+                game.tSpinCounter[0]
+            }}
+            /
+            {{
+                game.tSpinCounter[1]
+            }}
+        </tr>
+        <tr>
+            BACK-TO-BACK:
+            {{
+                game.lastDifficult
+            }}
+        </tr>
     </td>
 </template>
 
