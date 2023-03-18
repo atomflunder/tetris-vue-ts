@@ -20,7 +20,7 @@ export const MODERN_PIECE_RNG = true;
  *
  * See more information here: https://tetris.fandom.com/wiki/Random_Generator
  */
-export const PIECE_BAG_AMOUNT = 3;
+export const PIECE_BAG_AMOUNT = 1;
 
 /**
  * If this option is enabled, the very first piece cannot generate an overhang.
