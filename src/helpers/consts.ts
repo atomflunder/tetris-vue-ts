@@ -56,6 +56,12 @@ export const PIECE_LOCK_TICKS = 30;
  */
 export const LOCK_MOVE_RESETS = -1;
 
+/**
+ * The control scheme.
+ *
+ * For the values corresponding to the keys, please see:
+ * https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
+ */
 export const CONTROLS = {
     RESET_GAME: 'Enter',
     PAUSE_GAME: 'Escape',
