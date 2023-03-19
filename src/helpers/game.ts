@@ -15,7 +15,7 @@ export enum TSpin {
 /**
  * The last successful move a player makes.
  */
-enum Move {
+export enum Move {
     None,
     Drop,
     Rotation,

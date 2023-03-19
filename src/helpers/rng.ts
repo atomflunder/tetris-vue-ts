@@ -20,7 +20,7 @@ export const getRandomPiece = (
 /**
  * Gets a truly random piece, like in classic versions of Tetris.
  */
-const getRandomPieceClassic = (nextPieces: Piece[]): Piece[] => {
+export const getRandomPieceClassic = (nextPieces: Piece[]): Piece[] => {
     // We have to have at least 14 pieces in the next piece queue, for displaying them all.
     // So we fill it up to this point.
     while (nextPieces.length <= 14) {
@@ -37,7 +37,7 @@ const getRandomPieceClassic = (nextPieces: Piece[]): Piece[] => {
 /**
  * Gets you a pseudo-random shuffled piece bag, like in modern Tetris versions.
  */
-const getRandomPieceModern = (
+export const getRandomPieceModern = (
     nextPieces: Piece[],
     pieceBagSize: number,
     firstPiece: boolean = false

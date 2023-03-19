@@ -1,5 +1,5 @@
 import { MODERN_PIECE_RNG } from '@/helpers/consts';
-import { getRandomPiece } from '@/helpers/rng';
+import { getRandomPiece, getRandomPieceClassic, getRandomPieceModern } from '@/helpers/rng';
 import { expect, test } from 'vitest';
 
 test('Get Random Piece', () => {
@@ -8,4 +8,7 @@ test('Get Random Piece', () => {
     } else {
         expect(getRandomPiece([], 3, true).length).toBe(15);
     }
+
+    expect(getRandomPieceModern([], 3, true).length).toBe(21);
+    expect(getRandomPieceClassic([]).length).toBe(15);
 });

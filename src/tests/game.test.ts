@@ -1,5 +1,6 @@
 import { MODERN_PIECE_RNG, PIECE_LOCK_TICKS } from '@/helpers/consts';
-import { Game, TSpin } from '@/helpers/game';
+import { Game, Move, TSpin } from '@/helpers/game';
+import { allPieces } from '@/helpers/pieceData';
 import { expect, test } from 'vitest';
 
 test('New Game', () => {
@@ -66,6 +67,12 @@ test('Move Down', () => {
     // The game will roll over into the next turn if you hard drop.
     expect(game.currentPiece.offset).toEqual([0, 3]);
     expect(game.score).toBe(40);
+
+    for (let i = 0; i < 25; i++) {
+        game.moveDown(false, false);
+    }
+
+    expect(game.score).toBe(40);
 });
 
 test('Next Turn', () => {
@@ -95,6 +102,10 @@ test('Next Turn', () => {
     expect(game.ticks).toBe(0);
     expect(game.holdThisTurn).toBe(true);
     expect(game.waitForLock).toBe(false);
+
+    game.gameOver = true;
+
+    game.nextTurn();
 });
 
 test('Toggle Hold Piece', () => {
@@ -114,6 +125,15 @@ test('Toggle Hold Piece', () => {
 
     expect(game.ticks).toBe(0);
     expect(game.waitForLock).toBe(false);
+
+    game.nextTurn();
+
+    const currPiece = game.currentPiece;
+
+    game.toggleHoldPiece();
+
+    expect(game.holdPiece).toBeTruthy();
+    expect(game.holdPiece?.name).toEqual(currPiece.name);
 });
 
 test('Get Score', () => {
@@ -134,6 +154,16 @@ test('Get Score', () => {
     expect(game.getScore(3, 20, TSpin.None, true)).toBe(36000);
 
     expect(game.getScore(4, 30, TSpin.None, false)).toBe(24000);
+
+    expect(game.getScore(5, 30, TSpin.None, false)).toBe(0);
+    expect(game.getScore(4, 30, TSpin.Full, false)).toBe(0);
+    expect(game.getScore(3, 30, TSpin.Mini, false)).toBe(0);
+    expect(game.getScore(5, 30, TSpin.None, true)).toBe(0);
+
+    expect(game.getScore(0, 30, TSpin.Full, false)).toBe(12000);
+    expect(game.getScore(3, 30, TSpin.Full, false)).toBe(48000);
+    expect(game.getScore(2, 30, TSpin.Full, false)).toBe(36000);
+    expect(game.getScore(4, 30, TSpin.None, true)).toBe(60000);
 });
 
 test('Get Fall Speed', () => {
@@ -145,9 +175,25 @@ test('Get Fall Speed', () => {
 
     expect(game.getFallSpeed()).toBe(28);
 
+    game.level = 10;
+
+    expect(game.getFallSpeed()).toBe(6);
+
+    game.level = 13;
+
+    expect(game.getFallSpeed()).toBe(5);
+
     game.level = 15;
 
     expect(game.getFallSpeed()).toBe(4);
+
+    game.level = 19;
+
+    expect(game.getFallSpeed()).toBe(3);
+
+    game.level = 22;
+
+    expect(game.getFallSpeed()).toBe(2);
 
     game.level = 31;
 
@@ -162,4 +208,43 @@ test('Increment Piece Count', () => {
     game.nextTurn();
 
     expect(game.pieceCounter.reduce((a, b) => a + b)).toBe(2);
+});
+
+test('Detect T-Spin', () => {
+    const game = new Game();
+
+    game.currentPiece = allPieces[6];
+
+    game.currentPiece.offset = [15, 3];
+
+    expect(game.detectTSpin()).toBe(TSpin.None);
+
+    game.lastMove = Move.Rotation;
+
+    game.board.GameBoard[15][3] = 1;
+    game.board.GameBoard[17][3] = 1;
+    game.board.GameBoard[15][5] = 1;
+
+    expect(game.detectTSpin()).toBe(TSpin.Full);
+
+    game.board.GameBoard[15][5] = 0;
+    game.board.GameBoard[17][5] = 1;
+
+    expect(game.detectTSpin()).toBe(TSpin.Mini);
+
+    game.currentPiece.currentRotation = 1;
+
+    expect(game.detectTSpin()).toBe(TSpin.Mini);
+
+    game.currentPiece.currentRotation = 2;
+
+    expect(game.detectTSpin()).toBe(TSpin.Full);
+
+    game.currentPiece.currentRotation = 3;
+
+    expect(game.detectTSpin()).toBe(TSpin.Full);
+
+    game.currentPiece.currentRotation = 10;
+
+    expect(game.detectTSpin()).toBe(TSpin.None);
 });
