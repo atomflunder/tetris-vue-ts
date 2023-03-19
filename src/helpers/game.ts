@@ -161,12 +161,18 @@ export class Game {
                 this.holdPiece = null;
                 this.holdThisTurn = true;
 
+                this.lastMove = Move.None;
+
+                this.lastDifficult = false;
+                this.currentCombo = -1;
+
                 this.currentDrop = 0;
 
                 this.score = 0;
                 this.totalLines = 0;
                 this.lineCounter = [0, 0, 0, 0];
                 this.level = 1;
+                this.tSpinCounter = [0, 0];
 
                 this.ticks = 0;
                 this.lockTick = PIECE_LOCK_TICKS;
@@ -175,8 +181,6 @@ export class Game {
                 this.currentPiece.spawn(this.board);
 
                 this.incrementPieceCount();
-
-                this.advanceTick();
             }
 
             return;
