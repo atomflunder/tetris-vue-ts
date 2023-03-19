@@ -183,6 +183,9 @@ export class Game {
                 this.currentPiece.spawn(this.board);
 
                 this.incrementPieceCount();
+
+                // And of course we need to enable the main game loop again.
+                this.advanceTick();
             }
 
             return;
