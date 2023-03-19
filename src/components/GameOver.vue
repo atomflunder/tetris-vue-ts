@@ -1,6 +1,10 @@
+<script setup lang="ts">
+import { CONTROLS } from '@/helpers/consts';
+</script>
+
 <template>
     <div class="game-over">GAME OVER!</div>
-    <div class="game-over info">ENTER TO RESET</div>
+    <div class="game-over info">{{ CONTROLS.RESET_GAME.toUpperCase() }} TO RESET</div>
 </template>
 
 <style scoped>

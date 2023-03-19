@@ -1,6 +1,10 @@
+<script setup lang="ts">
+import { CONTROLS } from '@/helpers/consts';
+</script>
+
 <template>
     <div class="game-paused">GAME PAUSED</div>
-    <div class="game-paused info">ESC TO UNPAUSE</div>
+    <div class="game-paused info">{{ CONTROLS.PAUSE_GAME.toUpperCase() }} TO UNPAUSE</div>
 </template>
 
 <style scoped>
@@ -15,6 +19,6 @@
 
 .info {
     top: 25%;
-    font-size: 1.25rem;
+    font-size: 1rem;
 }
 </style>

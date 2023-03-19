@@ -55,3 +55,20 @@ export const PIECE_LOCK_TICKS = 30;
  * See more information here: https://tetris.fandom.com/wiki/Infinity
  */
 export const LOCK_MOVE_RESETS = -1;
+
+export const CONTROLS = {
+    RESET_GAME: 'Enter',
+    PAUSE_GAME: 'Escape',
+
+    MOVE_LEFT: 'ArrowLeft',
+    MOVE_RIGHT: 'ArrowRight',
+    SOFT_DROP: 'ArrowDown',
+    HARD_DROP: 'ArrowUp',
+
+    ROTATE_CW: ' ',
+    ROTATE_CCW: 'Enter',
+
+    HOLD_PIECE: '0',
+
+    INSERT_GARBAGE: 'F1'
+};
