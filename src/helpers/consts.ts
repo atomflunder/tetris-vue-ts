@@ -54,7 +54,7 @@ export const PIECE_LOCK_TICKS = 30;
  *
  * See more information here: https://tetris.fandom.com/wiki/Infinity
  */
-export const LOCK_MOVE_RESETS = -1;
+export const LOCK_MOVE_RESETS = 15;
 
 /**
  * The control scheme.
