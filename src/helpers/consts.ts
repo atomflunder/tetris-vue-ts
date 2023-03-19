@@ -1,4 +1,10 @@
 /**
+ * Displays some debug information on the game info screen.
+ * Used for development purposes.
+ */
+export const SHOW_DEBUG_INFO = false;
+
+/**
  * If you want to use a modern piece generator,
  * which makes sure you see each piece equally often.
  *
@@ -39,3 +45,13 @@ export const FIRST_PIECE_NO_OVERHANG = true;
  * See more information here: https://tetris.fandom.com/wiki/Lock_delay
  */
 export const PIECE_LOCK_TICKS = 30;
+
+/**
+ * The amount of moves that can reset the lock delay.
+ * After X moves, the lock delay will no longer refresh and lock a piece in place.
+ *
+ * Set this to -1 for an infinite amount of resets.
+ *
+ * See more information here: https://tetris.fandom.com/wiki/Infinity
+ */
+export const LOCK_MOVE_RESETS = -1;
