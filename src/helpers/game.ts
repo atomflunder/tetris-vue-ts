@@ -1,5 +1,5 @@
 import { Board } from './board';
-import { PIECE_BAG_AMOUNT, PIECE_LOCK_TICKS } from './consts';
+import { LOCK_MOVE_RESETS, PIECE_BAG_AMOUNT, PIECE_LOCK_TICKS } from './consts';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
 
@@ -60,6 +60,7 @@ export class Game {
     // The amount of ticks after a piece gets locked without input.
     lockTick: number;
     waitForLock: boolean;
+    lockMoveResets: number;
 
     constructor() {
         const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
@@ -99,6 +100,7 @@ export class Game {
         this.ticks = 0;
         this.lockTick = PIECE_LOCK_TICKS;
         this.waitForLock = false;
+        this.lockMoveResets = LOCK_MOVE_RESETS;
 
         // Spawning the first piece.
         this.currentPiece.spawn(this.board);
@@ -200,6 +202,13 @@ export class Game {
         const update = (): void => {
             this.lockTick = PIECE_LOCK_TICKS;
             this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
+
+            if (this.waitForLock) {
+                this.lockMoveResets--;
+                if (this.lockMoveResets === 0) {
+                    this.lockTick = 0;
+                }
+            }
         };
 
         switch (e.key) {
@@ -383,6 +392,7 @@ export class Game {
         this.ticks = 0;
         this.holdThisTurn = true;
         this.waitForLock = false;
+        this.lockMoveResets = LOCK_MOVE_RESETS;
     }
 
     /**
