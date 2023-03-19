@@ -349,9 +349,9 @@ export class Game {
             }
         }
 
-        const difficultMultiplier = this.lastDifficult && thisDifficult ? 1.5 : 1;
+        const multiplier = this.level * (this.lastDifficult && thisDifficult ? 1.5 : 1);
 
-        this.score += this.getScore(fullLines.length, tSpin, fullClear) * difficultMultiplier;
+        this.score += this.getScore(fullLines.length, multiplier, tSpin, fullClear);
 
         this.level = Math.floor(this.totalLines / 10) + 1;
 
@@ -502,9 +502,12 @@ export class Game {
      * Gets the score depending on the amount of lines cleared and the current level.
      * Taken from: https://tetris.wiki/Scoring#Recent_guideline_compatible_games
      */
-    getScore(linesCleared: number, tSpin: TSpin = TSpin.None, fullClear: boolean = false): number {
-        const multiplier = this.level * (this.lastDifficult ? 1.5 : 1);
-
+    getScore(
+        linesCleared: number,
+        multiplier: number,
+        tSpin: TSpin = TSpin.None,
+        fullClear: boolean = false
+    ): number {
         if (tSpin === TSpin.Mini) {
             switch (linesCleared) {
                 case 0:

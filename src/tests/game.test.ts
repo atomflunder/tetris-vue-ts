@@ -119,25 +119,21 @@ test('Toggle Hold Piece', () => {
 test('Get Score', () => {
     const game = new Game();
 
-    expect(game.getScore(1)).toBe(100);
-    expect(game.getScore(2)).toBe(300);
-    expect(game.getScore(3)).toBe(500);
-    expect(game.getScore(4)).toBe(800);
+    expect(game.getScore(1, 1)).toBe(100);
+    expect(game.getScore(2, 1)).toBe(300);
+    expect(game.getScore(3, 1)).toBe(500);
+    expect(game.getScore(4, 1)).toBe(800);
 
-    game.level = 20;
+    expect(game.getScore(1, 20)).toBe(2000);
+    expect(game.getScore(2, 20)).toBe(6000);
+    expect(game.getScore(3, 20)).toBe(10000);
+    expect(game.getScore(4, 20)).toBe(16000);
 
-    expect(game.getScore(1)).toBe(2000);
-    expect(game.getScore(2)).toBe(6000);
-    expect(game.getScore(3)).toBe(10000);
-    expect(game.getScore(4)).toBe(16000);
+    expect(game.getScore(1, 20, TSpin.Full, true)).toBe(16000);
+    expect(game.getScore(2, 30, TSpin.Mini)).toBe(12000);
+    expect(game.getScore(3, 20, TSpin.None, true)).toBe(36000);
 
-    expect(game.getScore(1, TSpin.Full, true)).toBe(16000);
-    expect(game.getScore(2, TSpin.Mini)).toBe(8000);
-    expect(game.getScore(3, TSpin.None, true)).toBe(36000);
-
-    game.lastDifficult = true;
-
-    expect(game.getScore(4, TSpin.None, false)).toBe(24000);
+    expect(game.getScore(4, 30, TSpin.None, false)).toBe(24000);
 });
 
 test('Get Fall Speed', () => {
