@@ -19,11 +19,11 @@ In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/w
 
 -   🆕 Inserting Garbage in Single Player
 -   🆕 Many In-Depth Configuration Options
+-   🆕 Remappable Controls
 
 -   ❌ Multiplayer, 40 Line Mode, Timed Mode
 -   ❌ 6 Next Pieces (We use 14)
 -   ❌ 20x10 Playfield (We use 22x10)
--   ❌ Standard Control Mappings
 -   ❌ Sound Effects, Logo, etc.
 -   ❌ Pause Countdown or Line clear delay
 

@@ -1,5 +1,5 @@
 import { Board } from './board';
-import { LOCK_MOVE_RESETS, PIECE_BAG_AMOUNT, PIECE_LOCK_TICKS } from './consts';
+import { CONTROLS, LOCK_MOVE_RESETS, PIECE_BAG_AMOUNT, PIECE_LOCK_TICKS } from './consts';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
 
@@ -143,7 +143,7 @@ export class Game {
     handleInput(e: KeyboardEvent): void {
         if (this.gameOver) {
             // Resets the game.
-            if (e.key === 'Enter') {
+            if (e.key === CONTROLS.RESET_GAME) {
                 const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
 
                 const currentPiece = nextPieces[0];
@@ -190,7 +190,7 @@ export class Game {
 
         // We need a special case for Esc
         // Because we don't want to listen to any other events while the game is paused.
-        if (e.key === 'Escape') {
+        if (e.key === CONTROLS.PAUSE_GAME) {
             this.isPaused = !this.isPaused;
         }
 
@@ -212,48 +212,48 @@ export class Game {
         };
 
         switch (e.key) {
-            case 'ArrowLeft':
+            case CONTROLS.MOVE_LEFT:
                 if (this.currentPiece.moveLeft(this.board)) {
                     update();
                     this.lastMove = Move.Left;
                 }
 
                 break;
-            case 'ArrowRight':
+            case CONTROLS.MOVE_RIGHT:
                 if (this.currentPiece.moveRight(this.board)) {
                     update();
                     this.lastMove = Move.Right;
                 }
 
                 break;
-            case 'ArrowDown':
+            case CONTROLS.SOFT_DROP:
                 this.moveDown(false, true);
                 // Incrementing the drop counter for every time the game registers a consecutive down press.
                 this.currentDrop += 1;
                 // When you hold down you probably do want the piece to lock instantly.
                 this.lockTick = 0;
                 break;
-            case 'ArrowUp':
+            case CONTROLS.HARD_DROP:
                 this.moveDown(true, true);
                 break;
-            case ' ':
+            case CONTROLS.ROTATE_CW:
                 if (this.currentPiece.rotate(this.board, true)) {
                     update();
                     this.lastMove = Move.Rotation;
                 }
                 break;
-            case 'Enter':
+            case CONTROLS.ROTATE_CCW:
                 if (this.currentPiece.rotate(this.board, false)) {
                     update();
                     this.lastMove = Move.Rotation;
                 }
                 break;
-            case '0':
+            case CONTROLS.HOLD_PIECE:
                 if (this.toggleHoldPiece()) {
                     update();
                 }
                 break;
-            case 'F1':
+            case CONTROLS.INSERT_GARBAGE:
                 this.board.insertGarbageLines(2, this.currentPiece);
                 update();
                 break;
