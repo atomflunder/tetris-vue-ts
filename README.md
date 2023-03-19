@@ -9,6 +9,7 @@ In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/w
 -   ✅ Super Rotation System
 -   ✅ Wallkicks
 -   ✅ 7-bag Random Generator
+-   ✅ Next Piece Preview
 -   ✅ Hold Piece
 -   ✅ Ghost Piece
 -   ✅ Lock Delay
@@ -22,7 +23,6 @@ In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/w
 -   🆕 Remappable Controls
 
 -   ❌ Multiplayer, 40 Line Mode, Timed Mode
--   ❌ 6 Next Pieces (We use 14)
 -   ❌ 20x10 Playfield (We use 22x10)
 -   ❌ Sound Effects, Logo, etc.
 -   ❌ Pause Countdown or Line clear delay

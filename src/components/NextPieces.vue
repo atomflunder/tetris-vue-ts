@@ -11,7 +11,7 @@ defineProps<{
 <template>
     NEXT:
     <table>
-        <tr v-for="(row, i) in getPreviewPieceTable(game.nextPieces.slice(0, 14))" :key="i">
+        <tr v-for="(row, i) in getPreviewPieceTable(game.nextPieces.slice(0, 6))" :key="i">
             <td
                 v-for="(block, j) in row"
                 :key="j"
