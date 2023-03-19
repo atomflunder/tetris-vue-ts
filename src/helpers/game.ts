@@ -479,19 +479,39 @@ export class Game {
                 break;
         }
 
+        // We check how many of the pieces are occupied.
+        // If 2 front pieces and 1 back piece is occupied by another block, this counts as a proper T-Spin.
+        // If 2 back pieces and 1 front piece are occupied, it is a Mini T-Spin.
+        let backPiecesOccupied = 0;
+        let frontPiecesOccupied = 0;
+
+        // The front pieces cannot be undefined by default, but the back pieces could.
+        // If the back pieces are against the wall (thus are undefined), these also count as an occupied piece.
+        if (this.board.GameBoard[frontLeft[0]][frontLeft[1]] !== 0) {
+            frontPiecesOccupied++;
+        }
+
+        if (this.board.GameBoard[frontRight[0]][frontRight[1]] !== 0) {
+            frontPiecesOccupied++;
+        }
+
         if (
-            this.board.GameBoard[frontLeft[0]][frontLeft[1]] !== 0 &&
-            this.board.GameBoard[frontRight[0]][frontRight[1]] &&
-            (this.board.GameBoard[backLeft[0]][backLeft[1]] !== 0 ||
-                this.board.GameBoard[backRight[0]][backRight[1]] !== 0)
+            this.board.GameBoard[backLeft[0]] === undefined ||
+            this.board.GameBoard[backLeft[0]][backLeft[1]] !== 0
         ) {
+            backPiecesOccupied++;
+        }
+
+        if (
+            this.board.GameBoard[backRight[0]] === undefined ||
+            this.board.GameBoard[backRight[0]][backRight[1]] !== 0
+        ) {
+            backPiecesOccupied++;
+        }
+
+        if (frontPiecesOccupied == 2 && backPiecesOccupied > 0) {
             tSpin = TSpin.Full;
-        } else if (
-            this.board.GameBoard[backLeft[0]][backLeft[1]] !== 0 &&
-            this.board.GameBoard[backRight[0]][backRight[1]] &&
-            (this.board.GameBoard[frontLeft[0]][frontLeft[1]] !== 0 ||
-                this.board.GameBoard[frontRight[0]][frontRight[1]] !== 0)
-        ) {
+        } else if (backPiecesOccupied == 2 && frontPiecesOccupied > 0) {
             tSpin = TSpin.Mini;
         }
 
