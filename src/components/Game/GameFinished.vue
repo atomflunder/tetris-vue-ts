@@ -12,8 +12,9 @@ defineProps<{
     <div class="game-over">GAME FINISHED!</div>
     <div class="info">{{ CONTROLS.RESET_GAME.toUpperCase() }} TO RESTART</div>
 
-    <div class="stats">LINES: {{ game.totalLines }}</div>
     <div class="stats">TIME: {{ msToTimer(game.timer) }}</div>
+    <div class="stats">LINES: {{ game.totalLines }}</div>
+    <div class="stats">SCORE: {{ game.score }}</div>
 </template>
 
 <style scoped>
