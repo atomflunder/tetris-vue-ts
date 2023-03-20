@@ -1,5 +1,11 @@
 import { Board } from './board';
-import { CONTROLS, LOCK_MOVE_RESETS, PIECE_BAG_AMOUNT, PIECE_LOCK_TICKS } from './consts';
+import {
+    COLORED_BOARD,
+    CONTROLS,
+    LOCK_MOVE_RESETS,
+    PIECE_BAG_AMOUNT,
+    PIECE_LOCK_TICKS
+} from './consts';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
 
@@ -369,6 +375,16 @@ export class Game {
 
         this.lastDifficult = thisDifficult;
 
+        // Greys the pieces out if the user wishes to do so.
+        if (!COLORED_BOARD) {
+            const coords = this.currentPiece.getCoordinates();
+
+            for (let i = 0; i < coords.length; i++) {
+                // 8 corresponds to the greyed out color.
+                this.board.GameBoard[coords[i][0]][coords[i][1]] = 8;
+            }
+        }
+
         // We get the new piece from the stack of next pieces.
         const nextPiece = this.nextPieces[0];
         this.currentPiece = nextPiece;
@@ -417,15 +433,29 @@ export class Game {
 
         // If you are not currently holding a piece, it is like ending your turn, kind of.
         if (!this.holdPiece) {
-            // We have to save the current combo before it gets overwritten.
-            const combo = this.currentCombo;
-
+            // First we move the current piece over.
             this.holdPiece = this.currentPiece;
-            this.nextTurn();
-            // But we have to make sure to set this to false.
+
+            // Then get the next piece in.
+            const nextPiece = this.nextPieces[0];
+            this.currentPiece = nextPiece;
+
+            // Checking if the piece can spawn, if not this is an automatic game over.
+            const b = this.currentPiece.spawn(this.board);
+            if (!b) {
+                this.gameOver = true;
+            }
+
+            // Then we populate the queue some more if it needs it.
+            this.nextPieces = getRandomPiece(this.nextPieces, PIECE_BAG_AMOUNT);
+            // Then we remove the first piece from the piece queue.
+            this.nextPieces.shift();
+
+            // But we have to make sure to set all this to false (or 0).
+            this.ticks = 0;
             this.holdThisTurn = false;
-            // And set the combo back to its original value.
-            this.currentCombo = combo;
+            this.waitForLock = false;
+
             return true;
         }
 
@@ -438,9 +468,7 @@ export class Game {
 
         this.currentPiece.spawn(this.board);
 
-        // Also need to set the ticks to 0 manually.
         this.ticks = 0;
-        // And of course turn off the ability to swap again.
         this.holdThisTurn = false;
         this.waitForLock = false;
 

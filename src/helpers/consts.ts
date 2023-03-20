@@ -5,6 +5,12 @@
 export const SHOW_DEBUG_INFO = false;
 
 /**
+ * If the dropped pieces should stay their respective color or not.
+ * When set to false, all pieces will be greyed out once dropped.
+ */
+export const COLORED_BOARD = true;
+
+/**
  * If you want to use a modern piece generator,
  * which makes sure you see each piece equally often.
  *
