@@ -17,6 +17,7 @@ defineProps<{
 
 <style scoped>
 .red-glow {
-    box-shadow: 1px 1px 1px #ff0000;
+    -webkit-box-shadow: 0 0 15px #ff0000;
+    box-shadow: 0 0 15px #ff0000;
 }
 </style>
