@@ -9,26 +9,42 @@ defineProps<{
 </script>
 
 <template>
-    <td colspan="4">
-        TOTAL PIECES: {{ game.pieceCounter.reduce((a, b) => a + b) }}
-        <table>
-            <td v-for="(count, i) in game.pieceCounter" :key="i">
-                <tr
-                    v-for="(row, j) in getPreviewPieceTable([
-                        JSON.parse(JSON.stringify(allPieces[i]))
-                    ])"
-                    :key="j"
-                >
-                    <td
-                        v-for="(block, j) in row"
+    <div class="grid">
+        <div class="header">TOTAL PIECES: {{ game.pieceCounter.reduce((a, b) => a + b) }}</div>
+        <div class="piece-table">
+            <table>
+                <td v-for="(count, i) in game.pieceCounter" :key="i">
+                    <tr
+                        v-for="(row, j) in getPreviewPieceTable([
+                            JSON.parse(JSON.stringify(allPieces[i]))
+                        ])"
                         :key="j"
-                        :class="getColorClass(game, block, -1, -1) + ' small-block'"
-                    ></td>
-                </tr>
-                {{ count }}
-            </td>
-        </table>
-    </td>
+                    >
+                        <td
+                            v-for="(block, j) in row"
+                            :key="j"
+                            :class="getColorClass(game, block, -1, -1) + ' small-block'"
+                        ></td>
+                    </tr>
+                    {{ count }}
+                </td>
+            </table>
+        </div>
+    </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.grid {
+    display: grid;
+}
+
+.header {
+    grid-column-start: 1;
+    grid-row-start: 1;
+}
+
+.piece-table {
+    grid-column-start: 1;
+    grid-row-start: 2;
+}
+</style>

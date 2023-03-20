@@ -65,17 +65,13 @@ onMounted(() => {
     display: grid;
     gap: 3.5rem 1rem;
     justify-content: center;
+    margin-top: 20px;
+    width: 100%;
 }
 
 .font {
     color: #ddd;
     font-size: 1.2rem;
-}
-
-.left-column {
-    grid-column-start: 1;
-    grid-row-start: 1;
-    grid-row-end: 5;
 }
 
 .center-column {
@@ -130,5 +126,25 @@ onMounted(() => {
     grid-row-end: 4;
     min-width: 500px;
     min-height: 130px;
+}
+
+@media (max-width: 1700px) {
+    .controls {
+        display: none;
+    }
+}
+
+@media (max-width: 1100px) {
+    .game-info {
+        display: none;
+    }
+
+    .line-count {
+        display: none;
+    }
+
+    .piece-count {
+        display: none;
+    }
 }
 </style>
