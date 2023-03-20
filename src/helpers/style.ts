@@ -55,8 +55,8 @@ export const getHeldPieceColor = (game: Game, block: number): string => {
 };
 
 /**
- * Gets you the CSS style class of the main table, if you are in danger or not.
- * "Danger" meaning if a dropped piece is X rows high.
+ * Gets you the CSS style class of the main table,
+ * with a special glow for being in danger, paused, both, or having a high combo.
  */
 export const getGlow = (game: Game): string => {
     if (game.board.firstRowsNotEmpty(game.currentPiece, 6) && game.isPaused) {
@@ -65,6 +65,8 @@ export const getGlow = (game: Game): string => {
         return 'red-glow ';
     } else if (game.isPaused) {
         return 'blue-glow ';
+    } else if (game.currentCombo > 4) {
+        return 'orange-glow ';
     } else {
         return '';
     }

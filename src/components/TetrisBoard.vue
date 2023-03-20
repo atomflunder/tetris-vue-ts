@@ -30,4 +30,9 @@ defineProps<{
     -webkit-box-shadow: 0 0 15px #9300b1;
     box-shadow: 0 0 15px #9300b1;
 }
+
+.orange-glow {
+    -webkit-box-shadow: 0 0 15px #ffae00;
+    box-shadow: 0 0 15px #ffae00;
+}
 </style>
