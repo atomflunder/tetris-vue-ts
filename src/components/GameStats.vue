@@ -9,95 +9,61 @@ defineProps<{
 </script>
 
 <template>
-    <td colspan="4">
-        <tr>
-            SCORE:
-            {{
-                game.score
-            }}
-        </tr>
-        <tr>
-            LEVEL:
-            {{
-                game.level
-            }}
-        </tr>
-        <tr>
-            TIME:
-            {{
-                msToTimer(game.timer)
-            }}
-        </tr>
-        <tr>
-            &nbsp;
-        </tr>
-        <tr>
-            COMBO:
-            {{
-                game.currentCombo + 1
-            }}
-        </tr>
-        <tr>
-            T-SPINS:
-            {{
-                game.tSpinCounter[0]
-            }}
-            /
-            {{
-                game.tSpinCounter[1]
-            }}
-        </tr>
-        <tr>
-            BACK-TO-BACK:
-            {{
-                game.lastDifficult
-            }}
-        </tr>
+    <div>
+        SCORE:
+        {{ game.score }}
+    </div>
+    <div>
+        LEVEL:
+        {{ game.level }}
+    </div>
+    <div>
+        TIME:
+        {{ msToTimer(game.timer) }}
+    </div>
+    <div>&nbsp;</div>
+    <div>
+        COMBO:
+        {{ game.currentCombo + 1 }}
+    </div>
+    <div>
+        T-SPINS:
+        {{ game.tSpinCounter[0] }}
+        /
+        {{ game.tSpinCounter[1] }}
+    </div>
+    <div>
+        BACK-TO-BACK:
+        {{ game.lastDifficult }}
+    </div>
 
-        <tr>
-            &nbsp;
-        </tr>
+    <div>&nbsp;</div>
 
-        <tr v-if="SHOW_DEBUG_INFO">
-            DEBUG INFO:
-        </tr>
+    <div v-if="SHOW_DEBUG_INFO">DEBUG INFO:</div>
 
-        <tr v-if="SHOW_DEBUG_INFO">
-            TICKS:
-            {{
-                game.ticks
-            }}
-        </tr>
+    <div v-if="SHOW_DEBUG_INFO">
+        TICKS:
+        {{ game.ticks }}
+    </div>
 
-        <tr v-if="SHOW_DEBUG_INFO">
-            LAST MOVE:
-            {{
-                game.lastMove
-            }}
-        </tr>
+    <div v-if="SHOW_DEBUG_INFO">
+        LAST MOVE:
+        {{ game.lastMove }}
+    </div>
 
-        <tr v-if="SHOW_DEBUG_INFO">
-            DROP:
-            {{
-                game.currentDrop
-            }}
-        </tr>
+    <div v-if="SHOW_DEBUG_INFO">
+        DROP:
+        {{ game.currentDrop }}
+    </div>
 
-        <tr v-if="SHOW_DEBUG_INFO">
-            LOCK INFO:
-            {{
-                game.lockMoveResets
-            }}
-            -
-            {{
-                Number(game.waitForLock)
-            }}
-            -
-            {{
-                game.lockTick
-            }}
-        </tr>
-    </td>
+    <div v-if="SHOW_DEBUG_INFO">
+        LOCK INFO:
+        {{ game.lockMoveResets }}
+        -
+        {{ Number(game.waitForLock) }}
+        -
+        {{ game.lockTick }}
+    </div>
 </template>
 
 <style scoped></style>
