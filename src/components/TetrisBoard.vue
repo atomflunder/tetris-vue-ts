@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-    <table :class="isInDanger(game) + 'center-column'">
+    <table :class="isInDanger(game)">
         <tr v-for="(row, i) in game.board.GameBoard" :key="i">
             <td v-for="(block, j) in row" :key="j" :class="getColorClass(game, block, i, j)"></td>
         </tr>
@@ -16,10 +16,6 @@ defineProps<{
 </template>
 
 <style scoped>
-.center-column {
-    width: 18%;
-}
-
 .red-glow {
     box-shadow: 1px 1px 1px #ff0000;
 }

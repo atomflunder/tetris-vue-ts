@@ -12,8 +12,9 @@ import { CONTROLS } from '@/helpers/consts';
     color: #ffffff;
     position: absolute;
     top: 20%;
-    left: 41%;
+    left: 40%;
     font-size: 1.8rem;
+    text-shadow: -1px 0 black 1px 0 black 1px 0 black -1px 0 black;
 }
 
 .info {

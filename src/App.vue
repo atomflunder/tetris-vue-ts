@@ -29,34 +29,32 @@ onMounted(() => {
 
 <template>
     <div class="app">
-        <div class="game-info left-column">
-            <table>
-                <tr>
-                    <GameStats :game="game" />
-                </tr>
-
-                <tr>
-                    <LineCount :game="game" />
-                </tr>
-
-                <tr>
-                    <PieceCount :game="game" />
-                </tr>
-            </table>
+        <div class="game-info font">
+            <GameStats :game="game" />
         </div>
 
-        <TetrisBoard :game="game" />
+        <div class="line-count font">
+            <LineCount :game="game" />
+        </div>
+
+        <div class="piece-count font">
+            <PieceCount :game="game" />
+        </div>
+
+        <div class="center-column">
+            <TetrisBoard :game="game" />
+        </div>
+
         <PauseOverlay v-if="game.isPaused" />
         <GameOver v-if="game.gameOver" />
 
-        <div class="next-column piece-info">
+        <div class="next-column font">
             <NextPieces :game="game" />
         </div>
-        <div class="held-column piece-info">
+        <div class="held-column font">
             <HoldPiece :game="game" />
-            <br />
-            <br />
-            <br />
+        </div>
+        <div class="controls font">
             <KeyboardControls />
         </div>
     </div>
@@ -64,38 +62,73 @@ onMounted(() => {
 
 <style scoped>
 .app {
-    display: flex;
-    clear: both;
+    display: grid;
+    gap: 3.5rem 1rem;
     justify-content: center;
+}
+
+.font {
+    color: #ddd;
+    font-size: 1.2rem;
 }
 
 .left-column {
-    width: 30%;
-    float: left;
-    justify-content: center;
-    display: flex;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    grid-row-end: 5;
+}
+
+.center-column {
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 5;
+    min-width: 300px;
+    min-height: 660px;
 }
 
 .next-column {
-    width: 8%;
-    float: right;
-    justify-content: center;
-    margin-left: 20px;
+    grid-column-start: 4;
+    grid-row-start: 1;
+    grid-row-end: 5;
+    min-width: 130px;
+    min-height: 310px;
 }
 
 .held-column {
-    width: 22%;
-    float: right;
-    justify-content: center;
+    grid-column-start: 5;
+    min-width: 130px;
+    min-height: 130px;
 }
 
-.piece-info {
-    color: #ddd;
-    font-size: 1.2rem;
+.controls {
+    grid-column-start: 5;
+    grid-row-start: 2;
+    grid-row-end: 5;
+    width: 500px;
 }
 
 .game-info {
-    color: #ddd;
-    font-size: 1.2rem;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    min-width: 500px;
+    min-height: 130px;
+}
+
+.line-count {
+    grid-column-start: 1;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    min-width: 500px;
+    min-height: 130px;
+}
+
+.piece-count {
+    grid-column-start: 1;
+    grid-row-start: 3;
+    grid-row-end: 4;
+    min-width: 500px;
+    min-height: 130px;
 }
 </style>
