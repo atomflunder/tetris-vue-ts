@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Game } from '@/helpers/game';
 import { SHOW_DEBUG_INFO } from '@/helpers/consts';
+import { msToTimer } from '@/helpers/style';
 
 defineProps<{
     game: Game;
@@ -19,6 +20,12 @@ defineProps<{
             LEVEL:
             {{
                 game.level
+            }}
+        </tr>
+        <tr>
+            TIME:
+            {{
+                msToTimer(game.timer)
             }}
         </tr>
         <tr>

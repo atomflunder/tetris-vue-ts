@@ -63,6 +63,10 @@ export class Game {
 
     // A tick is 1/60th of a second.
     ticks: number;
+    // Just a timer that gets displayed.
+    timer: number;
+    initialTime: number;
+
     // The amount of ticks after a piece gets locked without input.
     lockTick: number;
     waitForLock: boolean;
@@ -104,6 +108,9 @@ export class Game {
         this.tSpinCounter = [0, 0];
 
         this.ticks = 0;
+        this.timer = Date.now();
+        this.initialTime = Date.now();
+
         this.lockTick = PIECE_LOCK_TICKS;
         this.waitForLock = false;
         this.lockMoveResets = LOCK_MOVE_RESETS;
@@ -122,6 +129,8 @@ export class Game {
             // If the game is paused we pretty much do nothing.
             if (!this.isPaused) {
                 this.ticks++;
+
+                this.timer = Date.now() - this.initialTime;
 
                 // When the game is waiting for a locked piece to "finish",
                 // we decrement the timer
