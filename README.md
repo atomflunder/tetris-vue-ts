@@ -17,7 +17,7 @@ In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/w
 -   ✅ T-Spins
 -   ✅ Back-to-Backs
 -   ✅ Combos
--   ✅ Marathon Mode (Endless), 40 Line Mode, Timed Mode
+-   ✅ Endless Mode, Marathon Mode (150 Lines), Sprint Mode (40 Lines), Time Trial (3:00)
 
 -   🆕 Inserting Garbage in Single Player
 -   🆕 Many In-Depth Configuration Options

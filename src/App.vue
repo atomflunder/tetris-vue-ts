@@ -4,8 +4,9 @@ import TetrisGame from '@/components/TetrisGame.vue';
 
 enum Menu {
     None,
+    Endless,
     Marathon,
-    Lines,
+    Sprint,
     Time
 }
 
@@ -15,14 +16,18 @@ let menuChoice = ref(Menu.None);
 <template>
     <nav class="navbar" v-if="menuChoice === Menu.None">
         <div class="header">SELECT GAME MODE:</div>
-        <button class="menu-button" @click="menuChoice = Menu.Marathon">Marathon (Endless)</button>
-        <button class="menu-button" @click="menuChoice = Menu.Lines">40 Lines</button>
-        <button class="menu-button" @click="menuChoice = Menu.Time">2 Minutes Timed</button>
+        <button class="menu-button" @click="menuChoice = Menu.Endless">Endless</button>
+        <button class="menu-button" @click="menuChoice = Menu.Marathon">
+            Marathon (150 Lines)
+        </button>
+        <button class="menu-button" @click="menuChoice = Menu.Sprint">Sprint (40 Lines)</button>
+        <button class="menu-button" @click="menuChoice = Menu.Time">3 Minutes Timed</button>
     </nav>
 
-    <TetrisGame v-if="menuChoice === Menu.Marathon" :max-lines="null" :max-time="null" />
-    <TetrisGame v-if="menuChoice === Menu.Lines" :max-lines="40" :max-time="null" />
-    <TetrisGame v-if="menuChoice === Menu.Time" :max-lines="null" :max-time="120000" />
+    <TetrisGame v-if="menuChoice === Menu.Endless" :max-lines="null" :max-time="null" />
+    <TetrisGame v-if="menuChoice === Menu.Marathon" :max-lines="150" :max-time="null" />
+    <TetrisGame v-if="menuChoice === Menu.Sprint" :max-lines="40" :max-time="null" />
+    <TetrisGame v-if="menuChoice === Menu.Time" :max-lines="null" :max-time="180000" />
 </template>
 
 <style scoped>
