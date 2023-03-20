@@ -59,7 +59,9 @@ export const getHeldPieceColor = (game: Game, block: number): string => {
  * "Danger" meaning if a dropped piece is X rows high.
  */
 export const getGlow = (game: Game): string => {
-    if (game.board.firstRowsNotEmpty(game.currentPiece, 6)) {
+    if (game.board.firstRowsNotEmpty(game.currentPiece, 6) && game.isPaused) {
+        return 'purple-glow ';
+    } else if (game.board.firstRowsNotEmpty(game.currentPiece, 6)) {
         return 'red-glow ';
     } else if (game.isPaused) {
         return 'blue-glow ';
