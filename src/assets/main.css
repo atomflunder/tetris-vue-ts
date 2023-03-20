@@ -10,6 +10,7 @@ body {
     overflow: hidden;
     font-family: 'Press Start 2P';
     font-size: large;
+    color: #ddd;
 }
 
 .empty {

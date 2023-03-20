@@ -33,6 +33,9 @@ export class Game {
     gameOver: boolean;
     isPaused: boolean;
 
+    maxTime: number | null;
+    maxLines: number | null;
+
     board: Board;
     currentPiece: Piece;
     nextPieces: Piece[];
@@ -72,7 +75,7 @@ export class Game {
     waitForLock: boolean;
     lockMoveResets: number;
 
-    constructor() {
+    constructor(maxLines: number | null = null, maxTime: number | null = null) {
         const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
 
         // Taking the first piece of the queue.
@@ -84,6 +87,9 @@ export class Game {
         // Assigning the values.
         this.gameOver = false;
         this.isPaused = false;
+
+        this.maxLines = maxLines;
+        this.maxTime = maxTime;
 
         this.board = new Board();
         this.currentPiece = currentPiece;
@@ -131,6 +137,18 @@ export class Game {
                 this.ticks++;
 
                 this.timer = Date.now() - this.initialTime;
+
+                if (this.maxLines) {
+                    if (this.totalLines >= this.maxLines) {
+                        this.gameOver = true;
+                    }
+                }
+
+                if (this.maxTime) {
+                    if (this.timer >= this.maxTime) {
+                        this.gameOver = true;
+                    }
+                }
 
                 // When the game is waiting for a locked piece to "finish",
                 // we decrement the timer
@@ -192,6 +210,9 @@ export class Game {
                 this.tSpinCounter = [0, 0];
 
                 this.ticks = 0;
+                this.timer = Date.now();
+                this.initialTime = Date.now();
+
                 this.lockTick = PIECE_LOCK_TICKS;
                 this.waitForLock = false;
 
