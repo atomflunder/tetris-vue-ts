@@ -1,5 +1,5 @@
 import { Game } from '@/helpers/game';
-import { getColorClass, getHeldPieceColor, isInDanger } from '@/helpers/style';
+import { getColorClass, getHeldPieceColor, getGlow } from '@/helpers/style';
 import { expect, test } from 'vitest';
 
 test('Get Color Class', () => {
@@ -29,9 +29,17 @@ test('Get Held Piece Color', () => {
 test('Is in Danger', () => {
     const game = new Game();
 
-    expect(isInDanger(game)).toBe('');
+    expect(getGlow(game)).toBe('');
 
     game.board.GameBoard[2][2] = 2;
 
-    expect(isInDanger(game)).toBe('red-glow ');
+    expect(getGlow(game)).toBe('red-glow ');
+
+    game.isPaused = true;
+
+    expect(getGlow(game)).toBe('purple-glow ');
+
+    game.board.GameBoard[2][2] = 0;
+
+    expect(getGlow(game)).toBe('blue-glow ');
 });
