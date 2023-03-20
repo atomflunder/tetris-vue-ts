@@ -45,8 +45,9 @@ onMounted(() => {
             <TetrisBoard :game="game" />
         </div>
 
-        <PauseOverlay v-if="game.isPaused" />
-        <GameOver v-if="game.gameOver" />
+        <div class="center-column"><PauseOverlay v-if="game.isPaused" /></div>
+
+        <div class="center-column"><GameOver v-if="game.gameOver" /></div>
 
         <div class="next-column font">
             <NextPieces :game="game" />
@@ -79,7 +80,7 @@ onMounted(() => {
     grid-column-end: 4;
     grid-row-start: 1;
     grid-row-end: 5;
-    min-width: 300px;
+    min-width: 400px;
     min-height: 660px;
 }
 

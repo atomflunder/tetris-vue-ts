@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Game } from '@/helpers/game';
-import { isInDanger, getColorClass } from '@/helpers/style';
+import { getGlow, getColorClass } from '@/helpers/style';
 
 defineProps<{
     game: Game;
@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-    <table :class="isInDanger(game)">
+    <table :class="getGlow(game)">
         <tr v-for="(row, i) in game.board.GameBoard" :key="i">
             <td v-for="(block, j) in row" :key="j" :class="getColorClass(game, block, i, j)"></td>
         </tr>
@@ -19,5 +19,10 @@ defineProps<{
 .red-glow {
     -webkit-box-shadow: 0 0 15px #ff0000;
     box-shadow: 0 0 15px #ff0000;
+}
+
+.blue-glow {
+    -webkit-box-shadow: 0 0 15px #002fff;
+    box-shadow: 0 0 15px #002fff;
 }
 </style>
