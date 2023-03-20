@@ -26,7 +26,7 @@ function setMenu(choice: Menu) {
 
     <TetrisGame v-if="menuChoice === Menu.Marathon" :max-lines="null" :max-time="null" />
     <TetrisGame v-if="menuChoice === Menu.Lines" :max-lines="40" :max-time="null" />
-    <TetrisGame v-if="menuChoice === Menu.Time" :max-lines="null" :max-time="120000" />
+    <TetrisGame v-if="menuChoice === Menu.Time" :max-lines="null" :max-time="1200" />
 </template>
 
 <style scoped></style>

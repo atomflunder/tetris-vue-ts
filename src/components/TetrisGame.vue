@@ -11,6 +11,7 @@ import GameStats from '@/components/Game/GameStats.vue';
 import GameOver from '@/components/Game/GameOver.vue';
 import KeyboardControls from '@/components/Game/KeyboardControls.vue';
 import PauseOverlay from '@/components/Game/PauseOverlay.vue';
+import GameFinished from './Game/GameFinished.vue';
 
 const props = defineProps<{
     maxLines: number | null;
@@ -51,8 +52,8 @@ onMounted(() => {
         </div>
 
         <div class="center-column"><PauseOverlay v-if="game.isPaused" /></div>
-
         <div class="center-column"><GameOver v-if="game.gameOver" /></div>
+        <div class="center-column"><GameFinished v-if="game.gameFinished" :game="game" /></div>
 
         <div class="next-column font">
             <NextPieces :game="game" />
