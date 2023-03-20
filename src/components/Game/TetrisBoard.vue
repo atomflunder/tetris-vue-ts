@@ -35,4 +35,9 @@ defineProps<{
     -webkit-box-shadow: 0 0 15px #ffae00;
     box-shadow: 0 0 15px #ffae00;
 }
+
+.green-glow {
+    -webkit-box-shadow: 0 0 15px #00ff22;
+    box-shadow: 0 0 15px #00ff22;
+}
 </style>
