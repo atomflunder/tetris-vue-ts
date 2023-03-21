@@ -142,16 +142,13 @@ export class Game {
 
                 this.timer = Date.now() - this.initialTime;
 
-                if (this.maxLines) {
-                    if (this.totalLines >= this.maxLines) {
-                        this.gameFinished = true;
-                    }
+                // Checking if the game is finished.
+                if (this.maxLines && this.totalLines >= this.maxLines) {
+                    this.gameFinished = true;
                 }
 
-                if (this.maxTime) {
-                    if (this.timer >= this.maxTime) {
-                        this.gameFinished = true;
-                    }
+                if (this.maxTime && this.timer >= this.maxTime) {
+                    this.gameFinished = true;
                 }
 
                 // When the game is waiting for a locked piece to "finish",
