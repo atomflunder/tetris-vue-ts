@@ -20,8 +20,11 @@ export const getColorClass = (game: Game, block: number, i: number, j: number): 
         case 7:
             return 't block';
         case 8:
-            // Maybe used for garbage blocks in the future.
+            // Used for garbage blocks and the greyed out hold piece.
             return 'greyed-out block';
+        case 9:
+            // Used for full lines.
+            return 'white block';
         default:
             // If the piece is not filled in, we check if it is occupied by a "shadow" piece.
             // If that is the case, we render a slightly transparent color of the current piece.

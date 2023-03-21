@@ -18,14 +18,15 @@ In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/w
 -   ✅ Back-to-Backs
 -   ✅ Combos
 -   ✅ Endless Mode, Marathon Mode (150 Lines), Sprint Mode (40 Lines), Time Trial (3:00)
+-   ✅ Configurable Line Clear Delay
 
 -   🆕 Inserting Garbage in Single Player
--   🆕 Many In-Depth Configuration Options
--   🆕 Remappable Controls
+-   🆕 Many In-Depth Configuration Options (See [config](./src/helpers/config.ts))
+-   🆕 Remappable Controls (Also See [config](./src/helpers/config.ts))
 
 -   ❌ 20x10 Playfield (We use 22x10)
 -   ❌ Sound Effects, Logo, etc.
--   ❌ Pause Countdown or Line clear delay
+-   ❌ Game and Pause Countdown
 
 ## Running locally
 
