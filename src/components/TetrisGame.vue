@@ -13,15 +13,17 @@ import KeyboardControls from '@/components/Game/KeyboardControls.vue';
 import PauseOverlay from '@/components/Game/PauseOverlay.vue';
 import GameFinished from './Game/GameFinished.vue';
 import { CONTROLS } from '@/helpers/config';
+import type { Menu } from '@/helpers/types';
 
 const props = defineProps<{
+    gameMode: Menu;
     maxLines: number | null;
     maxTime: number | null;
 }>();
 
 const emits = defineEmits(['back-to-menu']);
 
-const game = ref(new Game(props.maxLines, props.maxTime));
+const game = ref(new Game(props.gameMode, props.maxLines, props.maxTime));
 
 onkeydown = (e: KeyboardEvent) => {
     game.value.handleInput(e);
