@@ -1,151 +1,65 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue';
-import { Game } from './helpers/game';
+import { ref } from 'vue';
+import TetrisGame from '@/components/TetrisGame.vue';
 
-import LineCount from './components/LineCount.vue';
-import PieceCount from './components/PieceCount.vue';
-import HoldPiece from './components/HoldPiece.vue';
-import NextPieces from './components/NextPieces.vue';
-import TetrisBoard from './components/TetrisBoard.vue';
-import GameStats from './components/GameStats.vue';
-import GameOver from './components/GameOver.vue';
-import KeyboardControls from './components/KeyboardControls.vue';
-import PauseOverlay from './components/PauseOverlay.vue';
+enum Menu {
+    None,
+    Endless,
+    Marathon,
+    Sprint,
+    Time
+}
 
-const game = reactive(new Game());
-
-onkeydown = (e: KeyboardEvent) => {
-    game.handleInput(e);
-};
-
-onkeyup = (e: KeyboardEvent) => {
-    game.handleKeyup(e);
-};
-
-onMounted(() => {
-    game.advanceTick();
-});
+let menuChoice = ref(Menu.None);
 </script>
 
 <template>
-    <div class="app">
-        <div class="game-info font">
-            <GameStats :game="game" />
-        </div>
+    <nav class="navbar" v-if="menuChoice === Menu.None">
+        <div class="header">SELECT GAME MODE:</div>
+        <button class="menu-button" @click="menuChoice = Menu.Endless">Endless</button>
+        <button class="menu-button" @click="menuChoice = Menu.Marathon">
+            Marathon (150 Lines)
+        </button>
+        <button class="menu-button" @click="menuChoice = Menu.Sprint">Sprint (40 Lines)</button>
+        <button class="menu-button" @click="menuChoice = Menu.Time">3 Minutes Timed</button>
+    </nav>
 
-        <div class="line-count font">
-            <LineCount :game="game" />
-        </div>
-
-        <div class="piece-count font">
-            <PieceCount :game="game" />
-        </div>
-
-        <div class="center-column">
-            <TetrisBoard :game="game" />
-        </div>
-
-        <div class="center-column"><PauseOverlay v-if="game.isPaused" /></div>
-
-        <div class="center-column"><GameOver v-if="game.gameOver" /></div>
-
-        <div class="next-column font">
-            <NextPieces :game="game" />
-        </div>
-        <div class="held-column font">
-            <HoldPiece :game="game" />
-        </div>
-        <div class="controls font">
-            <KeyboardControls />
-        </div>
-    </div>
+    <TetrisGame v-if="menuChoice === Menu.Endless" :max-lines="null" :max-time="null" />
+    <TetrisGame v-if="menuChoice === Menu.Marathon" :max-lines="150" :max-time="null" />
+    <TetrisGame v-if="menuChoice === Menu.Sprint" :max-lines="40" :max-time="null" />
+    <TetrisGame v-if="menuChoice === Menu.Time" :max-lines="null" :max-time="180000" />
 </template>
 
 <style scoped>
-.app {
-    display: grid;
-    gap: 3.5rem 1rem;
+.header {
+    display: inline-flex;
     justify-content: center;
-    margin-top: 20px;
-    width: 100%;
 }
 
-.font {
+.navbar {
+    display: grid;
+    justify-content: center;
+    padding: 4rem;
+    gap: 2rem;
+}
+
+.menu-button {
+    display: inline-block;
+    text-align: center;
+    font-size: 20px;
+    font-family: 'Press Start 2P';
     color: #ddd;
-    font-size: 1.2rem;
+    background-color: #444;
+    border: none;
+    padding: 16px;
+    -webkit-box-shadow: 0 0 15px #ddd;
+    box-shadow: 0 0 15px #ddd;
 }
 
-.center-column {
-    grid-column-start: 2;
-    grid-column-end: 4;
-    grid-row-start: 1;
-    grid-row-end: 5;
-    min-width: 400px;
-    min-height: 660px;
-}
-
-.next-column {
-    grid-column-start: 4;
-    grid-row-start: 1;
-    grid-row-end: 5;
-    min-width: 130px;
-    min-height: 310px;
-}
-
-.held-column {
-    grid-column-start: 5;
-    min-width: 130px;
-    min-height: 130px;
-}
-
-.controls {
-    grid-column-start: 5;
-    grid-row-start: 2;
-    grid-row-end: 5;
-    width: 500px;
-}
-
-.game-info {
-    grid-column-start: 1;
-    grid-row-start: 1;
-    grid-row-end: 2;
-    min-width: 500px;
-    min-height: 130px;
-}
-
-.line-count {
-    grid-column-start: 1;
-    grid-row-start: 2;
-    grid-row-end: 3;
-    min-width: 500px;
-    min-height: 130px;
-}
-
-.piece-count {
-    grid-column-start: 1;
-    grid-row-start: 3;
-    grid-row-end: 4;
-    min-width: 500px;
-    min-height: 130px;
-}
-
-@media (max-width: 1700px) {
-    .controls {
-        display: none;
-    }
-}
-
-@media (max-width: 1250px) {
-    .game-info {
-        display: none;
-    }
-
-    .line-count {
-        display: none;
-    }
-
-    .piece-count {
-        display: none;
-    }
+.menu-button:hover {
+    background-color: #333;
+    cursor: pointer;
+    -webkit-box-shadow: 0 0 15px #aaa;
+    box-shadow: 0 0 15px #aaa;
 }
 </style>

@@ -59,13 +59,19 @@ export const getHeldPieceColor = (game: Game, block: number): string => {
  * with a special glow for being in danger, paused, both, or having a high combo.
  */
 export const getGlow = (game: Game): string => {
+    if (game.gameFinished) {
+        return 'green-glow ';
+    }
     if (game.board.firstRowsNotEmpty(game.currentPiece, 6) && game.isPaused) {
         return 'purple-glow ';
-    } else if (game.board.firstRowsNotEmpty(game.currentPiece, 6)) {
+    }
+    if (game.board.firstRowsNotEmpty(game.currentPiece, 6) || game.gameOver) {
         return 'red-glow ';
-    } else if (game.isPaused) {
+    }
+    if (game.isPaused) {
         return 'blue-glow ';
-    } else if (game.currentCombo > 4) {
+    }
+    if (game.currentCombo > 4) {
         return 'orange-glow ';
     } else {
         return '';

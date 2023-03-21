@@ -30,8 +30,14 @@ export enum Move {
 }
 
 export class Game {
+    // Game Over is used when you "fail".
     gameOver: boolean;
+    // And Game Finished is used when you complete one of the challenge modes.
+    gameFinished: boolean;
     isPaused: boolean;
+
+    maxTime: number | null;
+    maxLines: number | null;
 
     board: Board;
     currentPiece: Piece;
@@ -72,7 +78,7 @@ export class Game {
     waitForLock: boolean;
     lockMoveResets: number;
 
-    constructor() {
+    constructor(maxLines: number | null = null, maxTime: number | null = null) {
         const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
 
         // Taking the first piece of the queue.
@@ -83,7 +89,11 @@ export class Game {
 
         // Assigning the values.
         this.gameOver = false;
+        this.gameFinished = false;
         this.isPaused = false;
+
+        this.maxLines = maxLines;
+        this.maxTime = maxTime;
 
         this.board = new Board();
         this.currentPiece = currentPiece;
@@ -132,6 +142,15 @@ export class Game {
 
                 this.timer = Date.now() - this.initialTime;
 
+                // Checking if the game is finished.
+                if (this.maxLines && this.totalLines >= this.maxLines) {
+                    this.gameFinished = true;
+                }
+
+                if (this.maxTime && this.timer >= this.maxTime) {
+                    this.gameFinished = true;
+                }
+
                 // When the game is waiting for a locked piece to "finish",
                 // we decrement the timer
                 if (this.waitForLock) {
@@ -146,7 +165,7 @@ export class Game {
                 }
             }
 
-            if (!this.gameOver) {
+            if (!this.gameOver && !this.gameFinished) {
                 this.advanceTick();
             }
         }, 1000 / 60);
@@ -156,7 +175,7 @@ export class Game {
      * Handles the keyboard inputs.
      */
     handleInput(e: KeyboardEvent): void {
-        if (this.gameOver) {
+        if (this.gameOver || this.gameFinished) {
             // Resets the game.
             if (e.key === CONTROLS.RESET_GAME) {
                 const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
@@ -167,6 +186,7 @@ export class Game {
                 getRandomPiece(nextPieces, PIECE_BAG_AMOUNT);
 
                 this.gameOver = false;
+                this.gameFinished = false;
                 this.isPaused = false;
 
                 this.board = new Board();
@@ -192,6 +212,9 @@ export class Game {
                 this.tSpinCounter = [0, 0];
 
                 this.ticks = 0;
+                this.timer = Date.now();
+                this.initialTime = Date.now();
+
                 this.lockTick = PIECE_LOCK_TICKS;
                 this.waitForLock = false;
 
@@ -330,7 +353,7 @@ export class Game {
      * deleting of any full lines, incrementing the score etc.
      */
     nextTurn(): void {
-        if (this.gameOver) {
+        if (this.gameOver || this.gameFinished) {
             return;
         }
 
