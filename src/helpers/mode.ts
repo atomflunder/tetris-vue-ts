@@ -5,7 +5,7 @@ export const getMaxLines = (gameMode: Menu): number | null => {
         case Menu.Marathon:
             return 150;
         case Menu.Sprint:
-            return 4;
+            return 40;
         default:
             return null;
     }
