@@ -2,6 +2,7 @@ import { Board } from './board';
 import {
     COLORED_BOARD,
     CONTROLS,
+    LINE_CLEAR_DELAY,
     LOCK_MOVE_RESETS,
     PIECE_BAG_AMOUNT,
     PIECE_LOCK_TICKS
@@ -312,7 +313,7 @@ export class Game {
                 this.lastMove = Move.Drop;
             }
 
-            this.nextTurn();
+            this.invokeNextTurn(LINE_CLEAR_DELAY);
         } else {
             const b = this.currentPiece.moveDown(this.board);
             if (!b) {
@@ -322,7 +323,8 @@ export class Game {
                 // If the 30 ticks are up, we lock the piece for real.
                 if (this.lockTick <= 0) {
                     this.score += this.currentDrop;
-                    this.nextTurn();
+
+                    this.invokeNextTurn(LINE_CLEAR_DELAY);
                 }
             } else {
                 if (manual) {
@@ -334,6 +336,30 @@ export class Game {
         // This will update the shadow coordinates when a new piece spawns.
         // Otherwise this is fairly useless.
         this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
+    }
+
+    /**
+     * Invokes the next turn, after waiting X milliseconds.
+     */
+    invokeNextTurn(delay: number): void {
+        const fullLines = this.board.getFullLines();
+
+        // Setting the whole row to white blocks only.
+        // But we only do so if the delay is great enough,
+        // otherwise the effect will look weird.
+        if (delay > 100) {
+            for (let i = 0; i < fullLines.length; i++) {
+                this.board.GameBoard[fullLines[i]] = [9, 9, 9, 9, 9, 9, 9, 9, 9, 9];
+            }
+        }
+
+        if (delay > 0 && fullLines.length > 0) {
+            setTimeout(() => {
+                this.nextTurn();
+            }, delay);
+        } else {
+            this.nextTurn();
+        }
     }
 
     /**
@@ -432,6 +458,8 @@ export class Game {
         this.holdThisTurn = true;
         this.waitForLock = false;
         this.lockMoveResets = LOCK_MOVE_RESETS;
+
+        this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
     }
 
     /**

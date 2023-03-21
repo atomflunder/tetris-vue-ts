@@ -11,6 +11,13 @@ export const SHOW_DEBUG_INFO = false;
 export const COLORED_BOARD = true;
 
 /**
+ * The delay you get when clearing lines, in milliseconds.
+ * Can be set to 0 (or lower) for no delay at all.
+ * Most games use a value between 400 to 700.
+ */
+export const LINE_CLEAR_DELAY = 300;
+
+/**
  * If you want to use a modern piece generator,
  * which makes sure you see each piece equally often.
  *
