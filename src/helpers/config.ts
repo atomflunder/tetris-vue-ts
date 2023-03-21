@@ -69,8 +69,11 @@ export const LOCK_MOVE_RESETS = 15;
  * https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
  */
 export const CONTROLS = {
-    RESET_GAME: 'Enter',
     PAUSE_GAME: 'Escape',
+    // The next two are only enabled when the game is over.
+    // So no need to worry about overlaps.
+    RESET_GAME: 'Enter',
+    BACK_TO_MENU: 'Escape',
 
     MOVE_LEFT: 'ArrowLeft',
     MOVE_RIGHT: 'ArrowRight',

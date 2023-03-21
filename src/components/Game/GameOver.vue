@@ -5,6 +5,7 @@ import { CONTROLS } from '@/helpers/config';
 <template>
     <div class="game-over">GAME OVER!</div>
     <div class="info">{{ CONTROLS.RESET_GAME.toUpperCase() }} TO RESET</div>
+    <div class="info">{{ CONTROLS.BACK_TO_MENU.toUpperCase() }} FOR MENU</div>
 </template>
 
 <style scoped>
@@ -18,7 +19,7 @@ import { CONTROLS } from '@/helpers/config';
 
 .info {
     top: 25%;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     color: #ffffff;
     margin-left: 15px;
 }

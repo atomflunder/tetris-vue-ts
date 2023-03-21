@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Game } from '../helpers/game';
 
 import LineCount from '@/components/Game/LineCount.vue';
@@ -12,24 +12,37 @@ import GameOver from '@/components/Game/GameOver.vue';
 import KeyboardControls from '@/components/Game/KeyboardControls.vue';
 import PauseOverlay from '@/components/Game/PauseOverlay.vue';
 import GameFinished from './Game/GameFinished.vue';
+import { CONTROLS } from '@/helpers/config';
 
 const props = defineProps<{
     maxLines: number | null;
     maxTime: number | null;
 }>();
 
-const game = reactive(new Game(props.maxLines, props.maxTime));
+const emits = defineEmits(['back-to-menu']);
+
+const game = ref(new Game(props.maxLines, props.maxTime));
 
 onkeydown = (e: KeyboardEvent) => {
-    game.handleInput(e);
+    game.value.handleInput(e);
 };
 
 onkeyup = (e: KeyboardEvent) => {
-    game.handleKeyup(e);
+    if (game.value.gameOver || game.value.gameFinished) {
+        if (e.key === CONTROLS.RESET_GAME) {
+            game.value.reset();
+        } else if (e.key === CONTROLS.BACK_TO_MENU) {
+            emits('back-to-menu');
+        }
+
+        return;
+    }
+
+    game.value.handleKeyup(e);
 };
 
 onMounted(() => {
-    game.advanceTick();
+    game.value.advanceTick();
 });
 </script>
 

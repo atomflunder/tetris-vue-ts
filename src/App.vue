@@ -4,6 +4,26 @@ import TetrisGame from '@/components/TetrisGame.vue';
 import { Menu } from './helpers/types';
 
 let menuChoice = ref(Menu.None);
+
+function getMaxLines(gameMode: Menu): number | null {
+    switch (gameMode) {
+        case Menu.Marathon:
+            return 150;
+        case Menu.Sprint:
+            return 40;
+        default:
+            return null;
+    }
+}
+
+function getMaxTime(gameMode: Menu): number | null {
+    switch (gameMode) {
+        case Menu.Time:
+            return 180000;
+        default:
+            return null;
+    }
+}
 </script>
 
 <template>
@@ -17,10 +37,12 @@ let menuChoice = ref(Menu.None);
         <button class="menu-button" @click="menuChoice = Menu.Time">3 Minutes Timed</button>
     </nav>
 
-    <TetrisGame v-if="menuChoice === Menu.Endless" :max-lines="null" :max-time="null" />
-    <TetrisGame v-if="menuChoice === Menu.Marathon" :max-lines="150" :max-time="null" />
-    <TetrisGame v-if="menuChoice === Menu.Sprint" :max-lines="40" :max-time="null" />
-    <TetrisGame v-if="menuChoice === Menu.Time" :max-lines="null" :max-time="180000" />
+    <TetrisGame
+        v-if="menuChoice !== Menu.None"
+        :max-lines="getMaxLines(menuChoice)"
+        :max-time="getMaxTime(menuChoice)"
+        @back-to-menu="menuChoice = Menu.None"
+    />
 </template>
 
 <style scoped>

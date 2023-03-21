@@ -11,6 +11,7 @@ defineProps<{
 <template>
     <div class="game-over">GAME FINISHED!</div>
     <div class="info">{{ CONTROLS.RESET_GAME.toUpperCase() }} TO RESTART</div>
+    <div class="info">{{ CONTROLS.BACK_TO_MENU.toUpperCase() }} FOR MENU</div>
 
     <div class="stats">TIME: {{ msToTimer(game.timer) }}</div>
     <div class="stats">LINES: {{ game.totalLines }}</div>
