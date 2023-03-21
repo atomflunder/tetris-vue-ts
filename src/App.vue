@@ -2,43 +2,35 @@
 import { ref } from 'vue';
 import TetrisGame from '@/components/TetrisGame.vue';
 import { Menu } from './helpers/types';
+import { getHighScore } from './helpers/storage';
+import { getMaxLines, getMaxTime } from './helpers/mode';
 
 let menuChoice = ref(Menu.None);
-
-function getMaxLines(gameMode: Menu): number | null {
-    switch (gameMode) {
-        case Menu.Marathon:
-            return 150;
-        case Menu.Sprint:
-            return 40;
-        default:
-            return null;
-    }
-}
-
-function getMaxTime(gameMode: Menu): number | null {
-    switch (gameMode) {
-        case Menu.Time:
-            return 180000;
-        default:
-            return null;
-    }
-}
 </script>
 
 <template>
     <div class="navbar" v-if="menuChoice === Menu.None">
         <div class="header">SELECT GAME MODE:</div>
+        <div class="header">HIGH SCORES:</div>
+
         <button class="menu-button" @click="menuChoice = Menu.Endless">Endless</button>
+        <div class="scores">{{ getHighScore(Menu.Endless) }}</div>
+
         <button class="menu-button" @click="menuChoice = Menu.Marathon">
             Marathon (150 Lines)
         </button>
+        <div class="scores">{{ getHighScore(Menu.Marathon) }}</div>
+
         <button class="menu-button" @click="menuChoice = Menu.Sprint">Sprint (40 Lines)</button>
+        <div class="scores">{{ getHighScore(Menu.Sprint) }}</div>
+
         <button class="menu-button" @click="menuChoice = Menu.Time">3 Minutes Timed</button>
+        <div class="scores">{{ getHighScore(Menu.Time) }}</div>
     </div>
 
     <TetrisGame
-        v-if="menuChoice !== Menu.None"
+        v-else
+        :gameMode="menuChoice"
         :max-lines="getMaxLines(menuChoice)"
         :max-time="getMaxTime(menuChoice)"
         @back-to-menu="menuChoice = Menu.None"
@@ -49,6 +41,7 @@ function getMaxTime(gameMode: Menu): number | null {
 .header {
     display: inline-flex;
     justify-content: center;
+    grid-row-start: 1;
 }
 
 .navbar {
@@ -69,6 +62,7 @@ function getMaxTime(gameMode: Menu): number | null {
     padding: 16px;
     -webkit-box-shadow: 0 0 15px #ddd;
     box-shadow: 0 0 15px #ddd;
+    grid-column-start: 1;
 }
 
 .menu-button:hover {
@@ -76,5 +70,11 @@ function getMaxTime(gameMode: Menu): number | null {
     cursor: pointer;
     -webkit-box-shadow: 0 0 15px #aaa;
     box-shadow: 0 0 15px #aaa;
+}
+
+.scores {
+    grid-column-start: 2;
+    font-size: 1.7rem;
+    padding: 16px;
 }
 </style>

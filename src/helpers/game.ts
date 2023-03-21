@@ -9,9 +9,12 @@ import {
 } from './config';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
-import { Move, TSpin } from './types';
+import { setHighScore } from './storage';
+import { Menu, Move, TSpin } from './types';
 
 export class Game {
+    gameMode: Menu;
+
     // Game Over is used when you "fail".
     gameOver: boolean;
     // And Game Finished is used when you complete one of the challenge modes.
@@ -60,7 +63,7 @@ export class Game {
     waitForLock: boolean;
     lockMoveResets: number;
 
-    constructor(maxLines: number | null = null, maxTime: number | null = null) {
+    constructor(gameMode: Menu, maxLines: number | null = null, maxTime: number | null = null) {
         const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
 
         // Taking the first piece of the queue.
@@ -70,6 +73,7 @@ export class Game {
         getRandomPiece(nextPieces, PIECE_BAG_AMOUNT);
 
         // Assigning the values.
+        this.gameMode = gameMode;
         this.gameOver = false;
         this.gameFinished = false;
         this.isPaused = false;
@@ -153,6 +157,9 @@ export class Game {
 
             if (!this.gameOver && !this.gameFinished) {
                 this.advanceTick();
+            } else {
+                // If the game is over, we set the high score.
+                setHighScore(this.gameMode, this.score, this.timer, this.gameOver);
             }
         }, 1000 / 60);
     }
