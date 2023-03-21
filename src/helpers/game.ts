@@ -63,7 +63,11 @@ export class Game {
     waitForLock: boolean;
     lockMoveResets: number;
 
-    constructor(gameMode: Menu, maxLines: number | null = null, maxTime: number | null = null) {
+    constructor(
+        gameMode: Menu = Menu.Endless,
+        maxLines: number | null = null,
+        maxTime: number | null = null
+    ) {
         const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
 
         // Taking the first piece of the queue.
