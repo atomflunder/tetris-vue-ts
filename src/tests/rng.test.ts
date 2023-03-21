@@ -1,4 +1,4 @@
-import { MODERN_PIECE_RNG } from '@/helpers/consts';
+import { MODERN_PIECE_RNG } from '@/helpers/config';
 import { getRandomPiece, getRandomPieceClassic, getRandomPieceModern } from '@/helpers/rng';
 import { expect, test } from 'vitest';
 

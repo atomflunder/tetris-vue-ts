@@ -5,7 +5,7 @@ import {
     LOCK_MOVE_RESETS,
     PIECE_BAG_AMOUNT,
     PIECE_LOCK_TICKS
-} from './consts';
+} from './config';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
 import { Move, TSpin } from './types';

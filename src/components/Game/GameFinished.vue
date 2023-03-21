@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CONTROLS } from '@/helpers/consts';
+import { CONTROLS } from '@/helpers/config';
 import type { Game } from '@/helpers/game';
 import { msToTimer } from '@/helpers/style';
 

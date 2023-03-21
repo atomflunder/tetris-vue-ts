@@ -1,4 +1,4 @@
-import { MODERN_PIECE_RNG, PIECE_LOCK_TICKS } from '@/helpers/consts';
+import { MODERN_PIECE_RNG, PIECE_LOCK_TICKS } from '@/helpers/config';
 import { Game } from '@/helpers/game';
 import { allPieces } from '@/helpers/pieceData';
 import { Move, TSpin } from '@/helpers/types';

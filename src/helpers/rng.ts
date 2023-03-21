@@ -1,4 +1,4 @@
-import { FIRST_PIECE_NO_OVERHANG, MODERN_PIECE_RNG } from './consts';
+import { FIRST_PIECE_NO_OVERHANG, MODERN_PIECE_RNG } from './config';
 import { allPieces } from './pieceData';
 import type { Piece } from './pieces';
 
