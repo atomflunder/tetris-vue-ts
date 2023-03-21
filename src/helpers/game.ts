@@ -117,18 +117,22 @@ export class Game {
      */
     advanceTick(): void {
         setTimeout(() => {
-            // If the game is paused we pretty much do nothing.
+            this.timer = Date.now() - this.initialTime;
+
+            if (this.maxTime && this.timer >= this.maxTime) {
+                // If the game is over, we manually un-pause,
+                // if it happens to be paused.
+                this.isPaused = false;
+                this.gameFinished = true;
+            }
+
+            // If the game is paused we pretty much do nothing,
+            // except updating the timer and checking if it's over the limit.
             if (!this.isPaused) {
                 this.ticks++;
 
-                this.timer = Date.now() - this.initialTime;
-
                 // Checking if the game is finished.
                 if (this.maxLines && this.totalLines >= this.maxLines) {
-                    this.gameFinished = true;
-                }
-
-                if (this.maxTime && this.timer >= this.maxTime) {
                     this.gameFinished = true;
                 }
 

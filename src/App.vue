@@ -27,7 +27,7 @@ function getMaxTime(gameMode: Menu): number | null {
 </script>
 
 <template>
-    <nav class="navbar" v-if="menuChoice === Menu.None">
+    <div class="navbar" v-if="menuChoice === Menu.None">
         <div class="header">SELECT GAME MODE:</div>
         <button class="menu-button" @click="menuChoice = Menu.Endless">Endless</button>
         <button class="menu-button" @click="menuChoice = Menu.Marathon">
@@ -35,7 +35,7 @@ function getMaxTime(gameMode: Menu): number | null {
         </button>
         <button class="menu-button" @click="menuChoice = Menu.Sprint">Sprint (40 Lines)</button>
         <button class="menu-button" @click="menuChoice = Menu.Time">3 Minutes Timed</button>
-    </nav>
+    </div>
 
     <TetrisGame
         v-if="menuChoice !== Menu.None"
