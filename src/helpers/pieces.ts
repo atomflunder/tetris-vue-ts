@@ -1,11 +1,5 @@
 import type { Board } from './board';
-
-export enum Direction {
-    // You cannot really ever move a piece up in tetris.
-    Down,
-    Left,
-    Right
-}
+import { Direction } from './types';
 
 export class Piece {
     name: string;

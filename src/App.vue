@@ -1,14 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import TetrisGame from '@/components/TetrisGame.vue';
-
-enum Menu {
-    None,
-    Endless,
-    Marathon,
-    Sprint,
-    Time
-}
+import { Menu } from './helpers/types';
 
 let menuChoice = ref(Menu.None);
 </script>

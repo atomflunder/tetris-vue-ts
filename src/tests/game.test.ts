@@ -1,6 +1,7 @@
 import { MODERN_PIECE_RNG, PIECE_LOCK_TICKS } from '@/helpers/consts';
-import { Game, Move, TSpin } from '@/helpers/game';
+import { Game } from '@/helpers/game';
 import { allPieces } from '@/helpers/pieceData';
+import { Move, TSpin } from '@/helpers/types';
 import { expect, test } from 'vitest';
 
 test('New Game', () => {

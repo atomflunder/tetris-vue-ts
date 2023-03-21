@@ -1,6 +1,7 @@
 import { Board } from '@/helpers/board';
 import { allPieces } from '@/helpers/pieceData';
-import { Direction, Piece } from '@/helpers/pieces';
+import { Piece } from '@/helpers/pieces';
+import { Direction } from '@/helpers/types';
 import { expect, test } from 'vitest';
 
 test('New Piece', () => {

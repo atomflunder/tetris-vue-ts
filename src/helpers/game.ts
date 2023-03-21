@@ -8,26 +8,7 @@ import {
 } from './consts';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
-
-/**
- * The possible T-Spin outcomes.
- */
-export enum TSpin {
-    None,
-    Mini,
-    Full
-}
-
-/**
- * The last successful move a player makes.
- */
-export enum Move {
-    None,
-    Drop,
-    Rotation,
-    Left,
-    Right
-}
+import { Move, TSpin } from './types';
 
 export class Game {
     // Game Over is used when you "fail".
