@@ -10,6 +10,7 @@ import {
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
 import { setHighScore } from './storage';
+import { Timer } from './timer';
 import { Menu, Move, TSpin } from './types';
 
 export class Game {
@@ -55,8 +56,7 @@ export class Game {
     // A tick is 1/60th of a second.
     ticks: number;
     // Just a timer that gets displayed.
-    timer: number;
-    initialTime: number;
+    timer: Timer;
 
     // The amount of ticks after a piece gets locked without input.
     lockTick: number;
@@ -108,9 +108,7 @@ export class Game {
         this.tSpinCounter = [0, 0];
 
         this.ticks = 0;
-        // TODO: Factor out the timer into its own class.
-        this.timer = Date.now();
-        this.initialTime = Date.now();
+        this.timer = new Timer();
 
         this.lockTick = PIECE_LOCK_TICKS;
         this.waitForLock = false;
@@ -127,9 +125,9 @@ export class Game {
      */
     advanceTick(): void {
         setTimeout(() => {
-            this.timer = Date.now() - this.initialTime;
+            this.timer.update();
 
-            if (this.maxTime && this.timer >= this.maxTime) {
+            if (this.maxTime && this.timer.currentTime >= this.maxTime) {
                 // If the game is over, we manually un-pause,
                 // if it happens to be paused.
                 this.isPaused = false;
@@ -164,7 +162,7 @@ export class Game {
                 this.advanceTick();
             } else {
                 // If the game is over, we set the high score.
-                setHighScore(this.gameMode, this.score, this.timer, this.gameOver);
+                setHighScore(this.gameMode, this.score, this.timer.currentTime, this.gameOver);
             }
         }, 1000 / 60);
     }
@@ -297,8 +295,7 @@ export class Game {
         this.tSpinCounter = [0, 0];
 
         this.ticks = 0;
-        this.timer = Date.now();
-        this.initialTime = Date.now();
+        this.timer = new Timer();
 
         this.lockTick = PIECE_LOCK_TICKS;
         this.waitForLock = false;

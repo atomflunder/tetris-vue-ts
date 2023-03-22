@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Game } from '@/helpers/game';
 import { SHOW_DEBUG_INFO } from '@/helpers/config';
-import { msToTimer } from '@/helpers/style';
 
 defineProps<{
     game: Game;
@@ -19,7 +18,7 @@ defineProps<{
     </div>
     <div>
         TIME:
-        {{ msToTimer(game.timer) }}
+        {{ game.timer.toReadableTime() }}
     </div>
     <div>&nbsp;</div>
     <div>

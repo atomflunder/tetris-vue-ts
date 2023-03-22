@@ -1,11 +1,11 @@
-import { msToTimer } from './style';
+import { msToTime } from './timer';
 import { Menu } from './types';
 
 export const getHighScore = (gameMode: Menu): string => {
     const score = localStorage.getItem(`highscore-${gameMode}`) || '0';
     const bestTime = localStorage.getItem(`besttime-${gameMode}`) || '0';
 
-    return `${score} / ${msToTimer(Number(bestTime))}`;
+    return `${score} / ${msToTime(Number(bestTime))}`;
 };
 
 export const setHighScore = (

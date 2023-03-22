@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { CONTROLS } from '@/helpers/config';
 import type { Game } from '@/helpers/game';
-import { msToTimer } from '@/helpers/style';
 
 defineProps<{
     game: Game;
@@ -13,7 +12,7 @@ defineProps<{
     <div class="info">{{ CONTROLS.RESET_GAME.toUpperCase() }} TO RESTART</div>
     <div class="info">{{ CONTROLS.BACK_TO_MENU.toUpperCase() }} FOR MENU</div>
 
-    <div class="stats">TIME: {{ msToTimer(game.timer) }}</div>
+    <div class="stats">TIME: {{ game.timer.toReadableTime() }}</div>
     <div class="stats">LINES: {{ game.totalLines }}</div>
     <div class="stats">SCORE: {{ game.score }}</div>
 </template>
