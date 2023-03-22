@@ -108,6 +108,7 @@ export class Game {
         this.tSpinCounter = [0, 0];
 
         this.ticks = 0;
+        // TODO: Factor out the timer into its own class.
         this.timer = Date.now();
         this.initialTime = Date.now();
 
@@ -333,6 +334,7 @@ export class Game {
                 this.waitForLock = true;
                 // If the 30 ticks are up, we lock the piece for real.
                 if (this.lockTick <= 0) {
+                    this.lockTick = PIECE_LOCK_TICKS;
                     this.score += this.currentDrop;
 
                     this.invokeNextTurn(LINE_CLEAR_DELAY);
@@ -354,6 +356,16 @@ export class Game {
      */
     invokeNextTurn(delay: number): void {
         const fullLines = this.board.getFullLines();
+
+        // First, we grey the pieces out if the user wishes to do so.
+        if (!COLORED_BOARD) {
+            const coords = this.currentPiece.getCoordinates();
+
+            for (let i = 0; i < coords.length; i++) {
+                // 8 corresponds to the greyed out color.
+                this.board.GameBoard[coords[i][0]][coords[i][1]] = 8;
+            }
+        }
 
         // Setting the whole row to white blocks only.
         // But we only do so if the delay is great enough,
@@ -396,14 +408,6 @@ export class Game {
             this.currentCombo = -1;
         }
 
-        // This will detect a full-clear.
-        const boardSum = this.board.GameBoard.reduce(function (a, b) {
-            return a.concat(b);
-        }).reduce(function (a, b) {
-            return a + b;
-        });
-        const fullClear = boardSum === 0 && fullLines.length > 0 ? true : false;
-
         // This detects a T-Spin
         const tSpin = this.detectTSpin();
 
@@ -424,34 +428,36 @@ export class Game {
             }
         }
 
+        // Then we actually delete the lines.
+        // This needs to be between the T-Spin detection and the full-clear detection.
+        // Because the T-Spin detection checks for existing blocks around the T Piece
+        // and the full-clear detection checks for the state after the lines are cleared.
+        for (let i = 0; i < fullLines.length; i++) {
+            this.board.deleteLine(fullLines[i]);
+        }
+
+        // This will detect a full-clear.
+        const boardSum = this.board.GameBoard.reduce(function (a, b) {
+            return a.concat(b);
+        }).reduce(function (a, b) {
+            return a + b;
+        });
+        const fullClear = boardSum === 0 && fullLines.length > 0 ? true : false;
+
         const multiplier = this.level * (this.lastDifficult && thisDifficult ? 1.5 : 1);
 
         this.score += this.getScore(fullLines.length, multiplier, tSpin, fullClear);
 
+        // TODO: Add Level select.
         this.level = Math.floor(this.totalLines / 10) + 1;
 
         this.lastDifficult = thisDifficult;
-
-        // Greys the pieces out if the user wishes to do so.
-        if (!COLORED_BOARD) {
-            const coords = this.currentPiece.getCoordinates();
-
-            for (let i = 0; i < coords.length; i++) {
-                // 8 corresponds to the greyed out color.
-                this.board.GameBoard[coords[i][0]][coords[i][1]] = 8;
-            }
-        }
 
         // We get the new piece from the stack of next pieces.
         const nextPiece = this.nextPieces[0];
         this.currentPiece = nextPiece;
 
         this.incrementPieceCount();
-
-        // Then we actually delete the lines.
-        for (let i = 0; i < fullLines.length; i++) {
-            this.board.deleteLine(fullLines[i]);
-        }
 
         // Checking if the piece can spawn, if not this is an automatic game over.
         const b = this.currentPiece.spawn(this.board);
