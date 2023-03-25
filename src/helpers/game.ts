@@ -72,6 +72,7 @@ export class Game {
 
         // Taking the first piece of the queue.
         const currentPiece = nextPieces[0];
+        currentPiece.reset();
         nextPieces.shift();
 
         getRandomPiece(nextPieces, PIECE_BAG_AMOUNT);
