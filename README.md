@@ -22,7 +22,7 @@ In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/w
 
 -   🆕 Inserting Garbage in Single Player
 -   🆕 Many In-Depth Configuration Options (See [config](./src/helpers/config.ts))
--   🆕 Remappable Controls (Also See [config](./src/helpers/config.ts))
+-   🆕 Remappable Controls (See [controls](./src/helpers/controls.ts))
 
 -   ❌ 20x10 Playfield (We use 22x10)
 -   ❌ Sound Effects, Logo, etc.

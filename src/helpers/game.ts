@@ -1,15 +1,15 @@
 import { Board } from './board';
 import {
     COLORED_BOARD,
-    CONTROLS,
     LINE_CLEAR_DELAY,
     LOCK_MOVE_RESETS,
     PIECE_BAG_AMOUNT,
     PIECE_LOCK_TICKS
 } from './config';
+import { CONTROLS } from './controls';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
-import { setHighScore } from './storage';
+import { setHighScore } from './score';
 import { Timer } from './timer';
 import { Menu, Move, TSpin } from './types';
 
@@ -253,7 +253,7 @@ export class Game {
      */
     handleKeyup(e: KeyboardEvent): void {
         // Resetting the down counter when the player releases the down key.
-        if (e.key === 'ArrowDown') {
+        if (e.key === CONTROLS.SOFT_DROP) {
             this.currentDrop = 0;
             this.lockTick = PIECE_LOCK_TICKS;
         }

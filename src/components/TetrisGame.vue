@@ -12,7 +12,7 @@ import GameOver from '@/components/Game/GameOver.vue';
 import KeyboardControls from '@/components/Game/KeyboardControls.vue';
 import PauseOverlay from '@/components/Game/PauseOverlay.vue';
 import GameFinished from './Game/GameFinished.vue';
-import { CONTROLS } from '@/helpers/config';
+import { CONTROLS } from '@/helpers/controls';
 import type { Menu } from '@/helpers/types';
 
 const props = defineProps<{

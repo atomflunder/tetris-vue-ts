@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CONTROLS } from '@/helpers/config';
+import { CONTROLS } from '@/helpers/controls';
 
 /**
  * Displaying some commonly and default used keys to be visually more appealing.

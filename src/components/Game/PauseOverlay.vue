@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CONTROLS } from '@/helpers/config';
+import { CONTROLS } from '@/helpers/controls';
 </script>
 
 <template>

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import TetrisGame from '@/components/TetrisGame.vue';
 import { Menu } from './helpers/types';
-import { getHighScore } from './helpers/storage';
+import { getHighScore } from './helpers/score';
 import { getMaxLines, getMaxTime } from './helpers/mode';
 
 let menuChoice = ref(Menu.None);
