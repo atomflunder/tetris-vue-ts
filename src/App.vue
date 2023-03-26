@@ -5,6 +5,7 @@ import ConfigMenu from '@/components/ConfigMenu.vue';
 import { Menu } from './helpers/types';
 import { getHighScore } from './helpers/score';
 import { getMaxLines, getMaxTime } from './helpers/mode';
+import ControlMenu from './components/ControlMenu.vue';
 
 let menuChoice = ref(Menu.None);
 </script>
@@ -29,11 +30,13 @@ let menuChoice = ref(Menu.None);
         <div class="scores">{{ getHighScore(Menu.Time) }}</div>
 
         <div class="options">
-            <button class="menu-button" @click="menuChoice = Menu.Options">Config Options</button>
+            <button class="menu-button" @click="menuChoice = Menu.Config">Config Options</button>
+            <button class="menu-button" @click="menuChoice = Menu.Control">Keybind Options</button>
         </div>
     </div>
 
-    <ConfigMenu v-else-if="menuChoice === Menu.Options" @back="menuChoice = Menu.None" />
+    <ConfigMenu v-else-if="menuChoice === Menu.Config" @back="menuChoice = Menu.None" />
+    <ControlMenu v-else-if="menuChoice === Menu.Control" @back="menuChoice = Menu.None" />
 
     <TetrisGame
         v-else
@@ -64,6 +67,9 @@ let menuChoice = ref(Menu.None);
     top: 0%;
     margin-right: 10px;
     margin-top: 10px;
+    clear: right;
+    display: grid;
+    row-gap: 1rem;
 }
 
 .scores {

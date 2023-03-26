@@ -1,26 +1,6 @@
 <script setup lang="ts">
 import { CONTROLS } from '@/helpers/controls';
-
-/**
- * Displaying some commonly and default used keys to be visually more appealing.
- */
-function keyToDisplay(key: string): string {
-    switch (key) {
-        case ' ':
-            return 'SPACE';
-        case 'ArrowLeft':
-            return '◀';
-        case 'ArrowRight':
-            return '▶';
-        case 'ArrowDown':
-            return '▼';
-        case 'ArrowUp':
-            return '▲';
-
-        default:
-            return '';
-    }
-}
+import { keyToDisplay } from '@/helpers/style';
 </script>
 
 <template>
