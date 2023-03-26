@@ -1,11 +1,5 @@
 import { Board } from './board';
-import {
-    COLORED_BOARD,
-    LINE_CLEAR_DELAY,
-    LOCK_MOVE_RESETS,
-    PIECE_BAG_AMOUNT,
-    PIECE_LOCK_TICKS
-} from './config';
+import { CONFIG } from './config';
 import { CONTROLS } from './controls';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
@@ -68,14 +62,14 @@ export class Game {
         maxLines: number | null = null,
         maxTime: number | null = null
     ) {
-        const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
+        const nextPieces = getRandomPiece([], CONFIG.PIECE_BAG_AMOUNT, true);
 
         // Taking the first piece of the queue.
         const currentPiece = nextPieces[0];
         currentPiece.reset();
         nextPieces.shift();
 
-        getRandomPiece(nextPieces, PIECE_BAG_AMOUNT);
+        getRandomPiece(nextPieces, CONFIG.PIECE_BAG_AMOUNT);
 
         // Assigning the values.
         this.gameMode = gameMode;
@@ -111,9 +105,9 @@ export class Game {
         this.ticks = 0;
         this.timer = new Timer();
 
-        this.lockTick = PIECE_LOCK_TICKS;
+        this.lockTick = CONFIG.PIECE_LOCK_TICKS;
         this.waitForLock = false;
-        this.lockMoveResets = LOCK_MOVE_RESETS;
+        this.lockMoveResets = CONFIG.LOCK_MOVE_RESETS;
 
         // Spawning the first piece.
         this.currentPiece.spawn(this.board);
@@ -188,7 +182,7 @@ export class Game {
 
         // When an action successfully completes, we update the lock ticks and the shadow piece coordinates.
         const update = (): void => {
-            this.lockTick = PIECE_LOCK_TICKS;
+            this.lockTick = CONFIG.PIECE_LOCK_TICKS;
             this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
 
             if (this.waitForLock) {
@@ -255,7 +249,7 @@ export class Game {
         // Resetting the down counter when the player releases the down key.
         if (e.key === CONTROLS.SOFT_DROP) {
             this.currentDrop = 0;
-            this.lockTick = PIECE_LOCK_TICKS;
+            this.lockTick = CONFIG.PIECE_LOCK_TICKS;
         }
     }
 
@@ -263,12 +257,12 @@ export class Game {
      * Resets the game.
      */
     reset(): void {
-        const nextPieces = getRandomPiece([], PIECE_BAG_AMOUNT, true);
+        const nextPieces = getRandomPiece([], CONFIG.PIECE_BAG_AMOUNT, true);
 
         const currentPiece = nextPieces[0];
         nextPieces.shift();
 
-        getRandomPiece(nextPieces, PIECE_BAG_AMOUNT);
+        getRandomPiece(nextPieces, CONFIG.PIECE_BAG_AMOUNT);
 
         this.gameOver = false;
         this.gameFinished = false;
@@ -298,7 +292,7 @@ export class Game {
         this.ticks = 0;
         this.timer = new Timer();
 
-        this.lockTick = PIECE_LOCK_TICKS;
+        this.lockTick = CONFIG.PIECE_LOCK_TICKS;
         this.waitForLock = false;
 
         this.currentPiece.spawn(this.board);
@@ -323,7 +317,7 @@ export class Game {
                 this.lastMove = Move.Drop;
             }
 
-            this.invokeNextTurn(LINE_CLEAR_DELAY);
+            this.invokeNextTurn(CONFIG.LINE_CLEAR_DELAY);
         } else {
             const b = this.currentPiece.moveDown(this.board);
             if (!b) {
@@ -332,10 +326,10 @@ export class Game {
                 this.waitForLock = true;
                 // If the 30 ticks are up, we lock the piece for real.
                 if (this.lockTick <= 0) {
-                    this.lockTick = PIECE_LOCK_TICKS;
+                    this.lockTick = CONFIG.PIECE_LOCK_TICKS;
                     this.score += this.currentDrop;
 
-                    this.invokeNextTurn(LINE_CLEAR_DELAY);
+                    this.invokeNextTurn(CONFIG.LINE_CLEAR_DELAY);
                 }
             } else {
                 if (manual) {
@@ -356,7 +350,7 @@ export class Game {
         const fullLines = this.board.getFullLines();
 
         // First, we grey the pieces out if the user wishes to do so.
-        if (!COLORED_BOARD) {
+        if (!CONFIG.COLORED_BOARD) {
             const coords = this.currentPiece.getCoordinates();
 
             for (let i = 0; i < coords.length; i++) {
@@ -464,7 +458,7 @@ export class Game {
         }
 
         // Then we populate the queue some more if it needs it.
-        this.nextPieces = getRandomPiece(this.nextPieces, PIECE_BAG_AMOUNT);
+        this.nextPieces = getRandomPiece(this.nextPieces, CONFIG.PIECE_BAG_AMOUNT);
         // Then we remove the first piece from the piece queue.
         this.nextPieces.shift();
 
@@ -472,7 +466,7 @@ export class Game {
         this.ticks = 0;
         this.holdThisTurn = true;
         this.waitForLock = false;
-        this.lockMoveResets = LOCK_MOVE_RESETS;
+        this.lockMoveResets = CONFIG.LOCK_MOVE_RESETS;
 
         this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
     }
@@ -510,7 +504,7 @@ export class Game {
             }
 
             // Then we populate the queue some more if it needs it.
-            this.nextPieces = getRandomPiece(this.nextPieces, PIECE_BAG_AMOUNT);
+            this.nextPieces = getRandomPiece(this.nextPieces, CONFIG.PIECE_BAG_AMOUNT);
             // Then we remove the first piece from the piece queue.
             this.nextPieces.shift();
 

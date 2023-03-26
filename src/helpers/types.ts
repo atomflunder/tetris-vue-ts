@@ -3,6 +3,7 @@
  */
 export enum Menu {
     None,
+    Options,
     Endless,
     Marathon,
     Sprint,
