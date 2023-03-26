@@ -18,6 +18,7 @@ export const setKeybind = (keybind: string, value: string): void => {
 
 /**
  * The control scheme.
+ * If a keybind is not used we use a default keybinding.
  *
  * For the values corresponding to the keys, please see:
  * https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
