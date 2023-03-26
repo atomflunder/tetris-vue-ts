@@ -35,160 +35,181 @@ function resetConfig(): void {
 </script>
 
 <template>
-    <div>
+    <div class="grid">
         <button class="menu-button back" @click="$emit('back')">Back to Menu</button>
-        <div class="header">OPTIONS MENU</div>
-        <div class="config-options">
-            <table>
-                <tr>
-                    <td>SHOW DEBUG INFO:</td>
+
+        <table class="config-table">
+            <td class="header" colspan="2">OPTIONS MENU</td>
+            <tr>
+                <td>SHOW DEBUG INFO:</td>
+                <input
+                    class="box"
+                    type="checkbox"
+                    v-model="debugInfo"
+                    @click="
+                        setConfig(
+                            'SHOW_DEBUG_INFO',
+                            String(($event.target as HTMLInputElement).checked)
+                        )
+                    "
+                />
+            </tr>
+
+            <tr>
+                <td>COLORED BOARD:</td>
+                <input
+                    class="box"
+                    type="checkbox"
+                    v-model="coloredBoard"
+                    @click="
+                        setConfig(
+                            'COLORED_BOARD',
+                            String(($event.target as HTMLInputElement).checked)
+                        )
+                    "
+                />
+            </tr>
+
+            <tr>
+                <td>LINE CLEAR DELAY:</td>
+                <td>
                     <input
-                        class="box"
-                        type="checkbox"
-                        v-model="debugInfo"
-                        @click="
-                            setConfig(
-                                'SHOW_DEBUG_INFO',
-                                String(($event.target as HTMLInputElement).checked)
-                            )
+                        class="slider"
+                        type="range"
+                        v-model="lineClearDelay"
+                        min="0"
+                        max="1000"
+                        @change="
+                            setConfig('LINE_CLEAR_DELAY', ($event.target as HTMLInputElement).value)
                         "
                     />
-                </tr>
+                    ({{ lineClearDelay }})
+                </td>
+            </tr>
 
-                <tr>
-                    <td>COLORED BOARD:</td>
+            <tr>
+                <td>MODERN PIECE RNG:</td>
+                <input
+                    class="box"
+                    type="checkbox"
+                    v-model="modernPieceRNG"
+                    @click="
+                        setConfig(
+                            'MODERN_PIECE_RNG',
+                            String(($event.target as HTMLInputElement).checked)
+                        )
+                    "
+                />
+            </tr>
+
+            <tr>
+                <td>PIECE BAG AMOUNT:</td>
+                <td>
                     <input
-                        class="box"
-                        type="checkbox"
-                        v-model="coloredBoard"
-                        @click="
-                            setConfig(
-                                'COLORED_BOARD',
-                                String(($event.target as HTMLInputElement).checked)
-                            )
+                        class="slider"
+                        type="range"
+                        v-model="pieceBagAmount"
+                        min="1"
+                        max="10"
+                        @change="
+                            setConfig('PIECE_BAG_AMOUNT', ($event.target as HTMLInputElement).value)
                         "
                     />
-                </tr>
+                    ({{ pieceBagAmount }})
+                </td>
+            </tr>
 
-                <tr>
-                    <td>LINE CLEAR DELAY:</td>
-                    <td>
-                        <input
-                            class="slider"
-                            type="range"
-                            v-model="lineClearDelay"
-                            min="0"
-                            max="1000"
-                            @change="
-                                setConfig(
-                                    'LINE_CLEAR_DELAY',
-                                    ($event.target as HTMLInputElement).value
-                                )
-                            "
-                        />
-                        ({{ lineClearDelay }})
-                    </td>
-                </tr>
+            <tr>
+                <td>FIRST PIECE NO OVERHANG:</td>
+                <input
+                    class="box"
+                    type="checkbox"
+                    v-model="firstPieceNoOverhang"
+                    @click="
+                        setConfig(
+                            'FIRST_PIECE_NO_OVERHANG',
+                            String(($event.target as HTMLInputElement).checked)
+                        )
+                    "
+                />
+            </tr>
 
-                <tr>
-                    <td>MODERN PIECE RNG:</td>
+            <tr>
+                <td>PIECE LOCK TICKS:</td>
+                <td>
                     <input
-                        class="box"
-                        type="checkbox"
-                        v-model="modernPieceRNG"
-                        @click="
-                            setConfig(
-                                'MODERN_PIECE_RNG',
-                                String(($event.target as HTMLInputElement).checked)
-                            )
+                        class="slider"
+                        type="range"
+                        v-model="pieceLockTicks"
+                        min="0"
+                        max="60"
+                        @change="
+                            setConfig('PIECE_LOCK_TICKS', ($event.target as HTMLInputElement).value)
                         "
                     />
-                </tr>
+                    ({{ pieceLockTicks }})
+                </td>
+            </tr>
 
-                <tr>
-                    <td>PIECE BAG AMOUNT:</td>
-                    <td>
-                        <input
-                            class="slider"
-                            type="range"
-                            v-model="pieceBagAmount"
-                            min="1"
-                            max="10"
-                            @change="
-                                setConfig(
-                                    'PIECE_BAG_AMOUNT',
-                                    ($event.target as HTMLInputElement).value
-                                )
-                            "
-                        />
-                        ({{ pieceBagAmount }})
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>FIRST PIECE NO OVERHANG:</td>
+            <tr>
+                <td>LOCK MOVE RESETS:</td>
+                <td>
                     <input
-                        class="box"
-                        type="checkbox"
-                        v-model="firstPieceNoOverhang"
-                        @click="
-                            setConfig(
-                                'FIRST_PIECE_NO_OVERHANG',
-                                String(($event.target as HTMLInputElement).checked)
-                            )
+                        class="slider"
+                        type="range"
+                        v-model="lockMoveResets"
+                        min="-1"
+                        max="50"
+                        @change="
+                            setConfig('LOCK_MOVE_RESETS', ($event.target as HTMLInputElement).value)
                         "
                     />
-                </tr>
+                    ({{ lockMoveResets }})
+                </td>
+            </tr>
 
-                <tr>
-                    <td>PIECE LOCK TICKS:</td>
-                    <td>
-                        <input
-                            class="slider"
-                            type="range"
-                            v-model="pieceLockTicks"
-                            min="0"
-                            max="60"
-                            @change="
-                                setConfig(
-                                    'PIECE_LOCK_TICKS',
-                                    ($event.target as HTMLInputElement).value
-                                )
-                            "
-                        />
-                        ({{ pieceLockTicks }})
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>LOCK MOVE RESETS:</td>
-                    <td>
-                        <input
-                            class="slider"
-                            type="range"
-                            v-model="lockMoveResets"
-                            min="-1"
-                            max="50"
-                            @change="
-                                setConfig(
-                                    'LOCK_MOVE_RESETS',
-                                    ($event.target as HTMLInputElement).value
-                                )
-                            "
-                        />
-                        ({{ lockMoveResets }})
-                    </td>
-                </tr>
-            </table>
-
-            <button class="menu-button" @click="resetConfig">RESET TO DEFAULT</button>
-        </div>
-
-        <div class="footer">OPTIONS WILL UPDATE ON PAGE REFRESH (F5)</div>
+            <tr>
+                <td>RESET TO DEFAULT</td>
+                <td><button class="menu-button" @click="resetConfig">RESET TO DEFAULT</button></td>
+            </tr>
+        </table>
     </div>
+
+    <div class="footer">OPTIONS WILL UPDATE ON PAGE REFRESH (F5)</div>
 </template>
 
 <style scoped>
+.grid {
+    display: flex;
+    justify-content: center;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    font-size: 2.2rem;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.config-table {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.config-table td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.config-table tr:hover {
+    background-color: #222;
+}
+
 .back {
     position: absolute;
     right: 0%;
