@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Game } from '@/helpers/game';
-import { SHOW_DEBUG_INFO } from '@/helpers/config';
+import { CONFIG } from '@/helpers/config';
 
 defineProps<{
     game: Game;
@@ -38,24 +38,24 @@ defineProps<{
 
     <div>&nbsp;</div>
 
-    <div v-if="SHOW_DEBUG_INFO">DEBUG INFO:</div>
+    <div v-if="CONFIG.SHOW_DEBUG_INFO">DEBUG INFO:</div>
 
-    <div v-if="SHOW_DEBUG_INFO">
+    <div v-if="CONFIG.SHOW_DEBUG_INFO">
         TICKS:
         {{ game.ticks }}
     </div>
 
-    <div v-if="SHOW_DEBUG_INFO">
+    <div v-if="CONFIG.SHOW_DEBUG_INFO">
         LAST MOVE:
         {{ game.lastMove }}
     </div>
 
-    <div v-if="SHOW_DEBUG_INFO">
+    <div v-if="CONFIG.SHOW_DEBUG_INFO">
         DROP:
         {{ game.currentDrop }}
     </div>
 
-    <div v-if="SHOW_DEBUG_INFO">
+    <div v-if="CONFIG.SHOW_DEBUG_INFO">
         LOCK INFO:
         {{ game.lockMoveResets }}
         -

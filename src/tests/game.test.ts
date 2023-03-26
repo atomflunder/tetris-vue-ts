@@ -1,4 +1,4 @@
-import { MODERN_PIECE_RNG, PIECE_LOCK_TICKS } from '@/helpers/config';
+import { CONFIG } from '@/helpers/config';
 import { Game } from '@/helpers/game';
 import { allPieces } from '@/helpers/pieceData';
 import { Move, TSpin } from '@/helpers/types';
@@ -13,7 +13,7 @@ test('New Game', () => {
     // The board is already tested separately,
     // so no need to repeat that here.
 
-    if (MODERN_PIECE_RNG) {
+    if (CONFIG.MODERN_PIECE_RNG) {
         expect(game.nextPieces.length).toBe(13);
     } else {
         expect(game.nextPieces.length).toBe(15);
@@ -30,7 +30,7 @@ test('New Game', () => {
     expect(game.lineCounter).toEqual([0, 0, 0, 0]);
     expect(game.level).toEqual(1);
     expect(game.ticks).toBe(0);
-    expect(game.lockTick).toBe(PIECE_LOCK_TICKS);
+    expect(game.lockTick).toBe(CONFIG.PIECE_LOCK_TICKS);
     expect(game.waitForLock).toBe(false);
 });
 

@@ -1,9 +1,9 @@
-import { MODERN_PIECE_RNG } from '@/helpers/config';
+import { CONFIG } from '@/helpers/config';
 import { getRandomPiece, getRandomPieceClassic, getRandomPieceModern } from '@/helpers/rng';
 import { expect, test } from 'vitest';
 
 test('Get Random Piece', () => {
-    if (MODERN_PIECE_RNG) {
+    if (CONFIG.MODERN_PIECE_RNG) {
         expect(getRandomPiece([], 3, true).length).toBe(21);
     } else {
         expect(getRandomPiece([], 3, true).length).toBe(15);

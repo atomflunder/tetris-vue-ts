@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import TetrisGame from '@/components/TetrisGame.vue';
+import ConfigMenu from '@/components/ConfigMenu.vue';
 import { Menu } from './helpers/types';
 import { getHighScore } from './helpers/score';
 import { getMaxLines, getMaxTime } from './helpers/mode';
+import ControlMenu from './components/ControlMenu.vue';
 
 let menuChoice = ref(Menu.None);
 </script>
@@ -26,7 +28,15 @@ let menuChoice = ref(Menu.None);
 
         <button class="menu-button" @click="menuChoice = Menu.Time">3 Minutes Timed</button>
         <div class="scores">{{ getHighScore(Menu.Time) }}</div>
+
+        <div class="options">
+            <button class="menu-button" @click="menuChoice = Menu.Config">Config Options</button>
+            <button class="menu-button" @click="menuChoice = Menu.Control">Keybind Options</button>
+        </div>
     </div>
+
+    <ConfigMenu v-else-if="menuChoice === Menu.Config" @back="menuChoice = Menu.None" />
+    <ControlMenu v-else-if="menuChoice === Menu.Control" @back="menuChoice = Menu.None" />
 
     <TetrisGame
         v-else
@@ -51,25 +61,15 @@ let menuChoice = ref(Menu.None);
     gap: 2rem;
 }
 
-.menu-button {
-    display: inline-block;
-    text-align: center;
-    font-size: 20px;
-    font-family: 'Press Start 2P';
-    color: #ddd;
-    background-color: #444;
-    border: none;
-    padding: 16px;
-    -webkit-box-shadow: 0 0 15px #ddd;
-    box-shadow: 0 0 15px #ddd;
-    grid-column-start: 1;
-}
-
-.menu-button:hover {
-    background-color: #333;
-    cursor: pointer;
-    -webkit-box-shadow: 0 0 15px #aaa;
-    box-shadow: 0 0 15px #aaa;
+.options {
+    position: absolute;
+    right: 0%;
+    top: 0%;
+    margin-right: 10px;
+    margin-top: 10px;
+    clear: right;
+    display: grid;
+    row-gap: 1rem;
 }
 
 .scores {

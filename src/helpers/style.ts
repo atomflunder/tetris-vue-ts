@@ -58,6 +58,27 @@ export const getHeldPieceColor = (game: Game, block: number): string => {
 };
 
 /**
+ * Displaying some commonly and default used keys to be visually more appealing.
+ */
+export const keyToDisplay = (key: string): string => {
+    switch (key) {
+        case ' ':
+            return 'SPACE';
+        case 'ArrowLeft':
+            return '◀';
+        case 'ArrowRight':
+            return '▶';
+        case 'ArrowDown':
+            return '▼';
+        case 'ArrowUp':
+            return '▲';
+
+        default:
+            return key.toUpperCase();
+    }
+};
+
+/**
  * Gets you the CSS style class of the main table,
  * with a special glow for being in danger, paused, both, or having a high combo.
  */

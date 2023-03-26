@@ -1,4 +1,4 @@
-import { FIRST_PIECE_NO_OVERHANG, MODERN_PIECE_RNG } from './config';
+import { CONFIG } from './config';
 import { allPieces } from './pieceData';
 import type { Piece } from './pieces';
 
@@ -10,7 +10,7 @@ export const getRandomPiece = (
     pieceBagSize: number,
     firstPiece: boolean = false
 ): Piece[] => {
-    if (MODERN_PIECE_RNG) {
+    if (CONFIG.MODERN_PIECE_RNG) {
         return getRandomPieceModern(nextPieces, pieceBagSize, firstPiece);
     } else {
         return getRandomPieceClassic(nextPieces);
@@ -67,7 +67,7 @@ export const getRandomPieceModern = (
     pieceBag = shuffle(pieceBag);
 
     // If this is the first piece being generated, we do not want a piece that can generate an "overhang".
-    if (firstPiece && FIRST_PIECE_NO_OVERHANG) {
+    if (firstPiece && CONFIG.FIRST_PIECE_NO_OVERHANG) {
         // We just shuffle the bag until the first piece is not S, Z or O.
         let piece = pieceBag[0];
         while (piece.name === 'Z' || piece.name === 'S' || piece.name === 'O') {
