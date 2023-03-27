@@ -33,6 +33,11 @@ export const CONFIG = {
     COLORED_BOARD: getConfig('COLORED_BOARD', 'true') === 'true',
 
     /**
+     * If you want to enable the ghost piece that shows up at the bottom of the pieces.
+     */
+    GHOST_PIECE: getConfig('GHOST_PIECE', 'true') === 'true',
+
+    /**
      * The delay you get when clearing lines, in milliseconds.
      * Can be set to 0 (or lower) for no delay at all.
      * Most games use a value between 400 to 700.

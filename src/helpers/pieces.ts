@@ -1,4 +1,5 @@
 import type { Board } from './board';
+import { CONFIG } from './config';
 import { Direction } from './types';
 
 export class Piece {
@@ -404,6 +405,10 @@ export class Piece {
      * Meaning a piece, if it were to be dropped as far as it will go in the current position.
      */
     getShadowPieceCoordinates = (board: Board): number[][] => {
+        if (!CONFIG.GHOST_PIECE) {
+            return [];
+        }
+
         // Creating copies of the piece and board because we are only pretending to drop a piece.
         const copyPiece: Piece = JSON.parse(JSON.stringify(this));
 

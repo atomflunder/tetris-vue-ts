@@ -6,6 +6,7 @@ defineEmits(['back']);
 
 let debugInfo = ref(CONFIG.SHOW_DEBUG_INFO);
 let coloredBoard = ref(CONFIG.COLORED_BOARD);
+let ghostPiece = ref(CONFIG.GHOST_PIECE);
 let lineClearDelay = ref(CONFIG.LINE_CLEAR_DELAY);
 let modernPieceRNG = ref(CONFIG.MODERN_PIECE_RNG);
 let pieceBagAmount = ref(CONFIG.PIECE_BAG_AMOUNT);
@@ -13,9 +14,12 @@ let firstPieceNoOverhang = ref(CONFIG.FIRST_PIECE_NO_OVERHANG);
 let pieceLockTicks = ref(CONFIG.PIECE_LOCK_TICKS);
 let lockMoveResets = ref(CONFIG.LOCK_MOVE_RESETS);
 
+// TODO: Make config auto-refresh, and not only on page reload.
+
 function resetConfig(): void {
     debugInfo.value = false;
     coloredBoard.value = true;
+    ghostPiece.value = true;
     lineClearDelay.value = 300;
     modernPieceRNG.value = true;
     pieceBagAmount.value = 1;
@@ -25,6 +29,7 @@ function resetConfig(): void {
 
     setConfig('SHOW_DEBUG_INFO', 'false');
     setConfig('COLORED_BOARD', 'true');
+    setConfig('GHOST_PIECE', 'true');
     setConfig('LINE_CLEAR_DELAY', '300');
     setConfig('MODERN_PIECE_RNG', 'true');
     setConfig('PIECE_BAG_AMOUNT', '1');
@@ -64,6 +69,21 @@ function resetConfig(): void {
                     @click="
                         setConfig(
                             'COLORED_BOARD',
+                            String(($event.target as HTMLInputElement).checked)
+                        )
+                    "
+                />
+            </tr>
+
+            <tr>
+                <td>GHOST PIECE:</td>
+                <input
+                    class="box"
+                    type="checkbox"
+                    v-model="ghostPiece"
+                    @click="
+                        setConfig(
+                            'GHOST_PIECE',
                             String(($event.target as HTMLInputElement).checked)
                         )
                     "
