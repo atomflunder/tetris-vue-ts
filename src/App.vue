@@ -77,4 +77,10 @@ let menuChoice = ref(Menu.None);
     font-size: 1.7rem;
     padding: 16px;
 }
+
+@media (max-width: 1700px) {
+    .options {
+        position: relative;
+    }
+}
 </style>
