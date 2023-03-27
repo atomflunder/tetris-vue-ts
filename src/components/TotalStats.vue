@@ -63,7 +63,7 @@ defineEmits(['back']);
             </tr>
 
             <tr>
-                <td>TETRIS_LINES:</td>
+                <td>TETRIS:</td>
                 <td>
                     {{ getStat('TETRIS_LINES') }}
                 </td>
@@ -88,6 +88,8 @@ defineEmits(['back']);
             </tr>
         </table>
     </div>
+
+    <div class="footer" v-if="getStat('PLAY_TIME') > 0">THANKS FOR PLAYING! :)</div>
 </template>
 
 <style scoped>
@@ -116,5 +118,11 @@ defineEmits(['back']);
     top: 0%;
     margin-right: 10px;
     margin-top: 10px;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    font-size: 1.3rem;
 }
 </style>

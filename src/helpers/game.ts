@@ -168,6 +168,8 @@ export class Game {
      * Handles the keyboard inputs.
      */
     handleInput(e: KeyboardEvent): void {
+        // TODO: Add proper DAS.
+
         if (this.gameOver || this.gameFinished) {
             return;
         }

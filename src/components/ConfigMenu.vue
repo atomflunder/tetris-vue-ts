@@ -83,7 +83,7 @@ function resetConfig(): void {
                             setConfig('LINE_CLEAR_DELAY', ($event.target as HTMLInputElement).value)
                         "
                     />
-                    ({{ lineClearDelay }})
+                    ({{ lineClearDelay }}MS)
                 </td>
             </tr>
 
@@ -103,7 +103,7 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>PIECE BAG AMOUNT:</td>
+                <td>PIECE BAGS:</td>
                 <td>
                     <input
                         class="slider"
@@ -111,6 +111,7 @@ function resetConfig(): void {
                         v-model="pieceBagAmount"
                         min="1"
                         max="10"
+                        :disabled="!modernPieceRNG"
                         @change="
                             setConfig('PIECE_BAG_AMOUNT', ($event.target as HTMLInputElement).value)
                         "
@@ -120,11 +121,12 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>FIRST PIECE NO OVERHANG:</td>
+                <td>PREVENT OVERHANGS:</td>
                 <input
                     class="box"
                     type="checkbox"
                     v-model="firstPieceNoOverhang"
+                    :disabled="!modernPieceRNG"
                     @click="
                         setConfig(
                             'FIRST_PIECE_NO_OVERHANG',
@@ -135,7 +137,7 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>PIECE LOCK TICKS:</td>
+                <td>PIECE LOCK DELAY:</td>
                 <td>
                     <input
                         class="slider"
@@ -147,12 +149,12 @@ function resetConfig(): void {
                             setConfig('PIECE_LOCK_TICKS', ($event.target as HTMLInputElement).value)
                         "
                     />
-                    ({{ pieceLockTicks }})
+                    ({{ pieceLockTicks }} / {{ Math.round((pieceLockTicks / 60) * 1000) }}MS)
                 </td>
             </tr>
 
             <tr>
-                <td>LOCK MOVE RESETS:</td>
+                <td>LOCK DELAY RESETS:</td>
                 <td>
                     <input
                         class="slider"
@@ -166,6 +168,10 @@ function resetConfig(): void {
                     />
                     ({{ lockMoveResets }})
                 </td>
+            </tr>
+
+            <tr>
+                <td>&nbsp;</td>
             </tr>
 
             <tr>
@@ -283,5 +289,10 @@ input[type='checkbox']:checked:after {
 
 .slider::-moz-range-thumb:hover {
     background-color: #eee;
+}
+
+*:disabled {
+    opacity: 50%;
+    cursor: not-allowed;
 }
 </style>

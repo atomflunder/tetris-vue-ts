@@ -210,6 +210,10 @@ async function rebindKey(keybind: string): Promise<void> {
             </tr>
 
             <tr>
+                <td>&nbsp;</td>
+            </tr>
+
+            <tr>
                 <td colspan="2">RESET TO DEFAULT</td>
                 <td colspan="2">
                     <button class="menu-button" @click="resetKeybinds">RESET TO DEFAULT</button>
