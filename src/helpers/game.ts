@@ -34,7 +34,7 @@ export class Game {
 
     lastMove: Move;
 
-    lastDifficult: boolean;
+    backToBack: number;
     currentCombo: number;
 
     // We need to keep track of how long the player is holding down in a row.
@@ -92,7 +92,7 @@ export class Game {
 
         this.lastMove = Move.None;
 
-        this.lastDifficult = false;
+        this.backToBack = -1;
         this.currentCombo = -1;
 
         this.currentDrop = 0;
@@ -280,7 +280,7 @@ export class Game {
 
         this.lastMove = Move.None;
 
-        this.lastDifficult = false;
+        this.backToBack = -1;
         this.currentCombo = -1;
 
         this.currentDrop = 0;
@@ -413,12 +413,12 @@ export class Game {
 
         // This detects back-to-back "difficult moves"
         // Reference: https://tetris.wiki/Scoring#Recent_guideline_compatible_games
-        let thisDifficult = this.lastDifficult;
-
         if (fullLines.length > 0) {
-            thisDifficult = false;
             if (fullLines.length === 4 || (fullLines.length > 0 && tSpin !== TSpin.None)) {
-                thisDifficult = true;
+                this.backToBack++;
+            } else {
+                // If you clear a line that is not difficult, we reset the counter.
+                this.backToBack = -1;
             }
         }
 
@@ -438,14 +438,12 @@ export class Game {
         });
         const fullClear = boardSum === 0 && fullLines.length > 0 ? true : false;
 
-        const multiplier = this.level * (this.lastDifficult && thisDifficult ? 1.5 : 1);
+        const multiplier = this.level * (this.backToBack > 0 ? 1.5 : 1);
 
         this.score += this.getScore(fullLines.length, multiplier, tSpin, fullClear);
 
         // TODO: Add Level select.
         this.level = Math.floor(this.totalLines / 10) + 1;
-
-        this.lastDifficult = thisDifficult;
 
         // We get the new piece from the stack of next pieces.
         const nextPiece = this.nextPieces[0];

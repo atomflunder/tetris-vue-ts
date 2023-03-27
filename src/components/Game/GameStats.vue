@@ -26,14 +26,14 @@ defineProps<{
         {{ game.currentCombo + 1 }}
     </div>
     <div>
+        BACK-TO-BACK:
+        {{ game.backToBack < 0 ? 0 : game.backToBack }}
+    </div>
+    <div>
         T-SPINS:
         {{ game.tSpinCounter[0] }}
         /
         {{ game.tSpinCounter[1] }}
-    </div>
-    <div>
-        BACK-TO-BACK:
-        {{ game.lastDifficult }}
     </div>
 
     <div>&nbsp;</div>

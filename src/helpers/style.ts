@@ -95,7 +95,7 @@ export const getGlow = (game: Game): string => {
     if (game.isPaused) {
         return 'blue-glow ';
     }
-    if (game.currentCombo > 4) {
+    if (game.currentCombo > 4 || game.backToBack > 4) {
         return 'orange-glow ';
     } else {
         return '';
