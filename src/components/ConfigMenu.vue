@@ -36,7 +36,7 @@ function resetConfig(): void {
 
 <template>
     <div class="grid">
-        <button class="menu-button back" @click="$emit('back')">Back to Menu</button>
+        <button class="menu-button back" @click="$emit('back')">BACK TO MENU</button>
 
         <table class="config-table">
             <td class="header" colspan="2">OPTIONS MENU</td>

@@ -4,6 +4,7 @@ import { CONTROLS } from './controls';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
 import { setHighScore } from './score';
+import { incrementLifetimeStats } from './stats';
 import { Timer } from './timer';
 import { Menu, Move, TSpin } from './types';
 
@@ -156,8 +157,9 @@ export class Game {
             if (!this.gameOver && !this.gameFinished) {
                 this.advanceTick();
             } else {
-                // If the game is over, we set the high score.
+                // If the game is over, we set the high score and increment the overall stats.
                 setHighScore(this.gameMode, this.score, this.timer.currentTime, this.gameOver);
+                incrementLifetimeStats(this);
             }
         }, 1000 / 60);
     }

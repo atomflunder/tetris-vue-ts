@@ -5,6 +5,7 @@ export enum Menu {
     None,
     Config,
     Control,
+    Stats,
     Endless,
     Marathon,
     Sprint,
