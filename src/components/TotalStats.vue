@@ -35,6 +35,13 @@ defineEmits(['back']);
             </tr>
 
             <tr>
+                <td>PIECES:</td>
+                <td>
+                    {{ getStat('PIECES') }}
+                </td>
+            </tr>
+
+            <tr>
                 <td>TOTAL LINES:</td>
                 <td>
                     {{ getStat('TOTAL LINES') }}

@@ -23,6 +23,10 @@ export const incrementLifetimeStats = (game: Game): void => {
     increaseStats('GAMES_PLAYED', 1);
     increaseStats('TOTAL_SCORE', game.score);
     increaseStats('PLAY_TIME', game.timer.currentTime);
+    increaseStats(
+        'PIECES',
+        game.pieceCounter.reduce((a, b) => a + b)
+    );
     increaseStats('TOTAL_LINES', game.totalLines);
     increaseStats('SINGLE_LINES', game.lineCounter[0]);
     increaseStats('DOUBLE_LINES', game.lineCounter[1]);
