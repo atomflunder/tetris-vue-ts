@@ -12,7 +12,33 @@ export const getConfig = (config: string, defaultValue: string): string => {
 /**
  * Sets a config setting to local storage.
  */
-export const setConfig = (config: string, value: string): void => {
+export const setConfig = (config: keyof typeof CONFIG, value: string): void => {
+    const boolValues = [
+        'SHOW_DEBUG_INFO',
+        'COLORED_BOARD',
+        'GHOST_PIECE',
+        'MODERN_PIECE_RNG',
+        'FIRST_PIECE_NO_OVERHANG'
+    ];
+    const numValues = [
+        'LINE_CLEAR_DELAY',
+        'PIECE_BAG_AMOUNT',
+        'PIECE_LOCK_TICKS',
+        'LOCK_MOVE_RESETS',
+        'DAS_DELAY',
+        'ARR_SPEED'
+    ];
+
+    // First we set the correct value in memory.
+    if (boolValues.indexOf(config) !== -1) {
+        // @ts-ignore
+        CONFIG[config] = value === 'true';
+    } else if (numValues.indexOf(config) !== -1) {
+        // @ts-ignore
+        CONFIG[config] = Number(value);
+    }
+
+    // And then in storage too.
     localStorage.setItem(`config-${config}`, value);
 };
 

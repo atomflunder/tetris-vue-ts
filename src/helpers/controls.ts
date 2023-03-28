@@ -16,7 +16,9 @@ export const getKeybind = (keybind: string, defaultValue: string): string => {
 /**
  * Sets a keybing setting to local storage.
  */
-export const setKeybind = (keybind: string, value: string): void => {
+export const setKeybind = (keybind: keyof typeof CONTROLS, value: string): void => {
+    CONTROLS[keybind] = value;
+
     localStorage.setItem(`controls-${keybind}`, value);
 };
 

@@ -16,8 +16,6 @@ let lockMoveResets = ref(CONFIG.LOCK_MOVE_RESETS);
 let dasDelay = ref(CONFIG.DAS_DELAY);
 let arrSpeed = ref(CONFIG.ARR_SPEED);
 
-// TODO: Make config auto-refresh, and not only on page reload.
-
 function resetConfig(): void {
     debugInfo.value = false;
     coloredBoard.value = true;
@@ -242,8 +240,6 @@ function resetConfig(): void {
             </tr>
         </table>
     </div>
-
-    <div class="footer">OPTIONS WILL UPDATE ON PAGE REFRESH (F5)</div>
 </template>
 
 <style scoped>
@@ -256,12 +252,6 @@ function resetConfig(): void {
     display: flex;
     justify-content: center;
     font-size: 2.2rem;
-}
-
-.footer {
-    display: flex;
-    justify-content: center;
-    font-size: 1.3rem;
 }
 
 .config-table {

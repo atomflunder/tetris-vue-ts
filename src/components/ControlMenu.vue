@@ -58,7 +58,7 @@ async function rebindKey(keybind: string): Promise<void> {
             function onKeyHandler(e: KeyboardEvent): void {
                 e.preventDefault();
                 document.removeEventListener('keydown', onKeyHandler);
-                setKeybind(keybind, e.key);
+                setKeybind(keybind as keyof typeof CONTROLS, e.key);
                 resolve(e);
             }
         });
@@ -221,8 +221,6 @@ async function rebindKey(keybind: string): Promise<void> {
             </tr>
         </table>
     </div>
-
-    <div class="footer">KEYBINDS WILL UPDATE ON PAGE REFRESH (F5)</div>
 </template>
 
 <style scoped>
@@ -235,12 +233,6 @@ async function rebindKey(keybind: string): Promise<void> {
     display: flex;
     justify-content: center;
     font-size: 2.2rem;
-}
-
-.footer {
-    display: flex;
-    justify-content: center;
-    font-size: 1.3rem;
 }
 
 .config-table {
