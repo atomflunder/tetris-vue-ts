@@ -41,3 +41,11 @@ export enum Direction {
     Left,
     Right
 }
+
+/**
+ * A repeated keypress, used to mimick DAS.
+ * Only in use for ArrowLeft, ArrowRight and ArrowDown.
+ */
+export interface KeyEvents {
+    [id: string]: NodeJS.Timeout | null;
+}

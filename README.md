@@ -5,24 +5,23 @@ In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/w
 
 ## Tetris Guidelines Implemented
 
--   ✅ Start Locations
--   ✅ Super Rotation System
--   ✅ Wallkicks
--   ✅ 7-bag Random Generator
+-   ✅ Super Rotation System with Wallkicks
+-   ✅ 7-bag Random Generator (+ No-Overhang Option) & True Random Generator
+-   ✅ Endless Mode, Marathon Mode (150 Lines), Sprint Mode (40 Lines), Time Trial (3:00)
+-   ✅ Remappable Controls
 -   ✅ Next Piece Preview
 -   ✅ Hold Piece
--   ✅ Ghost Piece
--   ✅ Lock Delay
--   ✅ Standard Scoring System
+-   ✅ Guideline Scoring System
+-   ✅ NES-Style Gravity
 -   ✅ T-Spins
 -   ✅ Back-to-Backs
 -   ✅ Combos
--   ✅ Endless Mode, Marathon Mode (150 Lines), Sprint Mode (40 Lines), Time Trial (3:00)
--   ✅ Configurable Line Clear Delay
+-   ✅ Toggleable Ghost Piece
+-   ✅ Configurable Lock Delay & Move Resets
+-   ✅ Modifiable Line Clear Delay
+-   ✅ Customizable DAS & ARR
 
 -   🆕 Inserting Garbage in Single Player
--   🆕 Many In-Depth Configuration Options
--   🆕 Remappable Controls
 
 -   ❌ Sound Effects, Logo, etc.
 -   ❌ Game and Pause Countdown

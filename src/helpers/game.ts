@@ -6,7 +6,7 @@ import { getRandomPiece } from './rng';
 import { setHighScore } from './score';
 import { incrementLifetimeStats } from './stats';
 import { Timer } from './timer';
-import { Menu, Move, TSpin } from './types';
+import { Menu, Move, TSpin, type KeyEvents } from './types';
 
 export class Game {
     gameMode: Menu;
@@ -57,6 +57,9 @@ export class Game {
     lockTick: number;
     waitForLock: boolean;
     lockMoveResets: number;
+
+    // For the DAS.
+    keyEvents: KeyEvents;
 
     constructor(
         gameMode: Menu = Menu.Endless,
@@ -110,6 +113,12 @@ export class Game {
         this.waitForLock = false;
         this.lockMoveResets = CONFIG.LOCK_MOVE_RESETS;
 
+        this.keyEvents = {
+            ArrowLeft: null,
+            ArrowRight: null,
+            ArrowDown: null
+        };
+
         // Spawning the first piece.
         this.currentPiece.spawn(this.board);
 
@@ -134,6 +143,12 @@ export class Game {
             // except updating the timer and checking if it's over the limit.
             if (!this.isPaused) {
                 this.ticks++;
+
+                console.log(
+                    this.keyEvents[CONTROLS.MOVE_LEFT],
+                    this.keyEvents[CONTROLS.MOVE_RIGHT],
+                    this.keyEvents[CONTROLS.SOFT_DROP]
+                );
 
                 // Checking if the game is finished.
                 if (this.maxLines && this.totalLines >= this.maxLines) {
@@ -162,99 +177,6 @@ export class Game {
                 incrementLifetimeStats(this);
             }
         }, 1000 / 60);
-    }
-
-    /**
-     * Handles the keyboard inputs.
-     */
-    handleInput(e: KeyboardEvent): void {
-        // TODO: Add proper DAS.
-
-        if (this.gameOver || this.gameFinished) {
-            return;
-        }
-
-        // We need a special case for Esc
-        // Because we don't want to listen to any other events while the game is paused.
-        if (e.key === CONTROLS.PAUSE_GAME) {
-            this.isPaused = !this.isPaused;
-        }
-
-        if (this.isPaused) {
-            return;
-        }
-
-        // When an action successfully completes, we update the lock ticks and the shadow piece coordinates.
-        const update = (): void => {
-            this.lockTick = CONFIG.PIECE_LOCK_TICKS;
-            this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
-
-            if (this.waitForLock) {
-                this.lockMoveResets--;
-                if (this.lockMoveResets === 0) {
-                    this.lockTick = 0;
-                }
-            }
-        };
-
-        switch (e.key) {
-            case CONTROLS.MOVE_LEFT:
-                if (this.currentPiece.moveLeft(this.board)) {
-                    update();
-                    this.lastMove = Move.Left;
-                }
-
-                break;
-            case CONTROLS.MOVE_RIGHT:
-                if (this.currentPiece.moveRight(this.board)) {
-                    update();
-                    this.lastMove = Move.Right;
-                }
-
-                break;
-            case CONTROLS.SOFT_DROP:
-                this.moveDown(false, true);
-                // Incrementing the drop counter for every time the game registers a consecutive down press.
-                this.currentDrop += 1;
-                // When you hold down you probably do want the piece to lock instantly.
-                this.lockTick = 0;
-                break;
-            case CONTROLS.HARD_DROP:
-                this.moveDown(true, true);
-                break;
-            case CONTROLS.ROTATE_CW:
-                if (this.currentPiece.rotate(this.board, true)) {
-                    update();
-                    this.lastMove = Move.Rotation;
-                }
-                break;
-            case CONTROLS.ROTATE_CCW:
-                if (this.currentPiece.rotate(this.board, false)) {
-                    update();
-                    this.lastMove = Move.Rotation;
-                }
-                break;
-            case CONTROLS.HOLD_PIECE:
-                if (this.toggleHoldPiece()) {
-                    update();
-                }
-                break;
-            case CONTROLS.INSERT_GARBAGE:
-                this.board.insertGarbageLines(2, this.currentPiece);
-                update();
-                break;
-        }
-    }
-
-    /**
-     * Handles the event when the user releases a key.
-     */
-    handleKeyup(e: KeyboardEvent): void {
-        // Resetting the down counter when the player releases the down key.
-        if (e.key === CONTROLS.SOFT_DROP) {
-            this.currentDrop = 0;
-            this.lockTick = CONFIG.PIECE_LOCK_TICKS;
-        }
     }
 
     /**
@@ -298,6 +220,12 @@ export class Game {
 
         this.lockTick = CONFIG.PIECE_LOCK_TICKS;
         this.waitForLock = false;
+
+        this.keyEvents = {
+            ArrowLeft: null,
+            ArrowRight: null,
+            ArrowDown: null
+        };
 
         this.currentPiece.spawn(this.board);
 
@@ -371,6 +299,8 @@ export class Game {
                 this.board.GameBoard[fullLines[i]] = [9, 9, 9, 9, 9, 9, 9, 9, 9, 9];
             }
         }
+
+        // TODO: Prevent user from rotating the piece while the delay is in progress.
 
         if (delay > 0 && fullLines.length > 0) {
             setTimeout(() => {

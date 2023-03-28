@@ -12,7 +12,7 @@ import GameOver from '@/components/Game/GameOver.vue';
 import KeyboardControls from '@/components/Game/KeyboardControls.vue';
 import PauseOverlay from '@/components/Game/PauseOverlay.vue';
 import GameFinished from './Game/GameFinished.vue';
-import { CONTROLS } from '@/helpers/controls';
+import { CONTROLS, handleInput, handleKeyup } from '@/helpers/controls';
 import type { Menu } from '@/helpers/types';
 
 const props = defineProps<{
@@ -26,7 +26,7 @@ const emits = defineEmits(['back-to-menu']);
 const game = ref(new Game(props.gameMode, props.maxLines, props.maxTime));
 
 onkeydown = (e: KeyboardEvent) => {
-    game.value.handleInput(e);
+    handleInput(e, game.value);
 };
 
 onkeyup = (e: KeyboardEvent) => {
@@ -40,7 +40,7 @@ onkeyup = (e: KeyboardEvent) => {
         return;
     }
 
-    game.value.handleKeyup(e);
+    handleKeyup(e, game.value);
 };
 
 onMounted(() => {
