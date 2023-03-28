@@ -49,7 +49,7 @@ export const CONTROLS = {
  * Handles the keyboard inputs.
  */
 export const handleInput = (e: KeyboardEvent, game: Game): void => {
-    if (game.gameOver || game.gameFinished) {
+    if (game.gameOver || game.gameFinished || game.gameFreezed) {
         return;
     }
 

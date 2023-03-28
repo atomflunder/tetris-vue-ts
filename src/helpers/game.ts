@@ -16,6 +16,8 @@ export class Game {
     // And Game Finished is used when you complete one of the challenge modes.
     gameFinished: boolean;
     isPaused: boolean;
+    // For delays like line-clear delay, or maybe Pause Countdowns in the future.
+    gameFreezed: boolean;
 
     maxTime: number | null;
     maxLines: number | null;
@@ -80,6 +82,7 @@ export class Game {
         this.gameOver = false;
         this.gameFinished = false;
         this.isPaused = false;
+        this.gameFreezed = false;
 
         this.maxLines = maxLines;
         this.maxTime = maxTime;
@@ -141,7 +144,7 @@ export class Game {
 
             // If the game is paused we pretty much do nothing,
             // except updating the timer and checking if it's over the limit.
-            if (!this.isPaused) {
+            if (!this.isPaused || this.gameFreezed) {
                 this.ticks++;
 
                 console.log(
@@ -193,6 +196,7 @@ export class Game {
         this.gameOver = false;
         this.gameFinished = false;
         this.isPaused = false;
+        this.gameFreezed = false;
 
         this.board = new Board();
         this.currentPiece = currentPiece;
@@ -303,6 +307,7 @@ export class Game {
         // TODO: Prevent user from rotating the piece while the delay is in progress.
 
         if (delay > 0 && fullLines.length > 0) {
+            this.gameFreezed = true;
             setTimeout(() => {
                 this.nextTurn();
             }, delay);
@@ -316,6 +321,8 @@ export class Game {
      * deleting of any full lines, incrementing the score etc.
      */
     nextTurn(): void {
+        this.gameFreezed = false;
+
         if (this.gameOver || this.gameFinished) {
             return;
         }
