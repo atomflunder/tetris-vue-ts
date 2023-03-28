@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { CONTROLS, setKeybind } from '../helpers/controls';
 import { keyToDisplay } from '@/helpers/style';
 import { ref } from 'vue';
+import { CONTROLS, setKeybind } from '../helpers/controls';
 
 defineEmits(['back']);
 

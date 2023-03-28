@@ -2,18 +2,18 @@
 import { onMounted, ref } from 'vue';
 import { Game } from '../helpers/game';
 
-import LineCount from '@/components/Game/LineCount.vue';
-import PieceCount from '@/components/Game/PieceCount.vue';
-import HoldPiece from '@/components/Game/HoldPiece.vue';
-import NextPieces from '@/components/Game/NextPieces.vue';
-import TetrisBoard from '@/components/Game/TetrisBoard.vue';
-import GameStats from '@/components/Game/GameStats.vue';
 import GameOver from '@/components/Game/GameOver.vue';
+import GameStats from '@/components/Game/GameStats.vue';
+import HoldPiece from '@/components/Game/HoldPiece.vue';
 import KeyboardControls from '@/components/Game/KeyboardControls.vue';
+import LineCount from '@/components/Game/LineCount.vue';
+import NextPieces from '@/components/Game/NextPieces.vue';
 import PauseOverlay from '@/components/Game/PauseOverlay.vue';
-import GameFinished from './Game/GameFinished.vue';
+import PieceCount from '@/components/Game/PieceCount.vue';
+import TetrisBoard from '@/components/Game/TetrisBoard.vue';
 import { CONTROLS, handleInput, handleKeyup } from '@/helpers/controls';
 import type { Menu } from '@/helpers/types';
+import GameFinished from './Game/GameFinished.vue';
 
 const props = defineProps<{
     gameMode: Menu;

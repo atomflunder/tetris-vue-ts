@@ -304,8 +304,6 @@ export class Game {
             }
         }
 
-        // TODO: Prevent user from rotating the piece while the delay is in progress.
-
         if (delay > 0 && fullLines.length > 0) {
             this.gameFreezed = true;
             setTimeout(() => {
