@@ -5,8 +5,8 @@
 
 html,
 body {
-    background-image: url('./background.jpg');
-    background-size: 100%;
+    background-image: linear-gradient(0deg, #00000088 0%, #53535322 100%), url('./background.jpg');
+    background-size: cover;
     background-repeat: no-repeat;
     background-color: #000008;
     height: 100%;

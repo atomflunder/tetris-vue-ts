@@ -129,23 +129,23 @@ onMounted(() => {
 .game-info {
     grid-column-start: 1;
     grid-row-start: 1;
-    grid-row-end: 2;
+    grid-row-end: 3;
     min-width: 500px;
     min-height: 130px;
 }
 
 .line-count {
     grid-column-start: 1;
-    grid-row-start: 2;
-    grid-row-end: 3;
+    grid-row-start: 3;
+    grid-row-end: 4;
     min-width: 500px;
     min-height: 130px;
 }
 
 .piece-count {
     grid-column-start: 1;
-    grid-row-start: 3;
-    grid-row-end: 4;
+    grid-row-start: 4;
+    grid-row-end: 5;
     min-width: 500px;
     min-height: 130px;
 }

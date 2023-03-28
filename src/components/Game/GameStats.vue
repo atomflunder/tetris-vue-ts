@@ -38,31 +38,48 @@ defineProps<{
 
     <div>&nbsp;</div>
 
-    <div v-if="CONFIG.SHOW_DEBUG_INFO">DEBUG INFO:</div>
-
     <div v-if="CONFIG.SHOW_DEBUG_INFO">
-        TICKS:
-        {{ game.ticks }}
-    </div>
+        DEBUG INFO:
+        <div>
+            TICKS:
+            {{ game.ticks }}
+        </div>
 
-    <div v-if="CONFIG.SHOW_DEBUG_INFO">
-        LAST MOVE:
-        {{ game.lastMove }}
-    </div>
+        <div>
+            FROZEN:
+            {{ game.gameFreezed }}
+        </div>
 
-    <div v-if="CONFIG.SHOW_DEBUG_INFO">
-        DROP:
-        {{ game.currentDrop }}
-    </div>
+        <div>
+            LAST MOVE:
+            {{ game.lastMove }}
+        </div>
 
-    <div v-if="CONFIG.SHOW_DEBUG_INFO">
-        LOCK INFO:
-        {{ game.lockMoveResets }}
-        -
-        {{ Number(game.waitForLock) }}
-        -
-        {{ game.lockTick }}
+        <div>
+            DROP:
+            {{ game.currentDrop }}
+        </div>
+
+        <div>LAST MOVE: {{ game.lastMove }}</div>
+
+        <div>
+            LOCK INFO:
+            <div class="indented">WAITING: {{ game.waitForLock }}</div>
+            <div class="indented">MOVES: {{ game.lockMoveResets }}</div>
+            <div class="indented">TICKS: {{ game.lockTick }}</div>
+        </div>
+
+        <div>
+            KEY EVENTS:
+            <div class="indented">L: {{ game.keyEvents['ArrowLeft'] || 0 }}</div>
+            <div class="indented">R: {{ game.keyEvents['ArrowRight'] || 0 }}</div>
+            <div class="indented">D: {{ game.keyEvents['ArrowDown'] || 0 }}</div>
+        </div>
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.indented {
+    margin-left: 50px;
+}
+</style>
