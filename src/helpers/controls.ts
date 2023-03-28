@@ -100,8 +100,6 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
         dasLoop();
     };
 
-    // TODO: Fix holding left+right spazz out
-
     const moveLeftFn = () => {
         if (game.currentPiece.moveLeft(game.board)) {
             update();
@@ -131,6 +129,10 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
                 return;
             }
 
+            // We also need to clear the event from the opposite direction,
+            // if the user happens to press both keys at once.
+            clearTimeout(game.keyEvents[CONTROLS.MOVE_RIGHT]!);
+            game.keyEvents[CONTROLS.MOVE_RIGHT] = null;
             handleDAS(moveLeftFn);
 
             break;
@@ -139,6 +141,8 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
                 return;
             }
 
+            clearTimeout(game.keyEvents[CONTROLS.MOVE_LEFT]!);
+            game.keyEvents[CONTROLS.MOVE_LEFT] = null;
             handleDAS(moveRightFn);
 
             break;
