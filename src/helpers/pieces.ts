@@ -111,6 +111,8 @@ export class Piece {
      * Rotates a piece either clockwise or counter-clockwise, with wall kicks.
      */
     rotate = (board: Board, clockwise: boolean): boolean => {
+        // TODO-MAYBE: Add 180° rotation?
+
         // Can't rotate an O.
         if (this.name === 'O') {
             return false;

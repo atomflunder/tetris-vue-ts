@@ -93,5 +93,19 @@ export const CONFIG = {
      *
      * See more information here: https://tetris.fandom.com/wiki/Infinity
      */
-    LOCK_MOVE_RESETS: Number(getConfig('LOCK_MOVE_RESETS', '15'))
+    LOCK_MOVE_RESETS: Number(getConfig('LOCK_MOVE_RESETS', '15')),
+
+    /**
+     * The initial delay of when DAS kicks in, in milliseconds.
+     *
+     * See more information here: https://tetris.fandom.com/wiki/DAS
+     */
+    DAS_DELAY: Number(getConfig('DAS_DELAY', '167')),
+
+    /**
+     * The speed of the DAS, in milliseconds.
+     *
+     * See more information here: https://tetris.fandom.com/wiki/DAS
+     */
+    ARR_SPEED: Number(getConfig('ARR_SPEED', '33'))
 };

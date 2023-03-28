@@ -13,6 +13,8 @@ let pieceBagAmount = ref(CONFIG.PIECE_BAG_AMOUNT);
 let firstPieceNoOverhang = ref(CONFIG.FIRST_PIECE_NO_OVERHANG);
 let pieceLockTicks = ref(CONFIG.PIECE_LOCK_TICKS);
 let lockMoveResets = ref(CONFIG.LOCK_MOVE_RESETS);
+let dasDelay = ref(CONFIG.DAS_DELAY);
+let arrSpeed = ref(CONFIG.ARR_SPEED);
 
 // TODO: Make config auto-refresh, and not only on page reload.
 
@@ -26,6 +28,8 @@ function resetConfig(): void {
     firstPieceNoOverhang.value = true;
     pieceLockTicks.value = 30;
     lockMoveResets.value = 15;
+    dasDelay.value = 167;
+    arrSpeed.value = 33;
 
     setConfig('SHOW_DEBUG_INFO', 'false');
     setConfig('COLORED_BOARD', 'true');
@@ -36,6 +40,8 @@ function resetConfig(): void {
     setConfig('FIRST_PIECE_NO_OVERHANG', 'true');
     setConfig('PIECE_LOCK_TICKS', '30');
     setConfig('LOCK_MOVE_RESETS', '15');
+    setConfig('DAS_DELAY', '167');
+    setConfig('ARR_SPEED', '33');
 }
 </script>
 
@@ -99,6 +105,7 @@ function resetConfig(): void {
                         v-model="lineClearDelay"
                         min="0"
                         max="1000"
+                        step="1"
                         @change="
                             setConfig('LINE_CLEAR_DELAY', ($event.target as HTMLInputElement).value)
                         "
@@ -131,6 +138,7 @@ function resetConfig(): void {
                         v-model="pieceBagAmount"
                         min="1"
                         max="10"
+                        step="1"
                         :disabled="!modernPieceRNG"
                         @change="
                             setConfig('PIECE_BAG_AMOUNT', ($event.target as HTMLInputElement).value)
@@ -165,6 +173,7 @@ function resetConfig(): void {
                         v-model="pieceLockTicks"
                         min="0"
                         max="60"
+                        step="1"
                         @change="
                             setConfig('PIECE_LOCK_TICKS', ($event.target as HTMLInputElement).value)
                         "
@@ -182,11 +191,44 @@ function resetConfig(): void {
                         v-model="lockMoveResets"
                         min="-1"
                         max="50"
+                        step="1"
                         @change="
                             setConfig('LOCK_MOVE_RESETS', ($event.target as HTMLInputElement).value)
                         "
                     />
                     ({{ lockMoveResets }})
+                </td>
+            </tr>
+
+            <tr>
+                <td>DELAYED AUTO SHIFT (DAS):</td>
+                <td>
+                    <input
+                        class="slider"
+                        type="range"
+                        v-model="dasDelay"
+                        min="0"
+                        max="1000"
+                        step="1"
+                        @change="setConfig('DAS_DELAY', ($event.target as HTMLInputElement).value)"
+                    />
+                    ({{ dasDelay }}ms)
+                </td>
+            </tr>
+
+            <tr>
+                <td>AUTOMATIC REPEAT RATE (ARR):</td>
+                <td>
+                    <input
+                        class="slider"
+                        type="range"
+                        v-model="arrSpeed"
+                        min="1"
+                        max="500"
+                        step="1"
+                        @change="setConfig('ARR_SPEED', ($event.target as HTMLInputElement).value)"
+                    />
+                    ({{ arrSpeed }}ms)
                 </td>
             </tr>
 
