@@ -44,14 +44,14 @@ defineEmits(['back']);
             <tr>
                 <td>TOTAL LINES:</td>
                 <td>
-                    {{ getStat('TOTAL LINES') }}
+                    {{ getStat('TOTAL_LINES') }}
                 </td>
             </tr>
 
             <tr>
                 <td>SINGLES:</td>
                 <td>
-                    {{ getStat('SINGE_LINES') }}
+                    {{ getStat('SINGLE_LINES') }}
                 </td>
             </tr>
 
