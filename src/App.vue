@@ -9,6 +9,8 @@ import ControlMenu from './components/ControlMenu.vue';
 import TotalStats from './components/TotalStats.vue';
 
 let menuChoice = ref(Menu.None);
+
+let levelSelect = ref(1);
 </script>
 
 <template>
@@ -35,6 +37,12 @@ let menuChoice = ref(Menu.None);
             <button class="menu-button" @click="menuChoice = Menu.Control">KEYBIND OPTIONS</button>
             <button class="menu-button" @click="menuChoice = Menu.Stats">LIFETIME STATS</button>
         </div>
+
+        <div class="level-select">
+            <select name="level-select" id="level-select" v-model="levelSelect">
+                <option v-for="i in 20" :value="i" :key="i">{{ i }}</option>
+            </select>
+        </div>
     </div>
 
     <ConfigMenu v-else-if="menuChoice === Menu.Config" @back="menuChoice = Menu.None" />
@@ -46,6 +54,7 @@ let menuChoice = ref(Menu.None);
         :gameMode="menuChoice"
         :max-lines="getMaxLines(menuChoice)"
         :max-time="getMaxTime(menuChoice)"
+        :start-level="levelSelect"
         @back-to-menu="menuChoice = Menu.None"
     />
 </template>

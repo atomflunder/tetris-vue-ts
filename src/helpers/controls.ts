@@ -83,6 +83,8 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
         // Also we call it once, immediately.
         fn();
 
+        // TODO: Fix DAS When a line gets cleared (game freezed)
+
         let begin: number | null = CONFIG.DAS_DELAY;
         const speed = CONFIG.ARR_SPEED;
 

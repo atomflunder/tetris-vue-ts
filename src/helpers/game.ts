@@ -66,7 +66,8 @@ export class Game {
     constructor(
         gameMode: Menu = Menu.Endless,
         maxLines: number | null = null,
-        maxTime: number | null = null
+        maxTime: number | null = null,
+        startLevel: number = 1
     ) {
         const nextPieces = getRandomPiece([], CONFIG.PIECE_BAG_AMOUNT, true);
 
@@ -106,7 +107,7 @@ export class Game {
         this.score = 0;
         this.totalLines = 0;
         this.lineCounter = [0, 0, 0, 0];
-        this.level = 1;
+        this.level = startLevel;
         this.tSpinCounter = [0, 0];
 
         this.ticks = 0;
@@ -379,8 +380,9 @@ export class Game {
 
         this.score += this.getScore(fullLines.length, multiplier, tSpin, fullClear);
 
-        // TODO: Add Level select.
-        this.level = Math.floor(this.totalLines / 10) + 1;
+        if (this.totalLines / 10 >= this.level) {
+            this.level++;
+        }
 
         // We get the new piece from the stack of next pieces.
         const nextPiece = this.nextPieces[0];
