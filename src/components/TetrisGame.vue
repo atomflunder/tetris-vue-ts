@@ -19,11 +19,12 @@ const props = defineProps<{
     gameMode: Menu;
     maxLines: number | null;
     maxTime: number | null;
+    startLevel: number;
 }>();
 
 const emits = defineEmits(['back-to-menu']);
 
-const game = ref(new Game(props.gameMode, props.maxLines, props.maxTime));
+const game = ref(new Game(props.gameMode, props.maxLines, props.maxTime, props.startLevel));
 
 onkeydown = (e: KeyboardEvent) => {
     handleInput(e, game.value);

@@ -9,6 +9,8 @@ import ControlMenu from './components/ControlMenu.vue';
 import TotalStats from './components/TotalStats.vue';
 
 let menuChoice = ref(Menu.None);
+
+let levelSelect = ref(1);
 </script>
 
 <template>
@@ -16,24 +18,38 @@ let menuChoice = ref(Menu.None);
         <div class="header">SELECT GAME MODE:</div>
         <div class="header">HIGH SCORES:</div>
 
-        <button class="menu-button" @click="menuChoice = Menu.Endless">Endless</button>
+        <button class="menu-button" @click="menuChoice = Menu.Endless">ENDLESS</button>
         <div class="scores">{{ getHighScore(Menu.Endless) }}</div>
 
         <button class="menu-button" @click="menuChoice = Menu.Marathon">
-            Marathon (150 Lines)
+            MARATHON (150 LINES)
         </button>
         <div class="scores">{{ getHighScore(Menu.Marathon) }}</div>
 
-        <button class="menu-button" @click="menuChoice = Menu.Sprint">Sprint (40 Lines)</button>
+        <button class="menu-button" @click="menuChoice = Menu.Sprint">SPRINT (40 LINES)</button>
         <div class="scores">{{ getHighScore(Menu.Sprint) }}</div>
 
-        <button class="menu-button" @click="menuChoice = Menu.Time">3 Minutes Timed</button>
+        <button class="menu-button" @click="menuChoice = Menu.Time">ULTRA (3:00 MINUTES)</button>
         <div class="scores">{{ getHighScore(Menu.Time) }}</div>
 
         <div class="options">
             <button class="menu-button" @click="menuChoice = Menu.Config">CONFIG OPTIONS</button>
             <button class="menu-button" @click="menuChoice = Menu.Control">KEYBIND OPTIONS</button>
             <button class="menu-button" @click="menuChoice = Menu.Stats">LIFETIME STATS</button>
+        </div>
+
+        <div class="level">
+            LEVEL SELECT:
+            <select
+                name="level-select"
+                id="level-select"
+                v-model="levelSelect"
+                class="level-select"
+            >
+                <option v-for="i in 20" :value="i" :key="i" style="font-family: 'Consolas'">
+                    {{ i.toString().padStart(2, '0') }}
+                </option>
+            </select>
         </div>
     </div>
 
@@ -46,6 +62,7 @@ let menuChoice = ref(Menu.None);
         :gameMode="menuChoice"
         :max-lines="getMaxLines(menuChoice)"
         :max-time="getMaxTime(menuChoice)"
+        :start-level="levelSelect"
         @back-to-menu="menuChoice = Menu.None"
     />
 </template>
@@ -79,6 +96,42 @@ let menuChoice = ref(Menu.None);
     grid-column-start: 2;
     font-size: 1.7rem;
     padding: 16px;
+}
+
+.level {
+    display: inline-block;
+    text-align: center;
+    font-size: 20px;
+    font-family: 'Press Start 2P';
+    color: #ddd;
+    background-color: #444;
+    border: none;
+    padding: 16px;
+    -webkit-box-shadow: 0 0 15px #ddd;
+    box-shadow: 0 0 15px #ddd;
+    grid-row-start: 6;
+}
+
+.level:hover {
+    background-color: #333;
+    -webkit-box-shadow: 0 0 15px #aaa;
+    box-shadow: 0 0 15px #aaa;
+}
+
+.level-select {
+    text-align: center;
+    font-size: 20px;
+    font-family: 'Press Start 2P';
+    color: #ddd;
+    background-color: #444;
+    border: none;
+    border-radius: 2px;
+    padding: 8px;
+}
+
+.level-select:hover {
+    background-color: #333;
+    cursor: pointer;
 }
 
 @media (max-width: 1700px) {
