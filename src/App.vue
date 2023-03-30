@@ -14,6 +14,8 @@ let levelSelect = ref(1);
 </script>
 
 <template>
+    <h1 v-if="menuChoice === Menu.None" class="title">TETRIS</h1>
+
     <div class="navbar" v-if="menuChoice === Menu.None">
         <div class="header">SELECT GAME MODE:</div>
         <div class="header">HIGH SCORES:</div>
@@ -68,6 +70,10 @@ let levelSelect = ref(1);
 </template>
 
 <style scoped>
+.title {
+    margin-left: 2rem;
+}
+
 .header {
     display: inline-flex;
     justify-content: center;
@@ -110,6 +116,7 @@ let levelSelect = ref(1);
     -webkit-box-shadow: 0 0 15px #ddd;
     box-shadow: 0 0 15px #ddd;
     grid-row-start: 6;
+    grid-row-end: 7;
 }
 
 .level:hover {
@@ -137,6 +144,9 @@ let levelSelect = ref(1);
 @media (max-width: 1700px) {
     .options {
         position: relative;
+        grid-row-start: 6;
+        grid-row-end: 9;
+        grid-column-start: 2;
     }
 }
 </style>

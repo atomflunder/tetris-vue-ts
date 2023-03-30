@@ -1,6 +1,6 @@
-# tetris-vue-ts
+# Tetris in Vue + TypeScript
 
-This is a Tetris Game made with Vue, Vite and TypeScript.  
+This is a Tetris Game fully written in Vue + TypeScript.  
 In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/wiki/Tetris_Guideline).
 
 ## Tetris Guidelines Implemented

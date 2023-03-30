@@ -1,3 +1,4 @@
+import { playSound } from './audio';
 import { Board } from './board';
 import { CONFIG } from './config';
 import { CONTROLS } from './controls';
@@ -303,6 +304,10 @@ export class Game {
             for (let i = 0; i < fullLines.length; i++) {
                 this.board.GameBoard[fullLines[i]] = [9, 9, 9, 9, 9, 9, 9, 9, 9, 9];
             }
+        }
+
+        if (fullLines.length > 0) {
+            playSound('lineClear');
         }
 
         if (delay > 0 && fullLines.length > 0) {
