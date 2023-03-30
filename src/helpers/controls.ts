@@ -51,12 +51,12 @@ export const CONTROLS = {
  * Handles the keyboard inputs.
  */
 export const handleInput = (e: KeyboardEvent, game: Game): void => {
-    if (game.gameOver || game.gameFinished || game.gameFreezed) {
+    // If the game is over we don't want to listen to any events.
+    if (game.gameOver || game.gameFinished) {
         return;
     }
 
-    // We need a special case for Esc
-    // Because we don't want to listen to any other events while the game is paused.
+    // We also don't want to listen to any other events while the game is paused.
     if (e.key === CONTROLS.PAUSE_GAME) {
         game.isPaused = !game.isPaused;
     }
@@ -83,8 +83,6 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
         // Also we call it once, immediately.
         fn();
 
-        // TODO: Fix DAS When a line gets cleared (game freezed)
-
         let begin: number | null = CONFIG.DAS_DELAY;
         const speed = CONFIG.ARR_SPEED;
 
@@ -97,7 +95,10 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
                     dasLoop();
                 }
 
-                fn();
+                // If the game is frozen we don't want to execute the function just yet.
+                if (!game.gameFreezed) {
+                    fn();
+                }
             }, begin || speed);
         };
 
@@ -162,23 +163,45 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
             game.moveDown(true, true);
             break;
         case CONTROLS.ROTATE_CW:
+            // We don't want users to rotate a piece while it is frozen.
+            // This could lead to the piece not being in the full line anymore.
+            // We still want to listen to the input for moving a piece left/right
+            // since this is needed to buffer DAS.
+            // The check is not needed for Hard/Soft Drops as you will not be able
+            // to move a piece down any more when a line gets cleared.
+            if (game.gameFreezed) {
+                return;
+            }
+
             if (game.currentPiece.rotate(game.board, true)) {
                 update();
                 game.lastMove = Move.Rotation;
             }
             break;
         case CONTROLS.ROTATE_CCW:
+            if (game.gameFreezed) {
+                return;
+            }
+
             if (game.currentPiece.rotate(game.board, false)) {
                 update();
                 game.lastMove = Move.Rotation;
             }
             break;
         case CONTROLS.HOLD_PIECE:
+            if (game.gameFreezed) {
+                return;
+            }
+
             if (game.toggleHoldPiece()) {
                 update();
             }
             break;
         case CONTROLS.INSERT_GARBAGE:
+            if (game.gameFreezed) {
+                return;
+            }
+
             game.board.insertGarbageLines(2, game.currentPiece);
             update();
             break;
