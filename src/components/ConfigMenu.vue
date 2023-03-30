@@ -18,6 +18,7 @@ let dasDelay = ref(CONFIG.DAS_DELAY);
 let arrSpeed = ref(CONFIG.ARR_SPEED);
 
 function resetConfig(): void {
+    // TODO: This can probably be cleaned up.
     volume.value = 0.25;
     debugInfo.value = false;
     coloredBoard.value = true;

@@ -18,6 +18,7 @@ let holdPiece = ref(CONTROLS.HOLD_PIECE);
 let insertGarbage = ref(CONTROLS.INSERT_GARBAGE);
 
 function resetKeybinds(): void {
+    // TODO: This can probably be cleaned up.
     pauseGame.value = 'Escape';
     resetGame.value = 'Enter';
     backToMenu.value = 'Escape';

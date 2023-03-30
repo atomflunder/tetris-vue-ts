@@ -20,10 +20,10 @@ In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/w
 -   ✅ Configurable Lock Delay & Move Resets
 -   ✅ Modifiable Line Clear Delay
 -   ✅ Customizable DAS & ARR
+-   ✅ Sound Effects
 
 -   🆕 Inserting Garbage in Single Player
 
--   ❌ Sound Effects, Logo, etc.
 -   ❌ Game and Pause Countdown
 
 ## Running locally

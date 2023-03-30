@@ -59,7 +59,13 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
 
     // We also don't want to listen to any other events while the game is paused.
     if (e.key === CONTROLS.PAUSE_GAME) {
-        game.isPaused = !game.isPaused;
+        if (game.isPaused) {
+            game.isPaused = false;
+            playSound('gameUnpause');
+        } else {
+            game.isPaused = true;
+            playSound('gamePause');
+        }
     }
 
     if (game.isPaused) {
@@ -165,6 +171,7 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
             break;
         case CONTROLS.HARD_DROP:
             game.moveDown(true, true);
+            playSound('hardDrop');
             break;
         case CONTROLS.ROTATE_CW:
             // We don't want users to rotate a piece while it is frozen.
@@ -210,6 +217,7 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
 
             game.board.insertGarbageLines(2, game.currentPiece);
             update();
+            playSound('garbage');
             break;
     }
 };
