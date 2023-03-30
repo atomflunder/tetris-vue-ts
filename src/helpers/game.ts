@@ -161,6 +161,7 @@ export class Game {
                 // Checking if the game is finished.
                 if (this.maxLines && this.totalLines >= this.maxLines) {
                     this.gameFinished = true;
+                    playSound('gameFinished');
                 }
 
                 // When the game is waiting for a locked piece to "finish",
