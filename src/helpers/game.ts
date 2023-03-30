@@ -1,3 +1,4 @@
+import { playSound } from './audio';
 import { Board } from './board';
 import { CONFIG } from './config';
 import { CONTROLS } from './controls';
@@ -127,6 +128,8 @@ export class Game {
         this.currentPiece.spawn(this.board);
 
         this.incrementPieceCount();
+
+        playSound('gameStart');
     }
 
     /**
@@ -141,6 +144,7 @@ export class Game {
                 // if it happens to be paused.
                 this.isPaused = false;
                 this.gameFinished = true;
+                playSound('gameFinished');
             }
 
             // If the game is paused we pretty much do nothing,
@@ -266,6 +270,8 @@ export class Game {
                     this.lockTick = CONFIG.PIECE_LOCK_TICKS;
                     this.score += this.currentDrop;
 
+                    playSound('lock');
+
                     this.invokeNextTurn(CONFIG.LINE_CLEAR_DELAY);
                 }
             } else {
@@ -303,6 +309,10 @@ export class Game {
             for (let i = 0; i < fullLines.length; i++) {
                 this.board.GameBoard[fullLines[i]] = [9, 9, 9, 9, 9, 9, 9, 9, 9, 9];
             }
+        }
+
+        if (fullLines.length > 0) {
+            playSound(`lineclear-${fullLines.length}`);
         }
 
         if (delay > 0 && fullLines.length > 0) {
@@ -345,8 +355,10 @@ export class Game {
 
         if (tSpin === TSpin.Mini) {
             this.tSpinCounter[0]++;
+            playSound('tSpinMini');
         } else if (tSpin === TSpin.Full) {
             this.tSpinCounter[1]++;
+            playSound('tSpinFull');
         }
 
         // This detects back-to-back "difficult moves"
@@ -381,6 +393,7 @@ export class Game {
         this.score += this.getScore(fullLines.length, multiplier, tSpin, fullClear);
 
         if (this.totalLines / 10 >= this.level) {
+            playSound('levelUp');
             this.level++;
         }
 
@@ -394,6 +407,7 @@ export class Game {
         const b = this.currentPiece.spawn(this.board);
         if (!b) {
             this.gameOver = true;
+            playSound('gameOver');
         }
 
         // Then we populate the queue some more if it needs it.
@@ -419,6 +433,8 @@ export class Game {
         if (!this.holdThisTurn) {
             return false;
         }
+
+        playSound('holdPiece');
 
         // Despawning the current piece.
         const pieceCoordinates = this.currentPiece.getCoordinates();

@@ -21,6 +21,7 @@ export const setConfig = (config: keyof typeof CONFIG, value: string): void => {
         'FIRST_PIECE_NO_OVERHANG'
     ];
     const numValues = [
+        'VOLUME',
         'LINE_CLEAR_DELAY',
         'PIECE_BAG_AMOUNT',
         'PIECE_LOCK_TICKS',
@@ -46,6 +47,11 @@ export const setConfig = (config: keyof typeof CONFIG, value: string): void => {
  *  The configuration options for the game. If an option isn't set we use a default value.
  */
 export const CONFIG = {
+    /**
+     * The volume level of the game.
+     */
+    VOLUME: Number(getConfig('VOLUME', '0.25')),
+
     /**
      * Displays some debug information on the game info screen.
      * Used for development purposes.

@@ -4,6 +4,7 @@ import { CONFIG, setConfig } from '../helpers/config';
 
 defineEmits(['back']);
 
+let volume = ref(CONFIG.VOLUME);
 let debugInfo = ref(CONFIG.SHOW_DEBUG_INFO);
 let coloredBoard = ref(CONFIG.COLORED_BOARD);
 let ghostPiece = ref(CONFIG.GHOST_PIECE);
@@ -17,6 +18,8 @@ let dasDelay = ref(CONFIG.DAS_DELAY);
 let arrSpeed = ref(CONFIG.ARR_SPEED);
 
 function resetConfig(): void {
+    // TODO: This can probably be cleaned up.
+    volume.value = 0.25;
     debugInfo.value = false;
     coloredBoard.value = true;
     ghostPiece.value = true;
@@ -29,6 +32,7 @@ function resetConfig(): void {
     dasDelay.value = 167;
     arrSpeed.value = 33;
 
+    setConfig('VOLUME', '0.25');
     setConfig('SHOW_DEBUG_INFO', 'false');
     setConfig('COLORED_BOARD', 'true');
     setConfig('GHOST_PIECE', 'true');
@@ -41,6 +45,8 @@ function resetConfig(): void {
     setConfig('DAS_DELAY', '167');
     setConfig('ARR_SPEED', '33');
 }
+
+// TODO: Add a live uptating preview of a board to the right side?
 </script>
 
 <template>
@@ -49,6 +55,22 @@ function resetConfig(): void {
 
         <table class="config-table">
             <td class="header" colspan="2">OPTIONS MENU</td>
+            <tr>
+                <td>VOLUME:</td>
+                <input
+                    class="slider"
+                    type="range"
+                    v-model="volume"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    @change="setConfig('VOLUME', ($event.target as HTMLInputElement).value)"
+                />
+                ({{
+                    Math.round(volume * 100)
+                }}%)
+            </tr>
+
             <tr>
                 <td>SHOW DEBUG INFO:</td>
                 <input
@@ -240,6 +262,8 @@ function resetConfig(): void {
             </tr>
         </table>
     </div>
+
+    <div class="board-preview"></div>
 </template>
 
 <style scoped>

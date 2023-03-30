@@ -1,3 +1,4 @@
+import { playSound } from './audio';
 import { CONFIG } from './config';
 import type { Game } from './game';
 import { Move } from './types';
@@ -58,7 +59,13 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
 
     // We also don't want to listen to any other events while the game is paused.
     if (e.key === CONTROLS.PAUSE_GAME) {
-        game.isPaused = !game.isPaused;
+        if (game.isPaused) {
+            game.isPaused = false;
+            playSound('gameUnpause');
+        } else {
+            game.isPaused = true;
+            playSound('gamePause');
+        }
     }
 
     if (game.isPaused) {
@@ -109,6 +116,7 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
         if (game.currentPiece.moveLeft(game.board)) {
             update();
             game.lastMove = Move.Left;
+            playSound('move');
         }
     };
 
@@ -116,6 +124,7 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
         if (game.currentPiece.moveRight(game.board)) {
             update();
             game.lastMove = Move.Right;
+            playSound('move');
         }
     };
 
@@ -125,6 +134,7 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
         game.currentDrop += 1;
         // When you hold down you probably do want the piece to lock instantly.
         game.lockTick = 0;
+        playSound('move');
     };
 
     switch (e.key) {
@@ -161,6 +171,7 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
             break;
         case CONTROLS.HARD_DROP:
             game.moveDown(true, true);
+            playSound('hardDrop');
             break;
         case CONTROLS.ROTATE_CW:
             // We don't want users to rotate a piece while it is frozen.
@@ -176,6 +187,7 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
             if (game.currentPiece.rotate(game.board, true)) {
                 update();
                 game.lastMove = Move.Rotation;
+                playSound('rotate');
             }
             break;
         case CONTROLS.ROTATE_CCW:
@@ -186,6 +198,7 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
             if (game.currentPiece.rotate(game.board, false)) {
                 update();
                 game.lastMove = Move.Rotation;
+                playSound('rotate');
             }
             break;
         case CONTROLS.HOLD_PIECE:
@@ -204,6 +217,7 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
 
             game.board.insertGarbageLines(2, game.currentPiece);
             update();
+            playSound('garbage');
             break;
     }
 };
