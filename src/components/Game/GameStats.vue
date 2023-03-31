@@ -60,8 +60,6 @@ defineProps<{
             {{ game.currentDrop }}
         </div>
 
-        <div>LAST MOVE: {{ game.lastMove }}</div>
-
         <div>
             LOCK INFO:
             <div class="indented">WAITING: {{ game.waitForLock }}</div>

@@ -4,6 +4,7 @@
     "compilerOptions": {
         "composite": true,
         "lib": ["ES2017"],
-        "types": ["node", "jsdom"]
+        "types": ["node", "jsdom"],
+        "ignoreDeprecations": "5.0"
     }
 }

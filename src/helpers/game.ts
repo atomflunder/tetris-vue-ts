@@ -267,7 +267,7 @@ export class Game {
                 // where you have 30 ticks (0.5s) to move it again, or it becomes locked.
                 this.waitForLock = true;
                 // If the 30 ticks are up, we lock the piece for real.
-                if (this.lockTick <= 0) {
+                if (this.lockTick <= 0 && !this.gameFreezed) {
                     this.lockTick = CONFIG.PIECE_LOCK_TICKS;
                     this.score += this.currentDrop;
 
@@ -292,6 +292,9 @@ export class Game {
      */
     invokeNextTurn(delay: number): void {
         const fullLines = this.board.getFullLines();
+
+        this.currentDrop = 0;
+        this.lockTick = CONFIG.PIECE_LOCK_TICKS;
 
         // First, we grey the pieces out if the user wishes to do so.
         if (!CONFIG.COLORED_BOARD) {
