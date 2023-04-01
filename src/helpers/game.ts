@@ -1,7 +1,6 @@
-import { playSound } from './audio';
+import { AudioPlayer } from './audio';
 import { Board } from './board';
 import { CONFIG } from './config';
-import { CONTROLS } from './controls';
 import type { Piece } from './pieces';
 import { getRandomPiece } from './rng';
 import { setHighScore } from './score';
@@ -10,15 +9,15 @@ import { Timer } from './timer';
 import { Menu, Move, TSpin, type KeyEvents } from './types';
 
 export class Game {
-    gameMode: Menu;
+    mode: Menu;
 
     // Game Over is used when you "fail".
-    gameOver: boolean;
+    over: boolean;
     // And Game Finished is used when you complete one of the challenge modes.
-    gameFinished: boolean;
-    isPaused: boolean;
+    finished: boolean;
+    paused: boolean;
     // For delays like line-clear delay, or maybe Pause Countdowns in the future.
-    gameFreezed: boolean;
+    frozen: boolean;
 
     maxTime: number | null;
     maxLines: number | null;
@@ -27,13 +26,13 @@ export class Game {
     currentPiece: Piece;
     nextPieces: Piece[];
     // The individual count of each piece.
-    pieceCounter: number[];
+    pieceCountList: number[];
 
     // The coordinates of the "shadow" piece.
     shadowPiece: number[][];
     holdPiece: Piece | null;
     // You can only toggle held pieces once per turn.
-    holdThisTurn: boolean;
+    canHold: boolean;
 
     lastMove: Move;
 
@@ -44,12 +43,12 @@ export class Game {
     currentDrop: number;
 
     score: number;
-    totalLines: number;
+    lineCount: number;
     // The specific line clears (Single, Double, Triple, Tetris)
-    lineCounter: number[];
+    lineCountList: number[];
     level: number;
     // The number of Mini and Full T-Spins
-    tSpinCounter: number[];
+    tSpinCountList: number[];
 
     // A tick is 1/60th of a second.
     ticks: number;
@@ -57,12 +56,14 @@ export class Game {
     timer: Timer;
 
     // The amount of ticks after a piece gets locked without input.
-    lockTick: number;
+    lockTicksRemaining: number;
     waitForLock: boolean;
     lockMoveResets: number;
 
     // For the DAS.
     keyEvents: KeyEvents;
+
+    audioPlayer: AudioPlayer;
 
     constructor(
         gameMode: Menu = Menu.Endless,
@@ -70,21 +71,21 @@ export class Game {
         maxTime: number | null = null,
         startLevel: number = 1
     ) {
-        const nextPieces = getRandomPiece([], CONFIG.PIECE_BAG_AMOUNT, true);
+        const nextPieces = getRandomPiece([], CONFIG.PIECE_BAG_AMOUNT.value, true);
 
         // Taking the first piece of the queue.
         const currentPiece = nextPieces[0];
         currentPiece.reset();
         nextPieces.shift();
 
-        getRandomPiece(nextPieces, CONFIG.PIECE_BAG_AMOUNT);
+        getRandomPiece(nextPieces, CONFIG.PIECE_BAG_AMOUNT.value);
 
         // Assigning the values.
-        this.gameMode = gameMode;
-        this.gameOver = false;
-        this.gameFinished = false;
-        this.isPaused = false;
-        this.gameFreezed = false;
+        this.mode = gameMode;
+        this.over = false;
+        this.finished = false;
+        this.paused = false;
+        this.frozen = false;
 
         this.maxLines = maxLines;
         this.maxTime = maxTime;
@@ -92,11 +93,11 @@ export class Game {
         this.board = new Board();
         this.currentPiece = currentPiece;
         this.nextPieces = nextPieces;
-        this.pieceCounter = [0, 0, 0, 0, 0, 0, 0];
+        this.pieceCountList = [0, 0, 0, 0, 0, 0, 0];
 
-        this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
+        this.shadowPiece = this.currentPiece.getShadowCoordinates(this.board);
         this.holdPiece = null;
-        this.holdThisTurn = true;
+        this.canHold = true;
 
         this.lastMove = Move.None;
 
@@ -106,17 +107,17 @@ export class Game {
         this.currentDrop = 0;
 
         this.score = 0;
-        this.totalLines = 0;
-        this.lineCounter = [0, 0, 0, 0];
+        this.lineCount = 0;
+        this.lineCountList = [0, 0, 0, 0];
         this.level = startLevel;
-        this.tSpinCounter = [0, 0];
+        this.tSpinCountList = [0, 0];
 
         this.ticks = 0;
         this.timer = new Timer();
 
-        this.lockTick = CONFIG.PIECE_LOCK_TICKS;
+        this.lockTicksRemaining = CONFIG.PIECE_LOCK_TICKS.value;
         this.waitForLock = false;
-        this.lockMoveResets = CONFIG.LOCK_MOVE_RESETS;
+        this.lockMoveResets = CONFIG.LOCK_MOVE_RESETS.value;
 
         this.keyEvents = {
             ArrowLeft: null,
@@ -124,12 +125,14 @@ export class Game {
             ArrowDown: null
         };
 
+        this.audioPlayer = new AudioPlayer();
+
         // Spawning the first piece.
         this.currentPiece.spawn(this.board);
 
         this.incrementPieceCount();
 
-        playSound('gameStart');
+        this.audioPlayer.playSound('gameStart');
     }
 
     /**
@@ -142,32 +145,26 @@ export class Game {
             if (this.maxTime && this.timer.currentTime >= this.maxTime) {
                 // If the game is over, we manually un-pause,
                 // if it happens to be paused.
-                this.isPaused = false;
-                this.gameFinished = true;
-                playSound('gameFinished');
+                this.paused = false;
+                this.finished = true;
+                this.audioPlayer.playSound('gameFinished');
             }
 
             // If the game is paused we pretty much do nothing,
             // except updating the timer and checking if it's over the limit.
-            if (!this.isPaused || this.gameFreezed) {
+            if (!this.paused || this.frozen) {
                 this.ticks++;
 
-                console.log(
-                    this.keyEvents[CONTROLS.MOVE_LEFT],
-                    this.keyEvents[CONTROLS.MOVE_RIGHT],
-                    this.keyEvents[CONTROLS.SOFT_DROP]
-                );
-
                 // Checking if the game is finished.
-                if (this.maxLines && this.totalLines >= this.maxLines) {
-                    this.gameFinished = true;
-                    playSound('gameFinished');
+                if (this.maxLines && this.lineCount >= this.maxLines) {
+                    this.finished = true;
+                    this.audioPlayer.playSound('gameFinished');
                 }
 
                 // When the game is waiting for a locked piece to "finish",
                 // we decrement the timer
                 if (this.waitForLock) {
-                    this.lockTick--;
+                    this.lockTicksRemaining--;
                     this.moveDown(false, false);
                 }
 
@@ -178,11 +175,11 @@ export class Game {
                 }
             }
 
-            if (!this.gameOver && !this.gameFinished) {
+            if (!this.over && !this.finished) {
                 this.advanceTick();
             } else {
                 // If the game is over, we set the high score and increment the overall stats.
-                setHighScore(this.gameMode, this.score, this.timer.currentTime, this.gameOver);
+                setHighScore(this.mode, this.score, this.timer.currentTime, this.over);
                 incrementLifetimeStats(this);
             }
         }, 1000 / 60);
@@ -192,25 +189,25 @@ export class Game {
      * Resets the game.
      */
     reset(): void {
-        const nextPieces = getRandomPiece([], CONFIG.PIECE_BAG_AMOUNT, true);
+        const nextPieces = getRandomPiece([], CONFIG.PIECE_BAG_AMOUNT.value, true);
 
         const currentPiece = nextPieces[0];
         nextPieces.shift();
 
-        getRandomPiece(nextPieces, CONFIG.PIECE_BAG_AMOUNT);
+        getRandomPiece(nextPieces, CONFIG.PIECE_BAG_AMOUNT.value);
 
-        this.gameOver = false;
-        this.gameFinished = false;
-        this.isPaused = false;
-        this.gameFreezed = false;
+        this.over = false;
+        this.finished = false;
+        this.paused = false;
+        this.frozen = false;
 
         this.board = new Board();
         this.currentPiece = currentPiece;
         this.nextPieces = nextPieces;
-        this.pieceCounter = [0, 0, 0, 0, 0, 0, 0];
+        this.pieceCountList = [0, 0, 0, 0, 0, 0, 0];
 
         this.holdPiece = null;
-        this.holdThisTurn = true;
+        this.canHold = true;
 
         this.lastMove = Move.None;
 
@@ -220,15 +217,15 @@ export class Game {
         this.currentDrop = 0;
 
         this.score = 0;
-        this.totalLines = 0;
-        this.lineCounter = [0, 0, 0, 0];
+        this.lineCount = 0;
+        this.lineCountList = [0, 0, 0, 0];
         this.level = 1;
-        this.tSpinCounter = [0, 0];
+        this.tSpinCountList = [0, 0];
 
         this.ticks = 0;
         this.timer = new Timer();
 
-        this.lockTick = CONFIG.PIECE_LOCK_TICKS;
+        this.lockTicksRemaining = CONFIG.PIECE_LOCK_TICKS.value;
         this.waitForLock = false;
 
         this.keyEvents = {
@@ -239,12 +236,14 @@ export class Game {
 
         this.currentPiece.spawn(this.board);
 
-        this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
+        this.shadowPiece = this.currentPiece.getShadowCoordinates(this.board);
 
         this.incrementPieceCount();
 
         // And of course we need to enable the main game loop again.
         this.advanceTick();
+
+        this.audioPlayer.playSound('gameStart');
     }
 
     /**
@@ -259,7 +258,7 @@ export class Game {
                 this.lastMove = Move.Drop;
             }
 
-            this.invokeNextTurn(CONFIG.LINE_CLEAR_DELAY);
+            this.invokeNextTurn(CONFIG.LINE_CLEAR_DELAY.value);
         } else {
             const b = this.currentPiece.moveDown(this.board);
             if (!b) {
@@ -267,13 +266,13 @@ export class Game {
                 // where you have 30 ticks (0.5s) to move it again, or it becomes locked.
                 this.waitForLock = true;
                 // If the 30 ticks are up, we lock the piece for real.
-                if (this.lockTick <= 0 && !this.gameFreezed) {
-                    this.lockTick = CONFIG.PIECE_LOCK_TICKS;
+                if (this.lockTicksRemaining <= 0 && !this.frozen) {
+                    this.lockTicksRemaining = CONFIG.PIECE_LOCK_TICKS.value;
                     this.score += this.currentDrop;
 
-                    playSound('lock');
+                    this.audioPlayer.playSound('lock');
 
-                    this.invokeNextTurn(CONFIG.LINE_CLEAR_DELAY);
+                    this.invokeNextTurn(CONFIG.LINE_CLEAR_DELAY.value);
                 }
             } else {
                 if (manual) {
@@ -284,7 +283,7 @@ export class Game {
 
         // This will update the shadow coordinates when a new piece spawns.
         // Otherwise this is fairly useless.
-        this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
+        this.shadowPiece = this.currentPiece.getShadowCoordinates(this.board);
     }
 
     /**
@@ -294,7 +293,7 @@ export class Game {
         const fullLines = this.board.getFullLines();
 
         this.currentDrop = 0;
-        this.lockTick = CONFIG.PIECE_LOCK_TICKS;
+        this.lockTicksRemaining = CONFIG.PIECE_LOCK_TICKS.value;
 
         // First, we grey the pieces out if the user wishes to do so.
         if (!CONFIG.COLORED_BOARD) {
@@ -316,11 +315,11 @@ export class Game {
         }
 
         if (fullLines.length > 0) {
-            playSound(`lineclear-${fullLines.length}`);
+            this.audioPlayer.playSound(`lineclear-${fullLines.length}`);
         }
 
         if (delay > 0 && fullLines.length > 0) {
-            this.gameFreezed = true;
+            this.frozen = true;
             setTimeout(() => {
                 this.nextTurn();
             }, delay);
@@ -334,17 +333,17 @@ export class Game {
      * deleting of any full lines, incrementing the score etc.
      */
     nextTurn(): void {
-        this.gameFreezed = false;
+        this.frozen = false;
 
-        if (this.gameOver || this.gameFinished) {
+        if (this.over || this.finished) {
             return;
         }
 
         // First we check for the lines that need to be deleted.
         const fullLines = this.board.getFullLines();
 
-        this.totalLines += fullLines.length;
-        this.lineCounter[fullLines.length - 1] += 1;
+        this.lineCount += fullLines.length;
+        this.lineCountList[fullLines.length - 1] += 1;
 
         // This detects the ongoing combo.
         if (fullLines.length !== 0) {
@@ -358,11 +357,11 @@ export class Game {
         const tSpin = this.detectTSpin();
 
         if (tSpin === TSpin.Mini) {
-            this.tSpinCounter[0]++;
-            playSound('tSpinMini');
+            this.tSpinCountList[0]++;
+            this.audioPlayer.playSound('tSpinMini');
         } else if (tSpin === TSpin.Full) {
-            this.tSpinCounter[1]++;
-            playSound('tSpinFull');
+            this.tSpinCountList[1]++;
+            this.audioPlayer.playSound('tSpinFull');
         }
 
         // This detects back-to-back "difficult moves"
@@ -396,8 +395,8 @@ export class Game {
 
         this.score += this.getScore(fullLines.length, multiplier, tSpin, fullClear);
 
-        if (this.totalLines / 10 >= this.level) {
-            playSound('levelUp');
+        if (this.lineCount / 10 >= this.level) {
+            this.audioPlayer.playSound('levelUp');
             this.level++;
         }
 
@@ -410,22 +409,22 @@ export class Game {
         // Checking if the piece can spawn, if not this is an automatic game over.
         const b = this.currentPiece.spawn(this.board);
         if (!b) {
-            this.gameOver = true;
-            playSound('gameOver');
+            this.over = true;
+            this.audioPlayer.playSound('gameOver');
         }
 
         // Then we populate the queue some more if it needs it.
-        this.nextPieces = getRandomPiece(this.nextPieces, CONFIG.PIECE_BAG_AMOUNT);
+        this.nextPieces = getRandomPiece(this.nextPieces, CONFIG.PIECE_BAG_AMOUNT.value);
         // Then we remove the first piece from the piece queue.
         this.nextPieces.shift();
 
         // After all of that we reset the ticks and the ability to hold a new piece.
         this.ticks = 0;
-        this.holdThisTurn = true;
+        this.canHold = true;
         this.waitForLock = false;
-        this.lockMoveResets = CONFIG.LOCK_MOVE_RESETS;
+        this.lockMoveResets = CONFIG.LOCK_MOVE_RESETS.value;
 
-        this.shadowPiece = this.currentPiece.getShadowPieceCoordinates(this.board);
+        this.shadowPiece = this.currentPiece.getShadowCoordinates(this.board);
     }
 
     /**
@@ -434,11 +433,11 @@ export class Game {
      */
     toggleHoldPiece(): boolean {
         // You can only hold a piece one time per turn, otherwise you could just stall forever.
-        if (!this.holdThisTurn) {
+        if (!this.canHold) {
             return false;
         }
 
-        playSound('holdPiece');
+        this.audioPlayer.playSound('holdPiece');
 
         // Despawning the current piece.
         const pieceCoordinates = this.currentPiece.getCoordinates();
@@ -459,17 +458,17 @@ export class Game {
             // Checking if the piece can spawn, if not this is an automatic game over.
             const b = this.currentPiece.spawn(this.board);
             if (!b) {
-                this.gameOver = true;
+                this.over = true;
             }
 
             // Then we populate the queue some more if it needs it.
-            this.nextPieces = getRandomPiece(this.nextPieces, CONFIG.PIECE_BAG_AMOUNT);
+            this.nextPieces = getRandomPiece(this.nextPieces, CONFIG.PIECE_BAG_AMOUNT.value);
             // Then we remove the first piece from the piece queue.
             this.nextPieces.shift();
 
             // But we have to make sure to set all this to false (or 0).
             this.ticks = 0;
-            this.holdThisTurn = false;
+            this.canHold = false;
             this.waitForLock = false;
 
             return true;
@@ -485,7 +484,7 @@ export class Game {
         this.currentPiece.spawn(this.board);
 
         this.ticks = 0;
-        this.holdThisTurn = false;
+        this.canHold = false;
         this.waitForLock = false;
 
         return true;
@@ -674,25 +673,25 @@ export class Game {
         // Incrementing the individual piece counts.
         switch (this.currentPiece.name) {
             case 'I':
-                this.pieceCounter[0] += 1;
+                this.pieceCountList[0] += 1;
                 break;
             case 'J':
-                this.pieceCounter[1] += 1;
+                this.pieceCountList[1] += 1;
                 break;
             case 'L':
-                this.pieceCounter[2] += 1;
+                this.pieceCountList[2] += 1;
                 break;
             case 'O':
-                this.pieceCounter[3] += 1;
+                this.pieceCountList[3] += 1;
                 break;
             case 'S':
-                this.pieceCounter[4] += 1;
+                this.pieceCountList[4] += 1;
                 break;
             case 'Z':
-                this.pieceCounter[5] += 1;
+                this.pieceCountList[5] += 1;
                 break;
             case 'T':
-                this.pieceCounter[6] += 1;
+                this.pieceCountList[6] += 1;
                 break;
             default:
                 break;

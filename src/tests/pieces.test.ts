@@ -270,7 +270,7 @@ test('Get Shadow Piece Coordinates', () => {
 
     const iPiece = allPieces[0];
 
-    expect(iPiece.getShadowPieceCoordinates(board)).toEqual([
+    expect(iPiece.getShadowCoordinates(board)).toEqual([
         [21, 3],
         [21, 4],
         [21, 5],
@@ -280,7 +280,7 @@ test('Get Shadow Piece Coordinates', () => {
     iPiece.offset = [4, 6];
     iPiece.currentRotation = 1;
 
-    expect(iPiece.getShadowPieceCoordinates(board)).toEqual([
+    expect(iPiece.getShadowCoordinates(board)).toEqual([
         [18, 8],
         [19, 8],
         [20, 8],

@@ -25,13 +25,13 @@ export const incrementLifetimeStats = (game: Game): void => {
     increaseStats('PLAY_TIME', game.timer.currentTime);
     increaseStats(
         'PIECES',
-        game.pieceCounter.reduce((a, b) => a + b)
+        game.pieceCountList.reduce((a, b) => a + b)
     );
-    increaseStats('TOTAL_LINES', game.totalLines);
-    increaseStats('SINGLE_LINES', game.lineCounter[0]);
-    increaseStats('DOUBLE_LINES', game.lineCounter[1]);
-    increaseStats('TRIPLE_LINES', game.lineCounter[2]);
-    increaseStats('TETRIS_LINES', game.lineCounter[3]);
-    increaseStats('T_SPIN_MINI', game.tSpinCounter[0]);
-    increaseStats('T_SPIN_FULL', game.tSpinCounter[1]);
+    increaseStats('TOTAL_LINES', game.lineCount);
+    increaseStats('SINGLE_LINES', game.lineCountList[0]);
+    increaseStats('DOUBLE_LINES', game.lineCountList[1]);
+    increaseStats('TRIPLE_LINES', game.lineCountList[2]);
+    increaseStats('TETRIS_LINES', game.lineCountList[3]);
+    increaseStats('T_SPIN_MINI', game.tSpinCountList[0]);
+    increaseStats('T_SPIN_FULL', game.tSpinCountList[1]);
 };

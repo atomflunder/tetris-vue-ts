@@ -31,10 +31,10 @@ onkeydown = (e: KeyboardEvent) => {
 };
 
 onkeyup = (e: KeyboardEvent) => {
-    if (game.value.gameOver || game.value.gameFinished) {
-        if (e.key === CONTROLS.RESET_GAME) {
+    if (game.value.over || game.value.finished) {
+        if (e.key === CONTROLS.RESET_GAME.value) {
             game.value.reset();
-        } else if (e.key === CONTROLS.BACK_TO_MENU) {
+        } else if (e.key === CONTROLS.BACK_TO_MENU.value) {
             emits('back-to-menu');
         }
 
@@ -67,9 +67,9 @@ onMounted(() => {
             <TetrisBoard :game="game" />
         </div>
 
-        <div class="center-column"><PauseOverlay v-if="game.isPaused" /></div>
-        <div class="center-column"><GameOver v-if="game.gameOver" /></div>
-        <div class="center-column"><GameFinished v-if="game.gameFinished" :game="game" /></div>
+        <div class="center-column"><PauseOverlay v-if="game.paused" /></div>
+        <div class="center-column"><GameOver v-if="game.over" /></div>
+        <div class="center-column"><GameFinished v-if="game.finished" :game="game" /></div>
 
         <div class="next-column font">
             <NextPieces :game="game" />

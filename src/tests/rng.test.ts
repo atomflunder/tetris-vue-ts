@@ -3,7 +3,7 @@ import { getRandomPiece, getRandomPieceClassic, getRandomPieceModern } from '@/h
 import { expect, test } from 'vitest';
 
 test('Get Random Piece', () => {
-    if (CONFIG.MODERN_PIECE_RNG) {
+    if (CONFIG.MODERN_PIECE_RNG.value) {
         expect(getRandomPiece([], 3, true).length).toBe(21);
     } else {
         expect(getRandomPiece([], 3, true).length).toBe(15);

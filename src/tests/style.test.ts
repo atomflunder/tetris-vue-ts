@@ -21,7 +21,7 @@ test('Get Held Piece Color', () => {
 
     expect(getHeldPieceColor(game, 1)).toBe('i block small-block');
 
-    game.holdThisTurn = false;
+    game.canHold = false;
 
     expect(getHeldPieceColor(game, 1)).toBe('greyed-out empty small-block');
 });
@@ -35,7 +35,7 @@ test('Is in Danger', () => {
 
     expect(getGlow(game)).toBe('red-glow ');
 
-    game.isPaused = true;
+    game.paused = true;
 
     expect(getGlow(game)).toBe('purple-glow ');
 

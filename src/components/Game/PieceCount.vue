@@ -10,10 +10,10 @@ defineProps<{
 
 <template>
     <div class="grid">
-        <div class="header">TOTAL PIECES: {{ game.pieceCounter.reduce((a, b) => a + b) }}</div>
+        <div class="header">TOTAL PIECES: {{ game.pieceCountList.reduce((a, b) => a + b) }}</div>
         <div class="piece-table">
             <table>
-                <td v-for="(count, i) in game.pieceCounter" :key="i">
+                <td v-for="(count, i) in game.pieceCountList" :key="i">
                     <tr
                         v-for="(row, j) in getPreviewPieceTable([
                             JSON.parse(JSON.stringify(allPieces[i]))

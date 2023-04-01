@@ -18,30 +18,24 @@ let holdPiece = ref(CONTROLS.HOLD_PIECE);
 let insertGarbage = ref(CONTROLS.INSERT_GARBAGE);
 
 function resetKeybinds(): void {
-    // TODO: This can probably be cleaned up.
-    pauseGame.value = 'Escape';
-    resetGame.value = 'Enter';
-    backToMenu.value = 'Escape';
-    moveLeft.value = 'ArrowLeft';
-    moveRight.value = 'ArrowRight';
-    softDrop.value = 'ArrowDown';
-    hardDrop.value = 'ArrowUp';
-    rotateCW.value = ' ';
-    rotateCCW.value = 'Enter';
-    holdPiece.value = '0';
-    insertGarbage.value = 'F1';
+    const allValues = [
+        pauseGame,
+        resetGame,
+        backToMenu,
+        moveLeft,
+        moveRight,
+        softDrop,
+        hardDrop,
+        rotateCW,
+        rotateCCW,
+        holdPiece,
+        insertGarbage
+    ];
 
-    setKeybind('PAUSE_GAME', 'Escape');
-    setKeybind('RESET_GAME', 'Enter');
-    setKeybind('BACK_TO_MENU', 'Escape');
-    setKeybind('MOVE_LEFT', 'ArrowLeft');
-    setKeybind('MOVE_RIGHT', 'ArrowRight');
-    setKeybind('SOFT_DROP', 'ArrowDown');
-    setKeybind('HARD_DROP', 'ArrowUp');
-    setKeybind('ROTATE_CW', ' ');
-    setKeybind('ROTATE_CCW', 'Enter');
-    setKeybind('HOLD_PIECE', '0');
-    setKeybind('INSERT_GARBAGE', 'F1');
+    for (let i = 0; i < allValues.length; i++) {
+        allValues[i].value.value = allValues[i].value.defaultValue;
+        setKeybind(allValues[i].value.name, allValues[i].value.defaultValue);
+    }
 }
 
 async function rebindKey(keybind: string): Promise<void> {
@@ -59,7 +53,7 @@ async function rebindKey(keybind: string): Promise<void> {
             function onKeyHandler(e: KeyboardEvent): void {
                 e.preventDefault();
                 document.removeEventListener('keydown', onKeyHandler);
-                setKeybind(keybind as keyof typeof CONTROLS, e.key);
+                setKeybind(keybind, e.key);
                 resolve(e);
             }
         });
@@ -86,7 +80,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="MOVE_LEFT"
                         @click="rebindKey('MOVE_LEFT')"
                     >
-                        {{ keyToDisplay(moveLeft) }}
+                        {{ keyToDisplay(moveLeft.value) }}
                     </button>
                 </td>
 
@@ -97,7 +91,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="PAUSE_GAME"
                         @click="rebindKey('PAUSE_GAME')"
                     >
-                        {{ keyToDisplay(pauseGame) }}
+                        {{ keyToDisplay(pauseGame.value) }}
                     </button>
                 </td>
             </tr>
@@ -110,7 +104,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="MOVE_RIGHT"
                         @click="rebindKey('MOVE_RIGHT')"
                     >
-                        {{ keyToDisplay(moveRight) }}
+                        {{ keyToDisplay(moveRight.value) }}
                     </button>
                 </td>
 
@@ -121,7 +115,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="RESET_GAME"
                         @click="rebindKey('RESET_GAME')"
                     >
-                        {{ keyToDisplay(resetGame) }}
+                        {{ keyToDisplay(resetGame.value) }}
                     </button>
                 </td>
             </tr>
@@ -134,7 +128,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="SOFT_DROP"
                         @click="rebindKey('SOFT_DROP')"
                     >
-                        {{ keyToDisplay(softDrop) }}
+                        {{ keyToDisplay(softDrop.value) }}
                     </button>
                 </td>
 
@@ -145,7 +139,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="BACK_TO_MENU"
                         @click="rebindKey('BACK_TO_MENU')"
                     >
-                        {{ keyToDisplay(backToMenu) }}
+                        {{ keyToDisplay(backToMenu.value) }}
                     </button>
                 </td>
             </tr>
@@ -158,7 +152,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="HARD_DROP"
                         @click="rebindKey('HARD_DROP')"
                     >
-                        {{ keyToDisplay(hardDrop) }}
+                        {{ keyToDisplay(hardDrop.value) }}
                     </button>
                 </td>
 
@@ -169,7 +163,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="HOLD_PIECE"
                         @click="rebindKey('HOLD_PIECE')"
                     >
-                        {{ keyToDisplay(holdPiece) }}
+                        {{ keyToDisplay(holdPiece.value) }}
                     </button>
                 </td>
             </tr>
@@ -181,7 +175,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="ROTATE_CW"
                         @click="rebindKey('ROTATE_CW')"
                     >
-                        {{ keyToDisplay(rotateCW) }}
+                        {{ keyToDisplay(rotateCW.value) }}
                     </button>
                 </td>
 
@@ -192,7 +186,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="INSERT_GARBAGE"
                         @click="rebindKey('INSERT_GARBAGE')"
                     >
-                        {{ keyToDisplay(insertGarbage) }}
+                        {{ keyToDisplay(insertGarbage.value) }}
                     </button>
                 </td>
             </tr>
@@ -205,7 +199,7 @@ async function rebindKey(keybind: string): Promise<void> {
                         id="ROTATE_CCW"
                         @click="rebindKey('ROTATE_CCW')"
                     >
-                        {{ keyToDisplay(rotateCCW) }}
+                        {{ keyToDisplay(rotateCCW.value) }}
                     </button>
                 </td>
             </tr>

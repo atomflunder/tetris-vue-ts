@@ -7,36 +7,36 @@ import { expect, test } from 'vitest';
 test('New Game', () => {
     const game = new Game();
 
-    expect(game.gameOver).toBe(false);
-    expect(game.isPaused).toBe(false);
+    expect(game.over).toBe(false);
+    expect(game.paused).toBe(false);
 
     // The board is already tested separately,
     // so no need to repeat that here.
 
-    if (CONFIG.MODERN_PIECE_RNG) {
+    if (CONFIG.MODERN_PIECE_RNG.value) {
         expect(game.nextPieces.length).toBe(13);
     } else {
         expect(game.nextPieces.length).toBe(15);
     }
 
-    const sumPieceCounter = game.pieceCounter.reduce((a, b) => a + b);
+    const sumPieceCounter = game.pieceCountList.reduce((a, b) => a + b);
     expect(sumPieceCounter).toBe(1);
 
     expect(game.holdPiece).toBe(null);
-    expect(game.holdThisTurn).toBe(true);
+    expect(game.canHold).toBe(true);
     expect(game.currentDrop).toBe(0);
     expect(game.score).toBe(0);
-    expect(game.totalLines).toBe(0);
-    expect(game.lineCounter).toEqual([0, 0, 0, 0]);
+    expect(game.lineCount).toBe(0);
+    expect(game.lineCountList).toEqual([0, 0, 0, 0]);
     expect(game.level).toEqual(1);
     expect(game.ticks).toBe(0);
-    expect(game.lockTick).toBe(CONFIG.PIECE_LOCK_TICKS);
+    expect(game.lockTicksRemaining).toBe(CONFIG.PIECE_LOCK_TICKS.value);
     expect(game.waitForLock).toBe(false);
 });
 
 test('Advance Tick', () => {
     const game1 = new Game();
-    game1.gameOver = true;
+    game1.over = true;
 
     expect(game1.ticks).toBe(0);
 
@@ -45,7 +45,7 @@ test('Advance Tick', () => {
     expect(game1.ticks).toBe(0);
 
     const game2 = new Game();
-    game2.isPaused = true;
+    game2.paused = true;
 
     expect(game2.ticks).toBe(0);
 
@@ -81,7 +81,7 @@ test('Next Turn', () => {
     // We are spawning a piece on top of another piece instantly,
     // which is a game over.
     gameGO.nextTurn();
-    expect(gameGO.gameOver).toBe(true);
+    expect(gameGO.over).toBe(true);
 
     const game = new Game();
 
@@ -97,14 +97,14 @@ test('Next Turn', () => {
 
     expect(game.score).toBe(800);
     expect(game.board.GameBoard[10]).toEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    expect(game.totalLines).toBe(4);
-    expect(game.lineCounter).toEqual([0, 0, 0, 1]);
-    expect(game.pieceCounter.reduce((a, b) => a + b)).toEqual(2);
+    expect(game.lineCount).toBe(4);
+    expect(game.lineCountList).toEqual([0, 0, 0, 1]);
+    expect(game.pieceCountList.reduce((a, b) => a + b)).toEqual(2);
     expect(game.ticks).toBe(0);
-    expect(game.holdThisTurn).toBe(true);
+    expect(game.canHold).toBe(true);
     expect(game.waitForLock).toBe(false);
 
-    game.gameOver = true;
+    game.over = true;
 
     game.nextTurn();
 });
@@ -204,11 +204,11 @@ test('Get Fall Speed', () => {
 test('Increment Piece Count', () => {
     const game = new Game();
 
-    expect(game.pieceCounter.reduce((a, b) => a + b)).toBe(1);
+    expect(game.pieceCountList.reduce((a, b) => a + b)).toBe(1);
 
     game.nextTurn();
 
-    expect(game.pieceCounter.reduce((a, b) => a + b)).toBe(2);
+    expect(game.pieceCountList.reduce((a, b) => a + b)).toBe(2);
 });
 
 test('Detect T-Spin', () => {

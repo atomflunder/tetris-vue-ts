@@ -9,24 +9,29 @@ import { keyToDisplay } from '@/helpers/style';
 
         <div class="label-move">MOVE LEFT / RIGHT:</div>
         <div class="button-move">
-            {{ keyToDisplay(CONTROLS.MOVE_LEFT) }} / {{ keyToDisplay(CONTROLS.MOVE_RIGHT) }}
+            {{ keyToDisplay(CONTROLS.MOVE_LEFT.value).toUpperCase() }} /
+            {{ keyToDisplay(CONTROLS.MOVE_RIGHT.value).toUpperCase() }}
         </div>
 
         <div class="label-drop">SOFT / HARD DROP:</div>
         <div class="button-drop">
-            {{ keyToDisplay(CONTROLS.SOFT_DROP) }} / {{ keyToDisplay(CONTROLS.HARD_DROP) }}
+            {{ keyToDisplay(CONTROLS.SOFT_DROP.value).toUpperCase() }} /
+            {{ keyToDisplay(CONTROLS.HARD_DROP.value).toUpperCase() }}
         </div>
 
         <div class="label-rotate">ROTATE CW / CCW:</div>
         <div class="button-rotate">
-            {{ keyToDisplay(CONTROLS.ROTATE_CW) }} / {{ CONTROLS.ROTATE_CCW.toUpperCase() }}
+            {{ keyToDisplay(CONTROLS.ROTATE_CW.value).toUpperCase() }} /
+            {{ keyToDisplay(CONTROLS.ROTATE_CCW.value).toUpperCase() }}
         </div>
 
         <div class="label-hold">HOLD PIECE:</div>
-        <div class="button-hold">{{ CONTROLS.HOLD_PIECE.toUpperCase() }}</div>
+        <div class="button-hold">{{ keyToDisplay(CONTROLS.HOLD_PIECE.value).toUpperCase() }}</div>
 
         <div class="label-garbage">INSERT GARBAGE:</div>
-        <div class="button-garbage">{{ CONTROLS.INSERT_GARBAGE.toUpperCase() }}</div>
+        <div class="button-garbage">
+            {{ keyToDisplay(CONTROLS.INSERT_GARBAGE.value).toUpperCase() }}
+        </div>
     </div>
 </template>
 
