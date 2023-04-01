@@ -44,7 +44,7 @@ export const getColorClass = (game: Game, block: number, i: number, j: number): 
  */
 export const getHeldPieceColor = (game: Game, block: number): string => {
     // If you can toggle the hold this "turn" we return the standard colors.
-    if (game.holdThisTurn) {
+    if (game.canHold) {
         return getColorClass(game, block, -1, -1) + ' small-block';
     } else {
         // If you cannot toggle, we want the piece blocks to be greyed out.
@@ -83,16 +83,16 @@ export const keyToDisplay = (key: string): string => {
  * with a special glow for being in danger, paused, both, or having a high combo.
  */
 export const getGlow = (game: Game): string => {
-    if (game.gameFinished) {
+    if (game.finished) {
         return 'green-glow ';
     }
-    if (game.board.firstRowsNotEmpty(game.currentPiece, 6) && game.isPaused) {
+    if (game.board.firstRowsNotEmpty(game.currentPiece, 6) && game.paused) {
         return 'purple-glow ';
     }
-    if (game.board.firstRowsNotEmpty(game.currentPiece, 6) || game.gameOver) {
+    if (game.board.firstRowsNotEmpty(game.currentPiece, 6) || game.over) {
         return 'red-glow ';
     }
-    if (game.isPaused) {
+    if (game.paused) {
         return 'blue-glow ';
     }
     if (game.currentCombo > 4 || game.backToBack > 4) {

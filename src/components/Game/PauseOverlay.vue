@@ -4,7 +4,7 @@ import { CONTROLS } from '@/helpers/controls';
 
 <template>
     <div class="game-paused">GAME PAUSED</div>
-    <div class="info">{{ CONTROLS.PAUSE_GAME.toUpperCase() }} TO UNPAUSE</div>
+    <div class="info">{{ CONTROLS.PAUSE_GAME.value.toUpperCase() }} TO UNPAUSE</div>
 </template>
 
 <style scoped>

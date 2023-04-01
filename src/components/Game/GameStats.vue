@@ -31,14 +31,14 @@ defineProps<{
     </div>
     <div>
         T-SPINS:
-        {{ game.tSpinCounter[0] }}
+        {{ game.tSpinCountList[0] }}
         /
-        {{ game.tSpinCounter[1] }}
+        {{ game.tSpinCountList[1] }}
     </div>
 
     <div>&nbsp;</div>
 
-    <div v-if="CONFIG.SHOW_DEBUG_INFO">
+    <div v-if="CONFIG.SHOW_DEBUG_INFO.value">
         DEBUG INFO:
         <div>
             TICKS:
@@ -47,7 +47,7 @@ defineProps<{
 
         <div>
             FROZEN:
-            {{ game.gameFreezed }}
+            {{ game.frozen }}
         </div>
 
         <div>
@@ -64,7 +64,7 @@ defineProps<{
             LOCK INFO:
             <div class="indented">WAITING: {{ game.waitForLock }}</div>
             <div class="indented">MOVES: {{ game.lockMoveResets }}</div>
-            <div class="indented">TICKS: {{ game.lockTick }}</div>
+            <div class="indented">TICKS: {{ game.lockTicksRemaining }}</div>
         </div>
 
         <div>

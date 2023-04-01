@@ -1,6 +1,5 @@
 import { CONFIG } from './config';
-
-// TODO: This can probably be cleaned up.
+import type { SoundFiles } from './types';
 
 import double from '@/assets/sounds/double.mp3';
 import gameFinished from '@/assets/sounds/gameFinished.mp3';
@@ -21,94 +20,102 @@ import triple from '@/assets/sounds/triple.mp3';
 import tSpinFull from '@/assets/sounds/tSpinFull.mp3';
 import tSpinMini from '@/assets/sounds/tSpinMini.mp3';
 
-const hardDropSound = new Audio(hardDrop);
-const moveSound = new Audio(move);
-const rotateSound = new Audio(rotate);
-const lockSound = new Audio(lock);
-const singleSound = new Audio(single);
-const doubleSound = new Audio(double);
-const tripleSound = new Audio(triple);
-const tetrisSound = new Audio(tetris);
-const tSpinFullSound = new Audio(tSpinFull);
-const tSpinMiniSound = new Audio(tSpinMini);
-const garbageSound = new Audio(garbage);
-const gamePauseSound = new Audio(gamePause);
-const gameUnpauseSound = new Audio(gameUnpause);
-const gameStartSound = new Audio(gameStart);
-const gameOverSound = new Audio(gameOver);
-const gameFinishedSound = new Audio(gameFinished);
-const levelUpSound = new Audio(levelUp);
-const holdPieceSound = new Audio(holdPiece);
+export class AudioPlayer {
+    soundFiles: SoundFiles;
 
-/**
- * Plays a sound for a specific action.
- */
-export const playSound = (action: string): void => {
-    let sound: HTMLAudioElement;
+    constructor() {
+        const soundImports = [
+            {
+                name: 'lineclear-2',
+                sound: double
+            },
+            {
+                name: 'gameFinished',
+                sound: gameFinished
+            },
+            {
+                name: 'gameOver',
+                sound: gameOver
+            },
+            {
+                name: 'gamePause',
+                sound: gamePause
+            },
+            {
+                name: 'gameStart',
+                sound: gameStart
+            },
+            {
+                name: 'gameUnpause',
+                sound: gameUnpause
+            },
 
-    switch (action) {
-        case 'move':
-            sound = moveSound;
-            break;
-        case 'rotate':
-            sound = rotateSound;
-            break;
-        case 'hardDrop':
-            sound = hardDropSound;
-            break;
-        case 'lock':
-            sound = lockSound;
-            break;
-        case 'lineclear-1':
-            sound = singleSound;
-            break;
-        case 'lineclear-2':
-            sound = doubleSound;
-            break;
-        case 'lineclear-3':
-            sound = tripleSound;
-            break;
-        case 'lineclear-4':
-            sound = tetrisSound;
-            break;
-        case 'tSpinFull':
-            sound = tSpinFullSound;
-            break;
-        case 'tSpinMini':
-            sound = tSpinMiniSound;
-            break;
-        case 'garbage':
-            sound = garbageSound;
-            break;
-        case 'gamePause':
-            sound = gamePauseSound;
-            break;
-        case 'gameUnpause':
-            sound = gameUnpauseSound;
-            break;
-        case 'gameStart':
-            sound = gameStartSound;
-            break;
-        case 'gameOver':
-            sound = gameOverSound;
-            break;
-        case 'gameFinished':
-            sound = gameFinishedSound;
-            break;
-        case 'levelUp':
-            sound = levelUpSound;
-            break;
-        case 'holdPiece':
-            sound = holdPieceSound;
-            break;
-        default:
-            sound = new Audio();
+            {
+                name: 'garbage',
+                sound: garbage
+            },
+            {
+                name: 'hardDrop',
+                sound: hardDrop
+            },
+            {
+                name: 'holdPiece',
+                sound: holdPiece
+            },
+            {
+                name: 'levelUp',
+                sound: levelUp
+            },
+            {
+                name: 'lock',
+                sound: lock
+            },
+            {
+                name: 'move',
+                sound: move
+            },
+            {
+                name: 'rotate',
+                sound: rotate
+            },
+            {
+                name: 'lineclear-1',
+                sound: single
+            },
+            {
+                name: 'lineclear-4',
+                sound: tetris
+            },
+            {
+                name: 'lineclear-3',
+                sound: triple
+            },
+            {
+                name: 'tSpinFull',
+                sound: tSpinFull
+            },
+            {
+                name: 'tSpinMini',
+                sound: tSpinMini
+            }
+        ];
+
+        this.soundFiles = {};
+
+        for (let i = 0; i < soundImports.length; i++) {
+            this.soundFiles[soundImports[i].name] = new Audio(soundImports[i].sound);
+        }
     }
 
-    const cloneSound = sound.cloneNode();
-    // Not sure why TypeScript spits out a propery error here, it works fine.
-    // @ts-ignore
-    cloneSound.volume = CONFIG.VOLUME;
-    // @ts-ignore
-    cloneSound.play();
-};
+    /**
+     * Plays a sound for a specific action.
+     */
+    playSound = (action: string): void => {
+        const sound = this.soundFiles[action];
+
+        const cloneSound = sound.cloneNode() as HTMLAudioElement;
+
+        cloneSound.volume = CONFIG.VOLUME.value;
+        cloneSound.play();
+    };
+}

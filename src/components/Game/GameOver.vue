@@ -4,8 +4,8 @@ import { CONTROLS } from '@/helpers/controls';
 
 <template>
     <div class="game-over">GAME OVER!</div>
-    <div class="info">{{ CONTROLS.RESET_GAME.toUpperCase() }} TO RESET</div>
-    <div class="info">{{ CONTROLS.BACK_TO_MENU.toUpperCase() }} FOR MENU</div>
+    <div class="info">{{ CONTROLS.RESET_GAME.value.toUpperCase() }} TO RESET</div>
+    <div class="info">{{ CONTROLS.BACK_TO_MENU.value.toUpperCase() }} FOR MENU</div>
 </template>
 
 <style scoped>

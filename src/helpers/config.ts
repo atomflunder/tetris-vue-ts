@@ -12,31 +12,12 @@ export const getConfig = (config: string, defaultValue: string): string => {
 /**
  * Sets a config setting to local storage.
  */
-export const setConfig = (config: keyof typeof CONFIG, value: string): void => {
-    const boolValues = [
-        'SHOW_DEBUG_INFO',
-        'COLORED_BOARD',
-        'GHOST_PIECE',
-        'MODERN_PIECE_RNG',
-        'FIRST_PIECE_NO_OVERHANG'
-    ];
-    const numValues = [
-        'VOLUME',
-        'LINE_CLEAR_DELAY',
-        'PIECE_BAG_AMOUNT',
-        'PIECE_LOCK_TICKS',
-        'LOCK_MOVE_RESETS',
-        'DAS_DELAY',
-        'ARR_SPEED'
-    ];
-
+export const setConfig = (config: string, value: string, isBool: boolean): void => {
     // First we set the correct value in memory.
-    if (boolValues.indexOf(config) !== -1) {
-        // @ts-ignore
-        CONFIG[config] = value === 'true';
-    } else if (numValues.indexOf(config) !== -1) {
-        // @ts-ignore
-        CONFIG[config] = Number(value);
+    if (isBool) {
+        CONFIG[config as keyof typeof CONFIG].value = value === 'true';
+    } else {
+        CONFIG[config as keyof typeof CONFIG].value = Number(value);
     }
 
     // And then in storage too.
@@ -50,31 +31,51 @@ export const CONFIG = {
     /**
      * The volume level of the game.
      */
-    VOLUME: Number(getConfig('VOLUME', '0.25')),
+    VOLUME: {
+        name: 'VOLUME',
+        defaultValue: '0.25',
+        value: Number(getConfig('VOLUME', '0.25'))
+    },
 
     /**
      * Displays some debug information on the game info screen.
      * Used for development purposes.
      */
-    SHOW_DEBUG_INFO: getConfig('SHOW_DEBUG_INFO', 'false') === 'true',
+    SHOW_DEBUG_INFO: {
+        name: 'SHOW_DEBUG_INFO',
+        defaultValue: 'false',
+        value: getConfig('SHOW_DEBUG_INFO', 'false') === 'true'
+    },
 
     /**
      * If the dropped pieces should stay their respective color or not.
      * When set to false, all pieces will be greyed out once dropped.
      */
-    COLORED_BOARD: getConfig('COLORED_BOARD', 'true') === 'true',
+    COLORED_BOARD: {
+        name: 'COLORED_BOARD',
+        defaultValue: 'true',
+        value: getConfig('COLORED_BOARD', 'true') === 'true'
+    },
 
     /**
      * If you want to enable the ghost piece that shows up at the bottom of the pieces.
      */
-    GHOST_PIECE: getConfig('GHOST_PIECE', 'true') === 'true',
+    GHOST_PIECE: {
+        name: 'GHOST_PIECE',
+        defaultValue: 'true',
+        value: getConfig('GHOST_PIECE', 'true') === 'true'
+    },
 
     /**
      * The delay you get when clearing lines, in milliseconds.
      * Can be set to 0 (or lower) for no delay at all.
      * Most games use a value between 400 to 700.
      */
-    LINE_CLEAR_DELAY: Number(getConfig('LINE_CLEAR_DELAY', '300')),
+    LINE_CLEAR_DELAY: {
+        name: 'LINE_CLEAR_DELAY',
+        defaultValue: '300',
+        value: Number(getConfig('LINE_CLEAR_DELAY', '300'))
+    },
 
     /**
      * If you want to use a modern piece generator,
@@ -84,7 +85,11 @@ export const CONFIG = {
      *
      * See more information here: https://tetris.fandom.com/wiki/Random_Generator
      */
-    MODERN_PIECE_RNG: getConfig('MODERN_PIECE_RNG', 'true') === 'true',
+    MODERN_PIECE_RNG: {
+        name: 'MODERN_PIECE_RNG',
+        defaultValue: 'true',
+        value: getConfig('MODERN_PIECE_RNG', 'true') === 'true'
+    },
 
     /**
      * The amount of piece bags generated at once.
@@ -98,7 +103,12 @@ export const CONFIG = {
      *
      * See more information here: https://tetris.fandom.com/wiki/Random_Generator
      */
-    PIECE_BAG_AMOUNT: Number(getConfig('PIECE_BAG_AMOUNT', '1')),
+    PIECE_BAG_AMOUNT: {
+        name: 'PIECE_BAG_AMOUNT',
+        defaultValue: '1',
+        value: Number(getConfig('PIECE_BAG_AMOUNT', '1'))
+    },
+
     /**
      * If this option is enabled, the very first piece cannot generate an overhang.
      * These pieces being the S and Z pieces, but an O piece can generate an overhang too if you draw a S/Z after.
@@ -106,7 +116,11 @@ export const CONFIG = {
      *
      * This only has an effect if you have modern piece RNG enabled.
      */
-    FIRST_PIECE_NO_OVERHANG: getConfig('FIRST_PIECE_NO_OVERHANG', 'true') === 'true',
+    FIRST_PIECE_NO_OVERHANG: {
+        name: 'FIRST_PIECE_NO_OVERHANG',
+        defaultValue: 'true',
+        value: getConfig('FIRST_PIECE_NO_OVERHANG', 'true') === 'true'
+    },
 
     /**
      * This is the amount of ticks that a piece will wait before locking when it falls.
@@ -115,7 +129,11 @@ export const CONFIG = {
      *
      * See more information here: https://tetris.fandom.com/wiki/Lock_delay
      */
-    PIECE_LOCK_TICKS: Number(getConfig('PIECE_LOCK_TICKS', '30')),
+    PIECE_LOCK_TICKS: {
+        name: 'PIECE_LOCK_TICKS',
+        defaultValue: '30',
+        value: Number(getConfig('PIECE_LOCK_TICKS', '30'))
+    },
 
     /**
      * The amount of moves that can reset the lock delay.
@@ -125,19 +143,31 @@ export const CONFIG = {
      *
      * See more information here: https://tetris.fandom.com/wiki/Infinity
      */
-    LOCK_MOVE_RESETS: Number(getConfig('LOCK_MOVE_RESETS', '15')),
+    LOCK_MOVE_RESETS: {
+        name: 'LOCK_MOVE_RESETS',
+        defaultValue: '15',
+        value: Number(getConfig('LOCK_MOVE_RESETS', '15'))
+    },
 
     /**
      * The initial delay of when DAS kicks in, in milliseconds.
      *
      * See more information here: https://tetris.fandom.com/wiki/DAS
      */
-    DAS_DELAY: Number(getConfig('DAS_DELAY', '167')),
+    DAS_DELAY: {
+        name: 'DAS_DELAY',
+        defaultValue: '167',
+        value: Number(getConfig('DAS_DELAY', '167'))
+    },
 
     /**
      * The speed of the DAS, in milliseconds.
      *
      * See more information here: https://tetris.fandom.com/wiki/DAS
      */
-    ARR_SPEED: Number(getConfig('ARR_SPEED', '33'))
+    ARR_SPEED: {
+        name: 'ARR_SPEED',
+        defaultValue: '33',
+        value: Number(getConfig('ARR_SPEED', '33'))
+    }
 };

@@ -49,3 +49,7 @@ export enum Direction {
 export interface KeyEvents {
     [id: string]: NodeJS.Timeout | null;
 }
+
+export interface SoundFiles {
+    [key: string]: HTMLAudioElement;
+}

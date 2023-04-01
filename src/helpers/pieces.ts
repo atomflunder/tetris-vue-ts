@@ -406,8 +406,8 @@ export class Piece {
      * This function gets the coordinates of a "shadow" piece.
      * Meaning a piece, if it were to be dropped as far as it will go in the current position.
      */
-    getShadowPieceCoordinates = (board: Board): number[][] => {
-        if (!CONFIG.GHOST_PIECE) {
+    getShadowCoordinates = (board: Board): number[][] => {
+        if (!CONFIG.GHOST_PIECE.value) {
             return [];
         }
 

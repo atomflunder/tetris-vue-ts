@@ -18,32 +18,30 @@ let dasDelay = ref(CONFIG.DAS_DELAY);
 let arrSpeed = ref(CONFIG.ARR_SPEED);
 
 function resetConfig(): void {
-    // TODO: This can probably be cleaned up.
-    volume.value = 0.25;
-    debugInfo.value = false;
-    coloredBoard.value = true;
-    ghostPiece.value = true;
-    lineClearDelay.value = 300;
-    modernPieceRNG.value = true;
-    pieceBagAmount.value = 1;
-    firstPieceNoOverhang.value = true;
-    pieceLockTicks.value = 30;
-    lockMoveResets.value = 15;
-    dasDelay.value = 167;
-    arrSpeed.value = 33;
+    const allValues = [
+        volume,
+        debugInfo,
+        coloredBoard,
+        ghostPiece,
+        lineClearDelay,
+        modernPieceRNG,
+        pieceBagAmount,
+        firstPieceNoOverhang,
+        pieceLockTicks,
+        lockMoveResets,
+        dasDelay,
+        arrSpeed
+    ];
 
-    setConfig('VOLUME', '0.25');
-    setConfig('SHOW_DEBUG_INFO', 'false');
-    setConfig('COLORED_BOARD', 'true');
-    setConfig('GHOST_PIECE', 'true');
-    setConfig('LINE_CLEAR_DELAY', '300');
-    setConfig('MODERN_PIECE_RNG', 'true');
-    setConfig('PIECE_BAG_AMOUNT', '1');
-    setConfig('FIRST_PIECE_NO_OVERHANG', 'true');
-    setConfig('PIECE_LOCK_TICKS', '30');
-    setConfig('LOCK_MOVE_RESETS', '15');
-    setConfig('DAS_DELAY', '167');
-    setConfig('ARR_SPEED', '33');
+    for (let i = 0; i < allValues.length; i++) {
+        if (typeof allValues[i].value.value === 'boolean') {
+            allValues[i].value.value = allValues[i].value.defaultValue === 'true';
+            setConfig(allValues[i].value.name, allValues[i].value.defaultValue, true);
+        } else {
+            allValues[i].value.value = Number(allValues[i].value.defaultValue);
+            setConfig(allValues[i].value.name, allValues[i].value.defaultValue, false);
+        }
+    }
 }
 
 // TODO: Add a live uptating preview of a board to the right side?
@@ -60,14 +58,14 @@ function resetConfig(): void {
                 <input
                     class="slider"
                     type="range"
-                    v-model="volume"
+                    v-model="volume.value"
                     min="0"
                     max="1"
                     step="0.01"
-                    @change="setConfig('VOLUME', ($event.target as HTMLInputElement).value)"
+                    @change="setConfig('VOLUME', ($event.target as HTMLInputElement).value, false)"
                 />
                 ({{
-                    Math.round(volume * 100)
+                    Math.round(volume.value * 100)
                 }}%)
             </tr>
 
@@ -76,11 +74,12 @@ function resetConfig(): void {
                 <input
                     class="box"
                     type="checkbox"
-                    v-model="debugInfo"
+                    v-model="debugInfo.value"
                     @click="
                         setConfig(
                             'SHOW_DEBUG_INFO',
-                            String(($event.target as HTMLInputElement).checked)
+                            String(($event.target as HTMLInputElement).checked),
+                            true
                         )
                     "
                 />
@@ -91,11 +90,12 @@ function resetConfig(): void {
                 <input
                     class="box"
                     type="checkbox"
-                    v-model="coloredBoard"
+                    v-model="coloredBoard.value"
                     @click="
                         setConfig(
                             'COLORED_BOARD',
-                            String(($event.target as HTMLInputElement).checked)
+                            String(($event.target as HTMLInputElement).checked),
+                            true
                         )
                     "
                 />
@@ -106,11 +106,12 @@ function resetConfig(): void {
                 <input
                     class="box"
                     type="checkbox"
-                    v-model="ghostPiece"
+                    v-model="ghostPiece.value"
                     @click="
                         setConfig(
                             'GHOST_PIECE',
-                            String(($event.target as HTMLInputElement).checked)
+                            String(($event.target as HTMLInputElement).checked),
+                            true
                         )
                     "
                 />
@@ -122,15 +123,19 @@ function resetConfig(): void {
                     <input
                         class="slider"
                         type="range"
-                        v-model="lineClearDelay"
+                        v-model="lineClearDelay.value"
                         min="0"
                         max="1000"
                         step="1"
                         @change="
-                            setConfig('LINE_CLEAR_DELAY', ($event.target as HTMLInputElement).value)
+                            setConfig(
+                                'LINE_CLEAR_DELAY',
+                                ($event.target as HTMLInputElement).value,
+                                false
+                            )
                         "
                     />
-                    ({{ lineClearDelay }}MS)
+                    ({{ lineClearDelay.value }}MS)
                 </td>
             </tr>
 
@@ -139,12 +144,15 @@ function resetConfig(): void {
                 <input
                     class="box"
                     type="checkbox"
-                    v-model="modernPieceRNG"
+                    v-model="modernPieceRNG.value"
                     @click="
+                        // Not sure why I have to do this here, but the disabled property would not update on the boxed below otherwise.
+                        modernPieceRNG.value = ($event.target as HTMLInputElement).checked;
                         setConfig(
                             'MODERN_PIECE_RNG',
-                            String(($event.target as HTMLInputElement).checked)
-                        )
+                            String(($event.target as HTMLInputElement).checked),
+                            true
+                        );
                     "
                 />
             </tr>
@@ -155,16 +163,20 @@ function resetConfig(): void {
                     <input
                         class="slider"
                         type="range"
-                        v-model="pieceBagAmount"
+                        v-model="pieceBagAmount.value"
                         min="1"
                         max="10"
                         step="1"
-                        :disabled="!modernPieceRNG"
+                        :disabled="!modernPieceRNG.value"
                         @change="
-                            setConfig('PIECE_BAG_AMOUNT', ($event.target as HTMLInputElement).value)
+                            setConfig(
+                                'PIECE_BAG_AMOUNT',
+                                ($event.target as HTMLInputElement).value,
+                                false
+                            )
                         "
                     />
-                    ({{ pieceBagAmount }})
+                    ({{ pieceBagAmount.value }})
                 </td>
             </tr>
 
@@ -173,12 +185,13 @@ function resetConfig(): void {
                 <input
                     class="box"
                     type="checkbox"
-                    v-model="firstPieceNoOverhang"
-                    :disabled="!modernPieceRNG"
+                    v-model="firstPieceNoOverhang.value"
+                    :disabled="!modernPieceRNG.value"
                     @click="
                         setConfig(
                             'FIRST_PIECE_NO_OVERHANG',
-                            String(($event.target as HTMLInputElement).checked)
+                            String(($event.target as HTMLInputElement).checked),
+                            true
                         )
                     "
                 />
@@ -190,15 +203,20 @@ function resetConfig(): void {
                     <input
                         class="slider"
                         type="range"
-                        v-model="pieceLockTicks"
+                        v-model="pieceLockTicks.value"
                         min="0"
                         max="60"
                         step="1"
                         @change="
-                            setConfig('PIECE_LOCK_TICKS', ($event.target as HTMLInputElement).value)
+                            setConfig(
+                                'PIECE_LOCK_TICKS',
+                                ($event.target as HTMLInputElement).value,
+                                false
+                            )
                         "
                     />
-                    ({{ pieceLockTicks }} / {{ Math.round((pieceLockTicks / 60) * 1000) }}MS)
+                    ({{ pieceLockTicks.value }} /
+                    {{ Math.round((pieceLockTicks.value / 60) * 1000) }}MS)
                 </td>
             </tr>
 
@@ -208,15 +226,19 @@ function resetConfig(): void {
                     <input
                         class="slider"
                         type="range"
-                        v-model="lockMoveResets"
+                        v-model="lockMoveResets.value"
                         min="-1"
                         max="50"
                         step="1"
                         @change="
-                            setConfig('LOCK_MOVE_RESETS', ($event.target as HTMLInputElement).value)
+                            setConfig(
+                                'LOCK_MOVE_RESETS',
+                                ($event.target as HTMLInputElement).value,
+                                false
+                            )
                         "
                     />
-                    ({{ lockMoveResets }})
+                    ({{ lockMoveResets.value }})
                 </td>
             </tr>
 
@@ -226,13 +248,15 @@ function resetConfig(): void {
                     <input
                         class="slider"
                         type="range"
-                        v-model="dasDelay"
+                        v-model="dasDelay.value"
                         min="0"
                         max="1000"
                         step="1"
-                        @change="setConfig('DAS_DELAY', ($event.target as HTMLInputElement).value)"
+                        @change="
+                            setConfig('DAS_DELAY', ($event.target as HTMLInputElement).value, false)
+                        "
                     />
-                    ({{ dasDelay }}ms)
+                    ({{ dasDelay.value }}ms)
                 </td>
             </tr>
 
@@ -242,13 +266,15 @@ function resetConfig(): void {
                     <input
                         class="slider"
                         type="range"
-                        v-model="arrSpeed"
+                        v-model="arrSpeed.value"
                         min="1"
                         max="500"
                         step="1"
-                        @change="setConfig('ARR_SPEED', ($event.target as HTMLInputElement).value)"
+                        @change="
+                            setConfig('ARR_SPEED', ($event.target as HTMLInputElement).value, false)
+                        "
                     />
-                    ({{ arrSpeed }}ms)
+                    ({{ arrSpeed.value }}ms)
                 </td>
             </tr>
 
