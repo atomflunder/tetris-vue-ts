@@ -15,11 +15,9 @@ export const getConfig = (config: string, defaultValue: string): string => {
 export const setConfig = (config: string, value: string, isBool: boolean): void => {
     // First we set the correct value in memory.
     if (isBool) {
-        // @ts-ignore
-        CONFIG[config].value = value === 'true';
+        CONFIG[config as keyof typeof CONFIG].value = value === 'true';
     } else {
-        // @ts-ignore
-        CONFIG[config].value = Number(value);
+        CONFIG[config as keyof typeof CONFIG].value = Number(value);
     }
 
     // And then in storage too.

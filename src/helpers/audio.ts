@@ -113,11 +113,9 @@ export class AudioPlayer {
     playSound = (action: string): void => {
         const sound = this.soundFiles[action];
 
-        const cloneSound = sound.cloneNode();
-        // Not sure why TypeScript spits out a propery error here, it works fine.
-        // @ts-ignore
+        const cloneSound = sound.cloneNode() as HTMLAudioElement;
+
         cloneSound.volume = CONFIG.VOLUME.value;
-        // @ts-ignore
         cloneSound.play();
     };
 }
