@@ -17,11 +17,9 @@ let levelSelect = ref(1);
 let backgroundURL = ref(getConfig(CONFIG.BACKGROUND_URL.name, CONFIG.BACKGROUND_URL.defaultValue));
 
 function changeBackground(newBackground: string): void {
-    // TODO: This seems to not trigger at all?
     backgroundURL.value = newBackground;
     const instance = getCurrentInstance();
     instance?.proxy?.$forceUpdate();
-    console.log('refershed');
 }
 </script>
 
@@ -74,8 +72,8 @@ function changeBackground(newBackground: string): void {
                     class="level-select"
                 >
                     <!-- 
-                The 2P Press Start font does not seem to work with dropdowns so we are using Consolas instead. 
-            -->
+                        The 2P Press Start font does not seem to work with dropdowns so we are using Consolas instead. 
+                    -->
                     <option v-for="i in 20" :value="i" :key="i" style="font-family: 'Consolas'">
                         {{ i.toString().padStart(2, '0') }}
                     </option>
