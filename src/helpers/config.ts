@@ -12,12 +12,21 @@ export const getConfig = (config: string, defaultValue: string): string => {
 /**
  * Sets a config setting to local storage.
  */
-export const setConfig = (config: string, value: string, isBool: boolean): void => {
-    // First we set the correct value in memory.
-    if (isBool) {
-        CONFIG[config as keyof typeof CONFIG].value = value === 'true';
+export const setConfig = (
+    config: string,
+    value: string,
+    isBool: boolean,
+    isString: boolean = false
+): void => {
+    if (isString) {
+        CONFIG[config as keyof typeof CONFIG].value = value;
     } else {
-        CONFIG[config as keyof typeof CONFIG].value = Number(value);
+        // First we set the correct value in memory.
+        if (isBool) {
+            CONFIG[config as keyof typeof CONFIG].value = value === 'true';
+        } else {
+            CONFIG[config as keyof typeof CONFIG].value = Number(value);
+        }
     }
 
     // And then in storage too.
@@ -169,5 +178,11 @@ export const CONFIG = {
         name: 'ARR_SPEED',
         defaultValue: '33',
         value: Number(getConfig('ARR_SPEED', '33'))
+    },
+
+    BACKGROUND_URL: {
+        name: 'BACKGROUND_URL',
+        defaultValue: './src/assets/images/background.jpg',
+        value: getConfig('BACKGROUND_URL', './src/assets/images/background.jpg')
     }
 };

@@ -2,7 +2,10 @@
 import { ref } from 'vue';
 import { CONFIG, setConfig } from '../helpers/config';
 
-defineEmits(['back']);
+defineEmits<{
+    (event: 'back'): void;
+    (event: 'changebg', newBackground: string): void;
+}>();
 
 let volume = ref(CONFIG.VOLUME);
 let debugInfo = ref(CONFIG.SHOW_DEBUG_INFO);
@@ -16,6 +19,7 @@ let pieceLockTicks = ref(CONFIG.PIECE_LOCK_TICKS);
 let lockMoveResets = ref(CONFIG.LOCK_MOVE_RESETS);
 let dasDelay = ref(CONFIG.DAS_DELAY);
 let arrSpeed = ref(CONFIG.ARR_SPEED);
+let backgroundURL = ref(CONFIG.BACKGROUND_URL);
 
 function resetConfig(): void {
     const allValues = [
@@ -30,16 +34,20 @@ function resetConfig(): void {
         pieceLockTicks,
         lockMoveResets,
         dasDelay,
-        arrSpeed
+        arrSpeed,
+        backgroundURL
     ];
 
     for (let i = 0; i < allValues.length; i++) {
         if (typeof allValues[i].value.value === 'boolean') {
             allValues[i].value.value = allValues[i].value.defaultValue === 'true';
             setConfig(allValues[i].value.name, allValues[i].value.defaultValue, true);
-        } else {
+        } else if (typeof allValues[i].value.value === 'number') {
             allValues[i].value.value = Number(allValues[i].value.defaultValue);
             setConfig(allValues[i].value.name, allValues[i].value.defaultValue, false);
+        } else {
+            allValues[i].value.value = allValues[i].value.defaultValue;
+            setConfig(allValues[i].value.name, allValues[i].value.defaultValue, false, true);
         }
     }
 }
@@ -279,12 +287,45 @@ function resetConfig(): void {
             </tr>
 
             <tr>
+                <td>BACKGROUND IMAGE:</td>
+                <td>
+                    <input
+                        type="text"
+                        class="text"
+                        :value="backgroundURL.value"
+                        @change="
+                            {
+                                $emit('changebg', ($event.target as HTMLInputElement).value);
+                                setConfig(
+                                    'BACKGROUND_URL',
+                                    ($event.target as HTMLInputElement).value,
+                                    false
+                                );
+                            }
+                        "
+                    />
+                </td>
+            </tr>
+
+            <tr>
                 <td>&nbsp;</td>
             </tr>
 
             <tr>
                 <td>RESET TO DEFAULT</td>
-                <td><button class="menu-button" @click="resetConfig">RESET TO DEFAULT</button></td>
+                <td>
+                    <button
+                        class="menu-button"
+                        @click="
+                            {
+                                resetConfig();
+                                $emit('changebg', CONFIG.BACKGROUND_URL.defaultValue);
+                            }
+                        "
+                    >
+                        RESET TO DEFAULT
+                    </button>
+                </td>
             </tr>
         </table>
     </div>
@@ -333,6 +374,18 @@ function resetConfig(): void {
 }
 
 .box:hover {
+    background-color: #444;
+}
+
+.text {
+    background-color: #333;
+    font-family: 'Press Start 2P';
+    font-size: 1rem;
+    color: #ddd;
+    border: none;
+}
+
+.text:hover {
     background-color: #444;
 }
 
