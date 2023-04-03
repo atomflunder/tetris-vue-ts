@@ -49,7 +49,7 @@ export class Board {
     };
 
     /**
-     * Delets a line from the board and inserts a new one.
+     * Deletes a line from the board and inserts a new one.
      */
     deleteLine = (line: number): void => {
         this.GameBoard.splice(line, 1);

@@ -43,7 +43,7 @@ export enum Direction {
 }
 
 /**
- * A repeated keypress, used to mimick DAS.
+ * A repeated keypress, used to mimic DAS.
  * Only in use for ArrowLeft, ArrowRight and ArrowDown.
  */
 export interface KeyEvents {

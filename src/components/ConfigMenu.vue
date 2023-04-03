@@ -292,14 +292,15 @@ function resetConfig(): void {
                     <input
                         type="text"
                         class="text"
-                        :value="backgroundURL.value"
+                        v-model="backgroundURL.value"
                         @change="
                             {
                                 $emit('changebg', ($event.target as HTMLInputElement).value);
                                 setConfig(
                                     'BACKGROUND_URL',
                                     ($event.target as HTMLInputElement).value,
-                                    false
+                                    false,
+                                    true
                                 );
                             }
                         "
