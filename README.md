@@ -21,10 +21,9 @@ In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/w
 -   ✅ Modifiable Line Clear Delay
 -   ✅ Customizable DAS & ARR
 -   ✅ Sound Effects
+-   ✅ Countdown
 
 -   🆕 Inserting Garbage in Single Player
-
--   ❌ Game and Pause Countdown
 
 ## Running locally
 

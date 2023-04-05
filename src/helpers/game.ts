@@ -16,7 +16,7 @@ export class Game {
     // And Game Finished is used when you complete one of the challenge modes.
     finished: boolean;
     paused: boolean;
-    // For delays like line-clear delay, or maybe Pause Countdowns in the future.
+    // For delays like line-clear delay, or countdown delays.
     frozen: boolean;
 
     maxTime: number | null;
@@ -131,8 +131,16 @@ export class Game {
         this.currentPiece.spawn(this.board);
 
         this.incrementPieceCount();
+    }
 
+    /**
+     * Starts a game properly.
+     */
+    start(): void {
+        this.frozen = false;
+        this.timer = new Timer();
         this.audioPlayer.playSound('gameStart');
+        this.advanceTick();
     }
 
     /**
@@ -183,67 +191,6 @@ export class Game {
                 incrementLifetimeStats(this);
             }
         }, 1000 / 60);
-    }
-
-    /**
-     * Resets the game.
-     */
-    reset(): void {
-        const nextPieces = getRandomPiece([], CONFIG.PIECE_BAG_AMOUNT.value, true);
-
-        const currentPiece = nextPieces[0];
-        nextPieces.shift();
-
-        getRandomPiece(nextPieces, CONFIG.PIECE_BAG_AMOUNT.value);
-
-        this.over = false;
-        this.finished = false;
-        this.paused = false;
-        this.frozen = false;
-
-        this.board = new Board();
-        this.currentPiece = currentPiece;
-        this.nextPieces = nextPieces;
-        this.pieceCountList = [0, 0, 0, 0, 0, 0, 0];
-
-        this.holdPiece = null;
-        this.canHold = true;
-
-        this.lastMove = Move.None;
-
-        this.backToBack = -1;
-        this.currentCombo = -1;
-
-        this.currentDrop = 0;
-
-        this.score = 0;
-        this.lineCount = 0;
-        this.lineCountList = [0, 0, 0, 0];
-        this.level = 1;
-        this.tSpinCountList = [0, 0];
-
-        this.ticks = 0;
-        this.timer = new Timer();
-
-        this.lockTicksRemaining = CONFIG.PIECE_LOCK_TICKS.value;
-        this.waitForLock = false;
-
-        this.keyEvents = {
-            ArrowLeft: null,
-            ArrowRight: null,
-            ArrowDown: null
-        };
-
-        this.currentPiece.spawn(this.board);
-
-        this.shadowPiece = this.currentPiece.getShadowCoordinates(this.board);
-
-        this.incrementPieceCount();
-
-        // And of course we need to enable the main game loop again.
-        this.advanceTick();
-
-        this.audioPlayer.playSound('gameStart');
     }
 
     /**

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { Game } from '../helpers/game';
 
+import GameFinished from '@/components//Game/GameFinished.vue';
+import CountdownTransition from '@/components/Game/CountdownTransition.vue';
 import GameOver from '@/components/Game/GameOver.vue';
 import GameStats from '@/components/Game/GameStats.vue';
 import HoldPiece from '@/components/Game/HoldPiece.vue';
@@ -11,9 +12,10 @@ import NextPieces from '@/components/Game/NextPieces.vue';
 import PauseOverlay from '@/components/Game/PauseOverlay.vue';
 import PieceCount from '@/components/Game/PieceCount.vue';
 import TetrisBoard from '@/components/Game/TetrisBoard.vue';
+
 import { CONTROLS, handleInput, handleKeyup } from '@/helpers/controls';
+import { Game } from '@/helpers/game';
 import type { Menu } from '@/helpers/types';
-import GameFinished from './Game/GameFinished.vue';
 
 const props = defineProps<{
     gameMode: Menu;
@@ -25,6 +27,7 @@ const props = defineProps<{
 const emits = defineEmits(['back-to-menu']);
 
 const game = ref(new Game(props.gameMode, props.maxLines, props.maxTime, props.startLevel));
+game.value.frozen = true;
 
 onkeydown = (e: KeyboardEvent) => {
     handleInput(e, game.value);
@@ -33,7 +36,9 @@ onkeydown = (e: KeyboardEvent) => {
 onkeyup = (e: KeyboardEvent) => {
     if (game.value.over || game.value.finished) {
         if (e.key === CONTROLS.RESET_GAME.value) {
-            game.value.reset();
+            game.value = new Game(props.gameMode, props.maxLines, props.maxTime, props.startLevel);
+            game.value.frozen = true;
+            runCountdown();
         } else if (e.key === CONTROLS.BACK_TO_MENU.value) {
             emits('back-to-menu');
         }
@@ -44,8 +49,23 @@ onkeyup = (e: KeyboardEvent) => {
     handleKeyup(e, game.value);
 };
 
+let count = ref(-1);
+
+function runCountdown(): void {
+    count.value = 3;
+
+    const interval = setInterval(() => {
+        if (count.value > -1) {
+            count.value--;
+        } else {
+            clearInterval(interval);
+            game.value.start();
+        }
+    }, 750); // Deliberately not a full second.
+}
+
 onMounted(() => {
-    game.value.advanceTick();
+    runCountdown();
 });
 </script>
 
@@ -67,6 +87,7 @@ onMounted(() => {
             <TetrisBoard :game="game" />
         </div>
 
+        <div class="center-column"><CountdownTransition :count="count" /></div>
         <div class="center-column"><PauseOverlay v-if="game.paused" /></div>
         <div class="center-column"><GameOver v-if="game.over" /></div>
         <div class="center-column"><GameFinished v-if="game.finished" :game="game" /></div>

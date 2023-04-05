@@ -131,7 +131,9 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
     // Calls the associated function every X milliseconds, after a Y milliseconds delay.
     const handleDAS = (fn: () => void): void => {
         // Also we call it once, immediately.
-        fn();
+        if (!game.frozen) {
+            fn();
+        }
 
         let begin: number | null = CONFIG.DAS_DELAY.value;
         const speed = CONFIG.ARR_SPEED.value;
