@@ -54,9 +54,12 @@ let count = ref(-1);
 function runCountdown(): void {
     count.value = 3;
 
+    game.value.audioPlayer.playSound('countdown');
+
     const interval = setInterval(() => {
         if (count.value > -1) {
             count.value--;
+            game.value.audioPlayer.playSound('countdown');
         } else {
             clearInterval(interval);
             game.value.start();

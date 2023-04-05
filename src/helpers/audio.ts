@@ -1,6 +1,7 @@
 import { CONFIG } from './config';
 import type { SoundFiles } from './types';
 
+import countdown from '@/assets/sounds/countdown.mp3';
 import double from '@/assets/sounds/double.mp3';
 import gameFinished from '@/assets/sounds/gameFinished.mp3';
 import gameOver from '@/assets/sounds/gameOver.mp3';
@@ -25,6 +26,10 @@ export class AudioPlayer {
 
     constructor() {
         const soundImports = [
+            {
+                name: 'countdown',
+                sound: countdown
+            },
             {
                 name: 'lineclear-2',
                 sound: double
