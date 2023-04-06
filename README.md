@@ -5,7 +5,7 @@ In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/w
 
 ## Tetris Guidelines Implemented
 
--   ✅ Super Rotation System with Wallkicks
+-   ✅ Super Rotation System with Wallkicks (+180° Rotations)
 -   ✅ 7-bag Random Generator (+ No-Overhang Option) & True Random Generator
 -   ✅ Endless Mode, Marathon Mode (150 Lines), Sprint Mode (40 Lines), Time Trial (3:00)
 -   ✅ Remappable Controls

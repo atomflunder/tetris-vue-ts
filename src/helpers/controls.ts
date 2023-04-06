@@ -77,6 +77,11 @@ export const CONTROLS = {
         defaultValue: 'Enter',
         value: getKeybind('ROTATE_CCW', 'Enter')
     },
+    ROTATE_180: {
+        name: 'ROTATE_180',
+        defaultValue: 'A',
+        value: getKeybind('ROTATE_180', 'A')
+    },
 
     HOLD_PIECE: {
         name: 'HOLD_PIECE',
@@ -229,7 +234,7 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
                 return;
             }
 
-            if (game.currentPiece.rotate(game.board, true)) {
+            if (game.currentPiece.rotate(game.board, true, false)) {
                 update();
                 game.lastMove = Move.Rotation;
                 game.audioPlayer.playSound('rotate');
@@ -240,7 +245,18 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
                 return;
             }
 
-            if (game.currentPiece.rotate(game.board, false)) {
+            if (game.currentPiece.rotate(game.board, false, false)) {
+                update();
+                game.lastMove = Move.Rotation;
+                game.audioPlayer.playSound('rotate');
+            }
+            break;
+        case CONTROLS.ROTATE_180.value:
+            if (game.frozen) {
+                return;
+            }
+
+            if (game.currentPiece.rotate(game.board, true, true)) {
                 update();
                 game.lastMove = Move.Rotation;
                 game.audioPlayer.playSound('rotate');

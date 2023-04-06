@@ -14,6 +14,7 @@ let softDrop = ref(CONTROLS.SOFT_DROP);
 let hardDrop = ref(CONTROLS.HARD_DROP);
 let rotateCW = ref(CONTROLS.ROTATE_CW);
 let rotateCCW = ref(CONTROLS.ROTATE_CCW);
+let rotate180 = ref(CONTROLS.ROTATE_180);
 let holdPiece = ref(CONTROLS.HOLD_PIECE);
 let insertGarbage = ref(CONTROLS.INSERT_GARBAGE);
 
@@ -28,6 +29,7 @@ function resetKeybinds(): void {
         hardDrop,
         rotateCW,
         rotateCCW,
+        rotate180,
         holdPiece,
         insertGarbage
     ];
@@ -200,6 +202,19 @@ async function rebindKey(keybind: string): Promise<void> {
                         @click="rebindKey('ROTATE_CCW')"
                     >
                         {{ keyToDisplay(rotateCCW.value) }}
+                    </button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>ROTATE 180°:</td>
+                <td>
+                    <button
+                        class="menu-button fixed-size"
+                        id="ROTATE_180"
+                        @click="rebindKey('ROTATE_180')"
+                    >
+                        {{ keyToDisplay(rotate180.value) }}
                     </button>
                 </td>
             </tr>

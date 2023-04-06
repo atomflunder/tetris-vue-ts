@@ -110,9 +110,7 @@ export class Piece {
     /**
      * Rotates a piece either clockwise or counter-clockwise, with wall kicks.
      */
-    rotate = (board: Board, clockwise: boolean): boolean => {
-        // TODO-MAYBE: Add 180° rotation?
-
+    rotate = (board: Board, clockwise: boolean, rotate180: boolean): boolean => {
         // Can't rotate an O.
         if (this.name === 'O') {
             return false;
@@ -123,9 +121,13 @@ export class Piece {
             nextRotation += 4;
         }
 
+        if (rotate180) {
+            nextRotation = (this.currentRotation + 2) % 4;
+        }
+
         const pieceCoordinates = this.getCoordinates();
 
-        const wallKick = this.getCorrectWallKick(board, nextRotation, clockwise);
+        const wallKick = this.getCorrectWallKick(board, nextRotation, clockwise, rotate180);
 
         if (wallKick === null) {
             return false;
@@ -139,8 +141,8 @@ export class Piece {
 
         this.currentRotation = nextRotation;
 
-        // These are intentionally swapped due to the wall kick coordinates being X/Y and the offset being Y/X.
-        this.offset[0] += wallKick[1];
+        // These are intentionally swapped due to the wall kick coordinates being -X/Y and the offset being Y/X.
+        this.offset[0] -= wallKick[1];
         this.offset[1] += wallKick[0];
 
         const newPieceBlocks = this.getCoordinates();
@@ -278,9 +280,7 @@ export class Piece {
      * The first one is always [0, 0].
      * This is taken from: https://tetris.fandom.com/wiki/SRS#Wall_Kicks
      */
-    getWallKicks = (clockwise: boolean): number[][] => {
-        const currentRotation = this.currentRotation;
-
+    getWallKicks = (clockwise: boolean, rotate180: boolean): number[][] => {
         const wallKicks: number[][] = [];
 
         wallKicks.push([0, 0]);
@@ -290,21 +290,38 @@ export class Piece {
             return wallKicks;
         }
 
+        if (rotate180) {
+            // These are taken from: https://twitter.com/tetriogame/status/1271572187309375491
+            // SRS does not have an official Wallkick table for 180° rotations.
+            // I guess the I piece would need a special rotation table, but the I piece 180° rotations seem kinda useless anyways?
+            if (this.currentRotation === 0) {
+                wallKicks.push([0, 1], [1, 1], [-1, 1], [1, 0], [-1, 0]); // 0 >> 2
+            } else if (this.currentRotation === 1) {
+                wallKicks.push([1, 0], [1, 2], [1, 1], [0, 2], [0, 1]); // 1 >> 3
+            } else if (this.currentRotation === 2) {
+                wallKicks.push([0, -1], [-1, -1], [1, -1], [-1, 0], [1, 0]); // 2 >> 0
+            } else if (this.currentRotation === 3) {
+                wallKicks.push([-1, 0], [-1, 2], [-1, 1], [0, 2], [0, 1]); // 3 >> 1
+            }
+
+            return wallKicks;
+        }
+
         // The I piece has special kick values due to its shape.
         if (this.name === 'I') {
-            if (currentRotation === 0) {
+            if (this.currentRotation === 0) {
                 clockwise
                     ? wallKicks.push([-2, 0], [1, 0], [-2, -1], [1, 2]) // 0 >> 1
                     : wallKicks.push([-1, 0], [2, 0], [-1, 2], [2, -1]); // 0 >> 3
-            } else if (currentRotation === 1) {
+            } else if (this.currentRotation === 1) {
                 clockwise
                     ? wallKicks.push([-1, 0], [2, 0], [-1, 2], [2, -1]) // 1 >> 2
                     : wallKicks.push([2, 0], [-1, 0], [2, 1], [-1, 2]); // 1 >> 0
-            } else if (currentRotation === 2) {
+            } else if (this.currentRotation === 2) {
                 clockwise
                     ? wallKicks.push([2, 0], [-1, 0], [2, 1], [-1, -2]) // 2 >> 3
                     : wallKicks.push([1, 0], [-2, 0], [1, -2], [-2, 1]); // 2 >> 1
-            } else if (currentRotation == 3) {
+            } else if (this.currentRotation == 3) {
                 clockwise
                     ? wallKicks.push([1, 0], [-2, 0], [1, -2], [-2, 1]) // 3 >> 0
                     : wallKicks.push([-2, 0], [1, 0], [-2, -1], [1, 2]); // 3 >> 2
@@ -314,19 +331,19 @@ export class Piece {
         }
 
         // And the J, L, T, S, and Z pieces all share kick values.
-        if (currentRotation === 0) {
+        if (this.currentRotation === 0) {
             clockwise
                 ? wallKicks.push([-1, 0], [-1, 1], [0, -2], [-1, -2]) // 0 >> 1
                 : wallKicks.push([1, 0], [1, 1], [0, -2], [1, -2]); // 0 >> 3
-        } else if (currentRotation === 1) {
+        } else if (this.currentRotation === 1) {
             clockwise
                 ? wallKicks.push([1, 0], [1, -1], [0, 2], [1, 2]) // 1 >> 2
                 : wallKicks.push([1, 0], [1, -1], [0, 2], [1, 2]); // 1 >> 0
-        } else if (currentRotation === 2) {
+        } else if (this.currentRotation === 2) {
             clockwise
                 ? wallKicks.push([1, 0], [1, 1], [0, -2], [1, -2]) // 2 >> 3
                 : wallKicks.push([-1, 0], [-1, 1], [0, -2], [-1, -2]); // 2 >> 1
-        } else if (currentRotation == 3) {
+        } else if (this.currentRotation == 3) {
             clockwise
                 ? wallKicks.push([-1, 0], [-1, -1], [0, 2], [-1, 2]) // 3 >> 0
                 : wallKicks.push([-1, 0], [-1, -1], [0, 2], [-1, 2]); // 3 >> 2
@@ -343,9 +360,10 @@ export class Piece {
     getCorrectWallKick = (
         board: Board,
         nextRotation: number,
-        clockwise: boolean
+        clockwise: boolean,
+        rotate180: boolean
     ): number[] | null => {
-        const wallKicks = this.getWallKicks(clockwise);
+        const wallKicks = this.getWallKicks(clockwise, rotate180);
 
         const pieceCoordinates = this.getCoordinates();
 
@@ -362,9 +380,9 @@ export class Piece {
             );
 
             // We apply the wallkick to the piece offsets.
-            // These are intentionally swapped due to the wall kick coordinates being X/Y and the offset being Y/X.
+            // These are intentionally swapped due to the wall kick coordinates being -X/Y and the offset being Y/X.
             rotatedPiece.offset = [
-                rotatedPiece.offset[0] + pieceOffset[1],
+                rotatedPiece.offset[0] - pieceOffset[1],
                 rotatedPiece.offset[1] + pieceOffset[0]
             ];
 

@@ -19,10 +19,11 @@ import { keyToDisplay } from '@/helpers/style';
             {{ keyToDisplay(CONTROLS.HARD_DROP.value).toUpperCase() }}
         </div>
 
-        <div class="label-rotate">ROTATE CW / CCW:</div>
+        <div class="label-rotate">ROTATE CW / CCW / 180:</div>
         <div class="button-rotate">
             {{ keyToDisplay(CONTROLS.ROTATE_CW.value).toUpperCase() }} /
-            {{ keyToDisplay(CONTROLS.ROTATE_CCW.value).toUpperCase() }}
+            {{ keyToDisplay(CONTROLS.ROTATE_CCW.value).toUpperCase() }} /
+            {{ keyToDisplay(CONTROLS.ROTATE_180.value).toUpperCase() }}
         </div>
 
         <div class="label-hold">HOLD PIECE:</div>

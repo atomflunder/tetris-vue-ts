@@ -93,19 +93,19 @@ test('Rotate Piece', () => {
     const oPiece = allPieces[3];
     const tPiece = allPieces[6];
 
-    expect(oPiece.rotate(board, true)).toBe(false);
-    expect(tPiece.rotate(board, false)).toBe(true);
-    expect(tPiece.rotate(board, false)).toBe(true);
-    expect(tPiece.rotate(board, false)).toBe(true);
-    expect(tPiece.rotate(board, false)).toBe(true);
-    expect(tPiece.rotate(board, false)).toBe(true);
+    expect(oPiece.rotate(board, true, false)).toBe(false);
+    expect(tPiece.rotate(board, false, false)).toBe(true);
+    expect(tPiece.rotate(board, false, false)).toBe(true);
+    expect(tPiece.rotate(board, false, false)).toBe(true);
+    expect(tPiece.rotate(board, false, false)).toBe(true);
+    expect(tPiece.rotate(board, false, false)).toBe(true);
 
     board.GameBoard[0] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1];
     board.GameBoard[1] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1];
     board.GameBoard[2] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1];
     board.GameBoard[3] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1];
 
-    expect(tPiece.rotate(board, true)).toBe(false);
+    expect(tPiece.rotate(board, true, false)).toBe(false);
 
     oPiece.reset();
     tPiece.reset();
@@ -193,22 +193,22 @@ test('Get Wall Kicks', () => {
     const oPiece = allPieces[3];
     const tPiece = allPieces[6];
 
-    expect(oPiece.getWallKicks(true)).toEqual([[0, 0]]);
-    expect(iPiece.getWallKicks(true)).toEqual([
+    expect(oPiece.getWallKicks(true, false)).toEqual([[0, 0]]);
+    expect(iPiece.getWallKicks(true, false)).toEqual([
         [0, 0],
         [-2, 0],
         [1, 0],
         [-2, -1],
         [1, 2]
     ]);
-    expect(tPiece.getWallKicks(true)).toEqual([
+    expect(tPiece.getWallKicks(true, false)).toEqual([
         [0, 0],
         [-1, 0],
         [-1, 1],
         [0, -2],
         [-1, -2]
     ]);
-    expect(tPiece.getWallKicks(false)).toEqual([
+    expect(tPiece.getWallKicks(false, false)).toEqual([
         [0, 0],
         [1, 0],
         [1, 1],
@@ -218,7 +218,7 @@ test('Get Wall Kicks', () => {
 
     tPiece.currentRotation = 2;
 
-    expect(tPiece.getWallKicks(false)).toEqual([
+    expect(tPiece.getWallKicks(false, false)).toEqual([
         [0, 0],
         [-1, 0],
         [-1, 1],
@@ -228,7 +228,7 @@ test('Get Wall Kicks', () => {
 
     iPiece.currentRotation = 3;
 
-    expect(iPiece.getWallKicks(true)).toEqual([
+    expect(iPiece.getWallKicks(true, false)).toEqual([
         [0, 0],
         [1, 0],
         [-2, 0],
@@ -248,21 +248,21 @@ test('Get Correct Wall Kick', () => {
     const oPiece = allPieces[3];
     const tPiece = allPieces[6];
 
-    expect(iPiece.getCorrectWallKick(board, 1, true)).toEqual([0, 0]);
-    expect(oPiece.getCorrectWallKick(board, 1, true)).toEqual([0, 0]);
-    expect(tPiece.getCorrectWallKick(board, 1, true)).toEqual([0, 0]);
+    expect(iPiece.getCorrectWallKick(board, 1, true, false)).toEqual([0, 0]);
+    expect(oPiece.getCorrectWallKick(board, 1, true, false)).toEqual([0, 0]);
+    expect(tPiece.getCorrectWallKick(board, 1, true, false)).toEqual([0, 0]);
 
     board.GameBoard[0] = [0, 2, 4, 0, 0, 3, 3, 2, 0, 1];
     board.GameBoard[1] = [0, 2, 4, 0, 0, 3, 3, 2, 0, 1];
     board.GameBoard[2] = [0, 2, 4, 0, 0, 3, 3, 2, 0, 1];
 
-    expect(iPiece.getCorrectWallKick(board, 1, true)).toEqual([-2, 0]);
+    expect(iPiece.getCorrectWallKick(board, 1, true, false)).toEqual([-2, 0]);
 
     board.GameBoard[0] = [1, 2, 4, 1, 1, 3, 3, 2, 1, 1];
     board.GameBoard[1] = [1, 2, 4, 1, 1, 3, 3, 2, 1, 1];
     board.GameBoard[2] = [1, 2, 4, 1, 1, 3, 3, 2, 1, 1];
 
-    expect(tPiece.getCorrectWallKick(board, 1, true)).toEqual(null);
+    expect(tPiece.getCorrectWallKick(board, 1, true, false)).toEqual(null);
 });
 
 test('Get Shadow Piece Coordinates', () => {
