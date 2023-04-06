@@ -243,6 +243,8 @@ export class Game {
         this.lockTicksRemaining = CONFIG.PIECE_LOCK_TICKS.value;
 
         // First, we grey the pieces out if the user wishes to do so.
+        // This is done here instead in the style options
+        // because we do not want to color in the current piece in grey under any circumstances.
         if (!CONFIG.COLORED_BOARD) {
             const coords = this.currentPiece.getCoordinates();
 

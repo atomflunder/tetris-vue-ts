@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { CONFIG, setConfig } from '../helpers/config';
+import { getColorClass } from '@/helpers/style';
+import { Game } from '@/helpers/game';
+import { allPieces } from '@/helpers/pieceData';
 
 defineEmits<{
     (event: 'back'): void;
@@ -20,6 +23,50 @@ let lockMoveResets = ref(CONFIG.LOCK_MOVE_RESETS);
 let dasDelay = ref(CONFIG.DAS_DELAY);
 let arrSpeed = ref(CONFIG.ARR_SPEED);
 let backgroundURL = ref(CONFIG.BACKGROUND_URL);
+
+function getPreviewGame(greyedOut: boolean): Game {
+    const dummyGame = new Game();
+
+    if (greyedOut) {
+        dummyGame.board.GameBoard[22] = [1, 2, 2, 2, 5, 5, 7, 7, 7, 0];
+        dummyGame.board.GameBoard[21] = [1, 2, 3, 3, 3, 5, 5, 7, 2, 0];
+        dummyGame.board.GameBoard[20] = [1, 4, 4, 6, 3, 0, 2, 2, 2, 0];
+        dummyGame.board.GameBoard[19] = [1, 4, 4, 6, 6, 0, 6, 5, 5, 0];
+        dummyGame.board.GameBoard[18] = [4, 4, 3, 0, 6, 0, 6, 6, 5, 5];
+        dummyGame.board.GameBoard[17] = [4, 4, 3, 0, 0, 0, 0, 6, 0, 0];
+        dummyGame.board.GameBoard[16] = [1, 3, 3, 0, 0, 0, 0, 0, 0, 0];
+        dummyGame.board.GameBoard[15] = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        dummyGame.board.GameBoard[14] = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        dummyGame.board.GameBoard[13] = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    } else {
+        dummyGame.board.GameBoard[22] = [8, 8, 8, 8, 8, 8, 8, 8, 8, 0];
+        dummyGame.board.GameBoard[21] = [8, 8, 8, 8, 8, 8, 8, 8, 8, 0];
+        dummyGame.board.GameBoard[20] = [8, 8, 8, 8, 8, 0, 8, 8, 8, 0];
+        dummyGame.board.GameBoard[19] = [8, 8, 8, 8, 8, 0, 8, 8, 8, 0];
+        dummyGame.board.GameBoard[18] = [8, 8, 8, 0, 8, 0, 8, 8, 8, 8];
+        dummyGame.board.GameBoard[17] = [8, 8, 8, 0, 0, 0, 0, 8, 0, 0];
+        dummyGame.board.GameBoard[16] = [8, 8, 8, 0, 0, 0, 0, 0, 0, 0];
+        dummyGame.board.GameBoard[15] = [8, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        dummyGame.board.GameBoard[14] = [8, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        dummyGame.board.GameBoard[13] = [8, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    }
+
+    dummyGame.board.GameBoard[9] = [0, 0, 0, 7, 7, 7, 0, 0, 0, 0];
+    dummyGame.board.GameBoard[8] = [0, 0, 0, 0, 7, 0, 0, 0, 0, 0];
+
+    dummyGame.board.GameBoard[0] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    dummyGame.board.GameBoard[1] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    dummyGame.board.GameBoard[2] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+    dummyGame.currentPiece = allPieces[6];
+    dummyGame.currentPiece.offset = [10, 3];
+
+    dummyGame.shadowPiece = dummyGame.currentPiece.getShadowCoordinates(dummyGame.board);
+
+    return dummyGame;
+}
+
+let dummyGame = ref(getPreviewGame(CONFIG.COLORED_BOARD.value));
 
 function resetConfig(): void {
     const allValues = [
@@ -50,9 +97,9 @@ function resetConfig(): void {
             setConfig(allValues[i].value.name, allValues[i].value.defaultValue, false, true);
         }
     }
-}
 
-// TODO: Add a live uptating preview of a board to the right side?
+    dummyGame.value = getPreviewGame(false);
+}
 </script>
 
 <template>
@@ -100,11 +147,14 @@ function resetConfig(): void {
                     type="checkbox"
                     v-model="coloredBoard.value"
                     @click="
-                        setConfig(
-                            'COLORED_BOARD',
-                            String(($event.target as HTMLInputElement).checked),
-                            true
-                        )
+                        {
+                            setConfig(
+                                'COLORED_BOARD',
+                                String(($event.target as HTMLInputElement).checked),
+                                true
+                            );
+                            dummyGame = getPreviewGame(CONFIG.COLORED_BOARD.value);
+                        }
                     "
                 />
             </tr>
@@ -116,11 +166,14 @@ function resetConfig(): void {
                     type="checkbox"
                     v-model="ghostPiece.value"
                     @click="
-                        setConfig(
-                            'GHOST_PIECE',
-                            String(($event.target as HTMLInputElement).checked),
-                            true
-                        )
+                        {
+                            setConfig(
+                                'GHOST_PIECE',
+                                String(($event.target as HTMLInputElement).checked),
+                                true
+                            );
+                            dummyGame = getPreviewGame(CONFIG.COLORED_BOARD.value);
+                        }
                     "
                 />
             </tr>
@@ -329,6 +382,19 @@ function resetConfig(): void {
                 </td>
             </tr>
         </table>
+
+        <div class="preview">
+            <div class="header">PREVIEW:</div>
+            <table>
+                <tr v-for="(row, i) in dummyGame.board.GameBoard" :key="i">
+                    <td
+                        v-for="(block, j) in row"
+                        :key="j"
+                        :class="getColorClass(dummyGame, block, i, j)"
+                    ></td>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <div class="board-preview"></div>
@@ -344,6 +410,7 @@ function resetConfig(): void {
     display: flex;
     justify-content: center;
     font-size: 2.2rem;
+    margin-bottom: 10px;
 }
 
 .config-table {
@@ -358,6 +425,11 @@ function resetConfig(): void {
 
 .config-table tr:hover {
     background-color: #222;
+}
+
+.preview {
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .back {
@@ -450,5 +522,11 @@ input[type='checkbox']:checked:after {
 *:disabled {
     opacity: 50%;
     cursor: not-allowed;
+}
+
+@media (max-width: 1800px) {
+    .preview {
+        display: none;
+    }
 }
 </style>

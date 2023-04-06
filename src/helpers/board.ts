@@ -3,7 +3,12 @@ import type { Piece } from './pieces';
 export class Board {
     GameBoard: number[][];
 
-    constructor() {
+    constructor(board: number[][] | null = null) {
+        if (board !== null) {
+            this.GameBoard = board;
+            return;
+        }
+
         // The board is usually 10 blocks wide,
         // and 16-24 blocks high. Our board is 22 blocks high.
         this.GameBoard = [
