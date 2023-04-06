@@ -109,7 +109,7 @@ function resetConfig(): void {
         <table class="config-table">
             <td class="header" colspan="2">OPTIONS MENU</td>
             <tr>
-                <td>VOLUME:</td>
+                <td title="The volume of the sound effects playing.">VOLUME:</td>
                 <input
                     class="slider"
                     type="range"
@@ -125,7 +125,9 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>SHOW DEBUG INFO:</td>
+                <td title="Shows some debug information on screen, used for development.">
+                    SHOW DEBUG INFO:
+                </td>
                 <input
                     class="box"
                     type="checkbox"
@@ -141,7 +143,11 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>COLORED BOARD:</td>
+                <td
+                    title="If you want the pieces to stay their color when dropped. If disabled, they will be greyed out on impact."
+                >
+                    COLORED BOARD:
+                </td>
                 <input
                     class="box"
                     type="checkbox"
@@ -160,7 +166,11 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>GHOST PIECE:</td>
+                <td
+                    title="If you want to enable a 'ghost piece' that shows up on the bottom of the screen showing you where the current piece will end up."
+                >
+                    GHOST PIECE:
+                </td>
                 <input
                     class="box"
                     type="checkbox"
@@ -179,7 +189,11 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>LINE CLEAR DELAY:</td>
+                <td
+                    title="The delay in milliseconds that the game will 'freeze' for when you clear a line."
+                >
+                    LINE CLEAR DELAY:
+                </td>
                 <td>
                     <input
                         class="slider"
@@ -201,7 +215,13 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>MODERN PIECE RNG:</td>
+                <td
+                    title="In the modern piece RNG, the game will generate a bag with X times each of the 7 pieces and shuffles it randomly. 
+This means that you cannot go more than X * 12 pieces in a row without seeing a specific piece and you cannot see a piece more than X * 2 times in a row.
+If disabled, the pieces will be truly random."
+                >
+                    MODERN PIECE RNG:
+                </td>
                 <input
                     class="box"
                     type="checkbox"
@@ -219,7 +239,11 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>PIECE BAGS:</td>
+                <td
+                    title="The amount of piece bags generated at once. Only available with modern piece RNG."
+                >
+                    PIECE BAGS:
+                </td>
                 <td>
                     <input
                         class="slider"
@@ -242,7 +266,11 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>PREVENT OVERHANGS:</td>
+                <td
+                    title="If enabled, the first piece spawned will never be a S, Z or O. Only available with modern piece RNG."
+                >
+                    PREVENT OVERHANGS:
+                </td>
                 <input
                     class="box"
                     type="checkbox"
@@ -259,7 +287,9 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>PIECE LOCK DELAY:</td>
+                <td title="The amount of time before a piece locks when falling down.">
+                    PIECE LOCK DELAY:
+                </td>
                 <td>
                     <input
                         class="slider"
@@ -276,13 +306,16 @@ function resetConfig(): void {
                             )
                         "
                     />
-                    ({{ pieceLockTicks.value }} /
-                    {{ Math.round((pieceLockTicks.value / 60) * 1000) }}MS)
+                    ({{ Math.round((pieceLockTicks.value / 60) * 1000) }}MS)
                 </td>
             </tr>
 
             <tr>
-                <td>LOCK DELAY RESETS:</td>
+                <td
+                    title="The amount of moves that reset the lock delay. Set this to -1 for an infinite amount of resets."
+                >
+                    LOCK DELAY RESETS:
+                </td>
                 <td>
                     <input
                         class="slider"
@@ -304,7 +337,9 @@ function resetConfig(): void {
             </tr>
 
             <tr>
-                <td>DELAYED AUTO SHIFT (DAS):</td>
+                <td title="The delay between the initial keypress and the ARR kicking in.">
+                    DELAYED AUTO SHIFT (DAS):
+                </td>
                 <td>
                     <input
                         class="slider"
@@ -317,12 +352,14 @@ function resetConfig(): void {
                             setConfig('DAS_DELAY', ($event.target as HTMLInputElement).value, false)
                         "
                     />
-                    ({{ dasDelay.value }}ms)
+                    ({{ dasDelay.value }}MS)
                 </td>
             </tr>
 
             <tr>
-                <td>AUTOMATIC REPEAT RATE (ARR):</td>
+                <td title="The speed of the tetrominoes moving when holding down a movement key.">
+                    AUTOMATIC REPEAT RATE (ARR):
+                </td>
                 <td>
                     <input
                         class="slider"
@@ -335,12 +372,12 @@ function resetConfig(): void {
                             setConfig('ARR_SPEED', ($event.target as HTMLInputElement).value, false)
                         "
                     />
-                    ({{ arrSpeed.value }}ms)
+                    ({{ arrSpeed.value }}MS)
                 </td>
             </tr>
 
             <tr>
-                <td>BACKGROUND IMAGE:</td>
+                <td title="The url of the background image.">BACKGROUND IMAGE:</td>
                 <td>
                     <input
                         type="text"
