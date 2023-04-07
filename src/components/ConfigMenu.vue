@@ -117,7 +117,12 @@ function resetConfig(): void {
                     min="0"
                     max="1"
                     step="0.01"
-                    @change="setConfig('VOLUME', ($event.target as HTMLInputElement).value, false)"
+                    @change="
+                        {
+                            setConfig('VOLUME', ($event.target as HTMLInputElement).value, false);
+                            dummyGame.audioPlayer.playSound('hardDrop');
+                        }
+                    "
                 />
                 ({{
                     Math.round(volume.value * 100)
