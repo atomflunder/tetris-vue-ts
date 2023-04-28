@@ -220,6 +220,10 @@ export const handleInput = (e: KeyboardEvent, game: Game): void => {
 
             break;
         case CONTROLS.HARD_DROP.value:
+            if (game.frozen) {
+                return;
+            }
+
             game.moveDown(true, true);
             game.audioPlayer.playSound('hardDrop');
             break;
