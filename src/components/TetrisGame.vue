@@ -16,6 +16,7 @@ import TetrisBoard from '@/components/Game/TetrisBoard.vue';
 import { CONTROLS, handleInput, handleKeyup } from '@/helpers/controls';
 import { Game } from '@/helpers/game';
 import type { Menu } from '@/helpers/types';
+import { CONFIG } from '@/helpers/config';
 
 const props = defineProps<{
     gameMode: Menu;
@@ -95,7 +96,7 @@ onMounted(() => {
         <div class="center-column"><GameOver v-if="game.over" /></div>
         <div class="center-column"><GameFinished v-if="game.finished" :game="game" /></div>
 
-        <div class="next-column font">
+        <div class="next-column font" v-if="CONFIG.PREVIEW_PIECE_AMOUNT.value > 0">
             <NextPieces :game="game" />
         </div>
         <div class="held-column font">

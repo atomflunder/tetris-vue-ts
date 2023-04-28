@@ -76,6 +76,15 @@ export const CONFIG = {
     },
 
     /**
+     * The amount of preview pieces shown on the right side of the board.
+     */
+    PREVIEW_PIECE_AMOUNT: {
+        name: 'PREVIEW_PIECE_AMOUNT',
+        defaultValue: '6',
+        value: Number(getConfig('PREVIEW_PIECE_AMOUNT', '6'))
+    },
+
+    /**
      * The delay you get when clearing lines, in milliseconds.
      * Can be set to 0 (or lower) for no delay at all.
      * Most games use a value between 400 to 700.

@@ -14,6 +14,7 @@ let volume = ref(CONFIG.VOLUME);
 let debugInfo = ref(CONFIG.SHOW_DEBUG_INFO);
 let coloredBoard = ref(CONFIG.COLORED_BOARD);
 let ghostPiece = ref(CONFIG.GHOST_PIECE);
+let previewPieceAmount = ref(CONFIG.PREVIEW_PIECE_AMOUNT);
 let lineClearDelay = ref(CONFIG.LINE_CLEAR_DELAY);
 let modernPieceRNG = ref(CONFIG.MODERN_PIECE_RNG);
 let pieceBagAmount = ref(CONFIG.PIECE_BAG_AMOUNT);
@@ -74,6 +75,7 @@ function resetConfig(): void {
         debugInfo,
         coloredBoard,
         ghostPiece,
+        previewPieceAmount,
         lineClearDelay,
         modernPieceRNG,
         pieceBagAmount,
@@ -191,6 +193,30 @@ function resetConfig(): void {
                         }
                     "
                 />
+            </tr>
+
+            <tr>
+                <td title="How many preview pieces get shown on the right hand side of the board.">
+                    PREVIEW PIECE AMOUNT:
+                </td>
+                <td>
+                    <input
+                        class="slider"
+                        type="range"
+                        v-model="previewPieceAmount.value"
+                        min="0"
+                        max="12"
+                        step="1"
+                        @change="
+                            setConfig(
+                                'PREVIEW_PIECE_AMOUNT',
+                                ($event.target as HTMLInputElement).value,
+                                false
+                            )
+                        "
+                    />
+                    ({{ previewPieceAmount.value }})
+                </td>
             </tr>
 
             <tr>
