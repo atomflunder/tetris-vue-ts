@@ -245,7 +245,7 @@ export class Game {
         // First, we grey the pieces out if the user wishes to do so.
         // This is done here instead in the style options
         // because we do not want to color in the current piece in grey under any circumstances.
-        if (!CONFIG.COLORED_BOARD) {
+        if (!CONFIG.COLORED_BOARD.value) {
             const coords = this.currentPiece.getCoordinates();
 
             for (let i = 0; i < coords.length; i++) {

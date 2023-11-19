@@ -100,7 +100,7 @@ function resetConfig(): void {
         }
     }
 
-    dummyGame.value = getPreviewGame(false);
+    dummyGame.value = getPreviewGame(true);
 }
 </script>
 
