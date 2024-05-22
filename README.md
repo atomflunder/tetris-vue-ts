@@ -3,6 +3,10 @@
 This is a Tetris Game fully written in Vue + TypeScript.  
 In large part compliant with the [Tetris Guidelines](https://tetris.fandom.com/wiki/Tetris_Guideline).
 
+You can play this game at: https://yet-another-tetris.vercel.app/
+
+![Screenshot of the game](./screenshot.png)
+
 ## Tetris Guidelines Implemented
 
 -   ✅ Super Rotation System with Wallkicks (+180° Rotations)
